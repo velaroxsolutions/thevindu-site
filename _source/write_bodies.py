@@ -1,0 +1,823 @@
+import json, os
+P = "/home/claude/site/parts"
+
+B = {}
+
+# ============================= HOME =============================
+B["home"] = '''
+<div class="hero" data-sec="top" data-secname="Top">
+  <div>
+    <div class="eyebrow">
+      <span class="lbl scr">Edmonton</span>
+      <span class="lbl scr">Computer Engineering &rsquo;28</span>
+      <span class="lbl scr">University of Alberta</span>
+    </div>
+    <h1 class="big"><span class="rv"><span style="--r:0">Thevindu</span></span><span class="rv"><em style="--r:1">Nagasinghe</em></span></h1>
+    <p class="status">Currently building <a href="work-aperis.html" class="mag">Aperis</a>.</p>
+    <p class="intro">
+      I build software under <a href="work.html">Velarox</a> and I'm learning how machines
+      represent meaning. Everything I pick up ends up in the <a href="library.html">library</a>, free.
+    </p>
+    <div class="quick">
+      <a class="mag" href="https://github.com/NitroSkyliner" target="_blank" rel="noopener">GitHub &#8599;</a>
+      <a class="mag" href="https://www.linkedin.com/in/thevindu-nagasinghe-9ba2a4342" target="_blank" rel="noopener">LinkedIn &#8599;</a>
+      <a class="mag" href="cv.html">R&eacute;sum&eacute;</a>
+      <a class="mag" href="#contact">Email</a>
+    </div>
+  </div>
+  <div class="panel" data-drift="12">
+    <div class="panel-h">
+      <span class="lbl">State of things</span>
+      <span class="live"><i class="dot"></i>Live</span>
+    </div>
+    <div class="prow2" data-lane-item="build"><i style="background:#D91A72"></i><b>Aperis</b><span class="hot">Closed beta</span></div>
+    <div class="prow2" data-lane-item="build"><i style="background:#2B4CE8"></i><b>Reflct</b><span>In dev</span></div>
+    <div class="prow2" data-lane-item="build"><i style="border:1.5px solid #5C6675"></i><b>Cadence</b><span>In dev</span></div>
+    <div class="prow2" data-lane-item="study"><i style="background:#2B4CE8"></i><b>Reading</b><span>Contrastive learning</span></div>
+    <div class="prow2" data-lane-item="study"><i style="background:#2B4CE8"></i><b>Chess</b><span>1240 rapid</span></div>
+    <div class="panel-f">
+      <span class="lbl">Last shipped</span>
+      <span class="lbl" style="color:var(--ink)">Aug 12</span>
+    </div>
+  </div>
+</div>
+
+<div class="marq" aria-hidden="true">
+  <div class="marq-in">
+    <b class="hot"><i></i>Shipped &mdash; Aperis onboarding, three screens to one</b>
+    <b><i></i>Reading &mdash; the contrastive gap</b>
+    <b><i></i>Broke &mdash; Cadence worker double-posted</b>
+    <b class="hot"><i></i>Learned &mdash; Firestore rules don&rsquo;t nest how I thought</b>
+    <b><i></i>Shipped &mdash; Reflct memory layer</b>
+    <b><i></i>Stuck &mdash; four inches off a dunk</b>
+  </div>
+</div>
+
+<section class="roomy" data-sec="belief" data-secname="Belief">
+  <p class="words">The bottleneck is <em>almost never</em> the code.</p>
+  <p class="side" data-anim style="max-width:34ch;margin:44px 0 0;color:var(--muted);font-size:15px;line-height:1.75">
+    Every time I&rsquo;ve been stuck, the real problem was that I hadn&rsquo;t talked to anyone
+    who&rsquo;d use the thing. Knowing that hasn&rsquo;t fixed it. It has made it shorter.</p>
+</section>
+
+<section id="now" data-sec="now" data-secname="Now">
+  <div class="chapter">
+    <span class="num">&sect; 01</span>
+    <div><h2 class="rv"><span>Now</span></h2>
+    <p class="sub">Updated when it changes, not on a schedule.</p></div>
+  </div>
+  <div class="now">
+    <div class="r" data-lane-item="build" data-anim style="--i:0"><span class="lbl">Aperis</span>
+      <p>Closed beta. Most of my week goes into getting real people on it and watching what they do.</p></div>
+    <div class="r" data-lane-item="study" data-anim style="--i:1"><span class="lbl">Reading</span>
+      <p>Why image and text embeddings end up in separate regions of the same space.</p></div>
+    <div class="r" data-lane-item="build" data-anim style="--i:2"><span class="lbl">Building</span>
+      <p>Rewriting Reflct&rsquo;s memory so entries carry context across months, not days.</p></div>
+    <div class="r" data-lane-item="study" data-anim style="--i:3"><span class="lbl">Off-screen</span>
+      <p>Basketball, chess, and a stubborn attempt to dunk.</p></div>
+  </div>
+</section>
+
+<section data-sec="work" data-secname="Work">
+  <div class="chapter">
+    <span class="num">&sect; 02</span>
+    <div><h2 class="rv"><span>Building</span></h2>
+    <p class="sub">Three products under Velarox. One is in front of real people.</p></div>
+  </div>
+  <div class="rows">
+    <a class="prow" href="work-aperis.html" data-lane-item="build" data-anim style="--i:0" data-peek="Aperis">
+      <i class="pm b"></i>
+      <div><p class="pname">Aperis</p><p class="ptag">A dating app with no swiping.</p></div>
+      <div class="pbody">
+        <p>Matches on a weighted five-dimension score instead of a photo grid. Photos unlock after a conversation starts.</p>
+        <div class="chips"><span class="chip">React</span><span class="chip">FastAPI</span><span class="chip">Firestore</span></div>
+      </div>
+      <span class="pstat hot">Closed beta</span>
+    </a>
+    <a class="prow" href="work.html" data-lane-item="build" data-anim style="--i:1" data-peek="Reflct">
+      <i class="pm s"></i>
+      <div><p class="pname">Reflct</p><p class="ptag">A journal that remembers.</p></div>
+      <div class="pbody">
+        <p>An AI journaling companion that carries context between entries, so what comes back is about your life.</p>
+        <div class="chips"><span class="chip">React</span><span class="chip">Claude SDK</span><span class="chip">FastAPI</span></div>
+      </div>
+      <span class="pstat">In dev</span>
+    </a>
+    <a class="prow" href="work.html" data-lane-item="build" data-anim style="--i:2" data-peek="Cadence">
+      <i class="pm n"></i>
+      <div><p class="pname">Cadence</p><p class="ptag">Post on repeat, never miss a beat.</p></div>
+      <div class="pbody">
+        <p>Free content scheduling across platforms. A queue, a calendar, and a worker that publishes on time.</p>
+        <div class="chips"><span class="chip">React</span><span class="chip">OAuth</span><span class="chip">Tauri</span></div>
+      </div>
+      <span class="pstat">In dev</span>
+    </a>
+  </div>
+</section>
+
+<section data-sec="skills" data-secname="Skills">
+  <div class="chapter">
+    <span class="num">&sect; 03</span>
+    <div><h2 class="rv"><span>What I work in</span></h2>
+    <p class="sub">Search it. Click any row to see where it was used.</p></div>
+  </div>
+  <div class="sk" data-anim>
+    <div class="sk-top">
+      <span class="lbl">Skills</span>
+      <div class="sk-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="sksearch" type="search" placeholder="search&hellip;" aria-label="Search skills">
+      </div>
+    </div>
+    <div class="pills" id="skpills" role="group" aria-label="Skill groups">
+      <button data-g="all" aria-pressed="true">All</button>
+      <button data-g="sw" aria-pressed="false">Software</button>
+      <button data-g="ai" aria-pressed="false">AI / ML</button>
+      <button data-g="co" aria-pressed="false">Content</button>
+      <button data-g="de" aria-pressed="false">Design</button>
+    </div>
+    <div class="wellmask"><div class="well" id="skwell"></div></div>
+    <div class="sk-foot">
+      <span class="lbl" id="skcount">&mdash;</span>
+      <span class="lbl">click a row for evidence</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="library" data-secname="Library">
+  <div class="chapter">
+    <span class="num">&sect; 04</span>
+    <div><h2 class="rv"><span>Library</span></h2>
+    <p class="sub">Everything I learn, given away. No email gate.</p></div>
+  </div>
+  <div class="grid3">
+    <a class="card" href="library-templates.html" data-lane-item="build" data-anim style="--i:0">
+      <span class="kcount"><span class="count" data-to="6">0</span> templates</span><h3>Templates</h3>
+      <p>Starting points for software, AI, and content work.</p></a>
+    <a class="card" href="library-courses.html" data-lane-item="study" data-anim style="--i:1">
+      <span class="kcount"><span class="count" data-to="4">0</span> courses</span><h3>Course notes</h3>
+      <p>Lectures condensed into sheets I study from.</p></a>
+    <a class="card" href="library-books.html" data-lane-item="study" data-anim style="--i:2">
+      <span class="kcount"><span class="count" data-to="23">0</span> books</span><h3>Books</h3>
+      <p>What I read and whether it was worth it.</p></a>
+  </div>
+</section>
+'''
+
+# ============================= WORK =============================
+B["work"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><span>Work</span></div>
+  <h1 class="rv"><span>Work</span></h1>
+  <p class="lede-xl">Three products under Velarox. I built <em>all of them</em> alone.</p>
+  <div class="metarow">
+    <span class="lbl scr">3 active</span><span class="lbl scr">1 in beta</span><span class="lbl scr">Since 2024</span>
+  </div>
+</div>
+
+<section style="padding-top:0" data-sec="products" data-secname="Products">
+  <a class="feature" href="work-aperis.html" data-lane-item="build">
+    <span class="fnum">01 &mdash; 03</span>
+    <div class="fmain">
+      <h3 class="rv"><span>Aperis</span></h3>
+      <p class="ftag">A dating app with no swiping.</p>
+      <p>Matching runs on a weighted five-dimension score instead of a photo grid. Photos
+      unlock only after a conversation is already going.</p>
+      <p>I designed the model, built the stack, and run the beta.</p>
+      <span class="golink mag">Read the case study <i></i></span>
+      <div class="fmeta">
+        <div><span>Status</span><span style="color:var(--build)">Closed beta</span></div>
+        <div><span>Stack</span><span>React &middot; FastAPI &middot; Firestore</span></div>
+        <div><span>Started</span><span>Nov 2024</span></div>
+      </div>
+    </div>
+    <div class="fvis" data-drift="22"><div class="frame"><b>Aperis</b></div></div>
+  </a>
+
+  <div class="feature flip s" data-lane-item="build">
+    <span class="fnum">02 &mdash; 03</span>
+    <div class="fmain">
+      <h3 class="rv"><span>Reflct</span></h3>
+      <p class="ftag">A journal that remembers.</p>
+      <p>Most journaling tools treat every entry as a blank page. Reflct carries context
+      between them, so what comes back is about your life.</p>
+      <p>The memory layer is the hard part and the whole point.</p>
+      <span class="golink mag">In development <i></i></span>
+      <div class="fmeta">
+        <div><span>Status</span><span>In dev</span></div>
+        <div><span>Stack</span><span>React &middot; Claude SDK &middot; FastAPI</span></div>
+        <div><span>Started</span><span>2025</span></div>
+      </div>
+    </div>
+    <div class="fvis" data-drift="22"><div class="frame"><b>Reflct</b></div></div>
+  </div>
+
+  <div class="feature n" data-lane-item="build">
+    <span class="fnum">03 &mdash; 03</span>
+    <div class="fmain">
+      <h3 class="rv"><span>Cadence</span></h3>
+      <p class="ftag">Post on repeat, never miss a beat.</p>
+      <p>Content scheduling across platforms. A queue, a calendar, and a worker that
+      publishes on time. There&rsquo;s a desktop build too.</p>
+      <p>I built it because I was scheduling posts by hand at midnight.</p>
+      <span class="golink mag">In development <i></i></span>
+      <div class="fmeta">
+        <div><span>Status</span><span>In dev</span></div>
+        <div><span>Stack</span><span>React &middot; OAuth &middot; Tauri</span></div>
+        <div><span>Started</span><span>2025</span></div>
+      </div>
+    </div>
+    <div class="fvis" data-drift="22"><div class="frame"><b>Cadence</b></div></div>
+  </div>
+</section>
+
+<section class="roomy" data-sec="how" data-secname="How I work">
+  <p class="words">I don&rsquo;t keep code I <em>couldn&rsquo;t rewrite</em> myself.</p>
+  <p data-anim style="max-width:34ch;margin:44px 0 0;color:var(--muted);font-size:15px;line-height:1.75">
+    I use AI heavily when I build. The rule is that nothing ships if I couldn&rsquo;t rewrite,
+    extend, and debug it on my own.</p>
+</section>
+
+<section data-sec="archive" data-secname="Archive">
+  <div class="chapter">
+    <span class="num">&sect; arch</span>
+    <div><h2 class="rv"><span>Smaller things</span></h2>
+    <p class="sub">The ones I&rsquo;d still defend.</p></div>
+  </div>
+  <div class="res">
+    <div class="ritem" data-anim style="--i:0">
+      <div><h3>Chess engine, badly</h3><p>Minimax with alpha-beta pruning. Beat me, lost to everyone else.</p></div>
+      <span class="rtype">Python</span><span class="dl">2024</span>
+    </div>
+    <div class="ritem" data-anim style="--i:1">
+      <div><h3>Snake agent</h3><p>MaskablePPO on a custom environment. Learned to avoid its own tail, eventually.</p></div>
+      <span class="rtype">RL</span><span class="dl">2025</span>
+    </div>
+    <div class="ritem" data-anim style="--i:2">
+      <div><h3>This website</h3><p>Hand-written. No framework, no build step, one stylesheet.</p></div>
+      <span class="rtype">Web</span><span class="dl">2026</span>
+    </div>
+  </div>
+</section>
+'''
+
+# ============================= APERIS =============================
+B["aperis"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><a href="work.html">Work</a><span>/</span><span>Aperis</span></div>
+  <h1 class="rv"><span>Aperis</span></h1>
+  <p class="lede-xl">A dating app that won&rsquo;t show you a face until you&rsquo;ve <em>already decided</em> you like someone.</p>
+  <div class="quick">
+    <a class="primary mag" href="#">Try it &#8599;</a>
+    <a class="mag" href="#">Instagram &#8599;</a>
+    <a class="mag" href="#">Repo &#8599;</a>
+  </div>
+  <div class="stats" style="margin-top:clamp(44px,7vw,80px)">
+    <div class="stat b" data-anim style="--i:0"><b><span class="count" data-to="5">0</span></b><span>Dimensions scored</span></div>
+    <div class="stat" data-anim style="--i:1"><b>0</b><span>Swipes, by design</span></div>
+    <div class="stat" data-anim style="--i:2"><b>1</b><span>Person building it</span></div>
+    <div class="stat s" data-anim style="--i:3"><b>&rsquo;24</b><span>Started</span></div>
+  </div>
+</div>
+
+<section style="padding-top:clamp(44px,6vw,84px)" data-sec="study" data-secname="Case study">
+  <div class="split">
+    <nav class="sidenav" aria-label="Sections">
+      <a href="#c1" class="on">Problem</a>
+      <a href="#c2">What I built</a>
+      <a href="#c3">Architecture</a>
+      <a href="#c4">Trade-offs</a>
+      <a href="#c5">What I learned</a>
+      <a href="#c6">Next</a>
+    </nav>
+
+    <div>
+      <div class="chunk" id="c1">
+        <h2 class="rv"><span>The problem</span></h2>
+        <div class="prose" data-anim>
+          <p>Every dating app has converged on the same interface: a photo, a swipe, a queue.
+          It&rsquo;s optimised for throughput. Rejecting a hundred people is faster than
+          considering three.</p>
+          <p>So appearance becomes the entire first filter. Everything else about a person
+          only gets looked at after they&rsquo;ve passed a two-second visual gate.</p>
+          <p>I wanted to know what happens if you remove the gate.</p>
+        </div>
+      </div>
+
+      <div class="chunk" id="c2">
+        <h2 class="rv"><span>What I built</span></h2>
+        <div class="prose" data-anim>
+          <p>You answer a set of questions. The system builds a profile vector and introduces
+          you to people whose vectors sit close on the dimensions you weighted highest. Photos
+          unlock once a conversation is running.</p>
+          <p>No queue, no swipe. A small number of introductions, and the scarcity is the point.</p>
+        </div>
+        <div class="shots" style="margin-top:38px">
+          <div class="shot" data-anim style="--i:0">Onboarding</div>
+          <div class="shot" data-anim style="--i:1">Scoring</div>
+          <div class="shot" data-anim style="--i:2">Introduction</div>
+          <div class="shot" data-anim style="--i:3">Chat</div>
+        </div>
+        <p class="quiet" style="margin-top:14px">Replace with real captures</p>
+      </div>
+
+      <div class="chunk" id="c3">
+        <h2 class="rv"><span>How it fits together</span></h2>
+        <div class="arch" data-anim>
+          <svg viewBox="0 0 660 250" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+            <g fill="none" stroke="#D3D8E0" stroke-width="1">
+              <rect class="bx" style="--d:0" x="8" y="86" width="120" height="52"/>
+              <rect class="bx" style="--d:2" x="196" y="86" width="130" height="52"/>
+              <rect class="bx" style="--d:4" x="394" y="16" width="130" height="52"/>
+              <rect class="bx" style="--d:5" x="394" y="96" width="130" height="52"/>
+              <rect class="bx" style="--d:7" x="394" y="176" width="130" height="52"/>
+              <rect class="bx" style="--d:6" x="196" y="176" width="130" height="52"/>
+            </g>
+            <g fill="#10131A" text-anchor="middle">
+              <text class="bx" style="--d:1" x="68" y="108">React client</text>
+              <text class="bx" style="--d:3" x="261" y="108">FastAPI</text>
+              <text class="bx" style="--d:5" x="459" y="38">Firebase Auth</text>
+              <text class="bx" style="--d:6" x="459" y="118">Firestore</text>
+              <text class="bx" style="--d:8" x="459" y="198">Scoring engine</text>
+              <text class="bx" style="--d:7" x="261" y="198">Match worker</text>
+            </g>
+            <g fill="#5C6675" text-anchor="middle" font-size="9.5">
+              <text class="bx" style="--d:1" x="68" y="124">web + mobile</text>
+              <text class="bx" style="--d:3" x="261" y="124">REST &middot; sessions</text>
+              <text class="bx" style="--d:5" x="459" y="54">identity</text>
+              <text class="bx" style="--d:6" x="459" y="134">profiles &middot; vectors</text>
+              <text class="bx" style="--d:8" x="459" y="214">5-dim weighted</text>
+              <text class="bx" style="--d:7" x="261" y="214">nightly batch</text>
+            </g>
+            <g stroke="#D91A72" stroke-width="1.4" fill="none" marker-end="url(#ar)">
+              <path class="ln" d="M128 112 L192 112"/>
+              <path class="ln" d="M326 106 L390 46"/>
+              <path class="ln" d="M326 112 L390 122"/>
+              <path class="ln" d="M261 138 L261 172"/>
+              <path class="ln" d="M326 202 L390 202"/>
+            </g>
+            <defs><marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3.2" orient="auto">
+              <path d="M0 0 L7 3.2 L0 6.4 z" fill="#D91A72"/></marker></defs>
+          </svg>
+        </div>
+      </div>
+
+      <div class="chunk" id="c4">
+        <h2 class="rv"><span>What each choice cost</span></h2>
+        <div class="tradeoff">
+          <div data-anim style="--i:0">
+            <div><span class="lbl">Decision</span><b>Hide photos until a conversation starts</b></div>
+            <div><span class="lbl">Cost</span><p>Kills the instant-gratification loop every competitor runs on. Signups convert far more slowly.</p></div>
+          </div>
+          <div data-anim style="--i:1">
+            <div><span class="lbl">Decision</span><b>Firestore over Postgres</b></div>
+            <div><span class="lbl">Cost</span><p>Fast to start, painful for the match query. I&rsquo;d choose relational next time.</p></div>
+          </div>
+          <div data-anim style="--i:2">
+            <div><span class="lbl">Decision</span><b>Nightly batch, not real-time</b></div>
+            <div><span class="lbl">Cost</span><p>Cheaper, simpler, and the scarcity is a feature. But a new user can wait a day for anything to happen.</p></div>
+          </div>
+          <div data-anim style="--i:3">
+            <div><span class="lbl">Decision</span><b>Hand-tuned weights, not a learned model</b></div>
+            <div><span class="lbl">Cost</span><p>No cold start, and I can explain every match. But it can&rsquo;t improve from data.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chunk" id="c5">
+        <h2 class="rv"><span>What I learned</span></h2>
+        <div class="prose" data-anim>
+          <p>The engineering was never the constraint. I could build features faster than I
+          could find people to use them, so for a long stretch I was optimising something
+          nobody had touched.</p>
+          <p>What moved was messaging individuals instead of posting into the void. Slower,
+          and the only thing that produced real feedback.</p>
+        </div>
+      </div>
+
+      <div class="chunk" id="c6">
+        <h2 class="rv"><span>Next</span></h2>
+        <div class="prose" data-anim>
+          <p>Grow the beta until the matching has something to work with, then replace the
+          hand-tuned weights with something learned from real outcomes.</p>
+        </div>
+        <div class="pnav" style="margin-top:48px">
+          <a href="work.html" class="mag">&larr; All work</a>
+          <a href="work.html" class="mag">Reflct &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+'''
+
+# ============================= ABOUT =============================
+B["about"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><span>About</span></div>
+  <h1 class="rv"><span>About</span></h1>
+  <p class="lede-xl">I came at this from the build side, <em>not the theory side</em>.</p>
+  <div class="metarow">
+    <span class="lbl scr">Edmonton</span><span class="lbl scr">Born in Sri Lanka</span><span class="lbl scr">Class of 2028</span>
+  </div>
+</div>
+
+<section data-sec="origin" data-secname="Origin">
+  <div class="chapter">
+    <span class="num">&sect; 01</span>
+    <div><h2 class="rv"><span>How I got here</span></h2></div>
+  </div>
+  <div class="prose" data-anim>
+    <p>I wanted an app to exist, so I made it. Everything I know about backends, auth, and
+    data modelling came from needing it to work at two in the morning.</p>
+    <p>That&rsquo;s a good way to learn and a bad way to learn thoroughly. You end up with
+    working code and a lot of holes. The last year has mostly been filling them in.</p>
+    <p>I grew up in Sri Lanka and moved to Edmonton for university. The cold was a surprise.</p>
+  </div>
+</section>
+
+<section class="roomy" data-sec="view" data-secname="Point of view">
+  <p class="words">Shipping beats planning, <em>but only just</em>.</p>
+  <p data-anim style="max-width:34ch;margin:44px 0 0;color:var(--muted);font-size:15px;line-height:1.75">
+    I&rsquo;ve lost more time to well-organised plans for things I never built than to anything
+    I shipped badly. The more elegant the plan, the more suspicious I try to be.</p>
+</section>
+
+<section id="skills" data-sec="skills" data-secname="Skills">
+  <div class="chapter">
+    <span class="num">&sect; 02</span>
+    <div><h2 class="rv"><span>What I work in</span></h2>
+    <p class="sub">Evidence, not ratings. Click any row.</p></div>
+  </div>
+  <div class="sk" data-anim>
+    <div class="sk-top">
+      <span class="lbl">Skills</span>
+      <div class="sk-search">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="sksearch" type="search" placeholder="search&hellip;" aria-label="Search skills">
+      </div>
+    </div>
+    <div class="pills" id="skpills" role="group" aria-label="Skill groups">
+      <button data-g="all" aria-pressed="true">All</button>
+      <button data-g="sw" aria-pressed="false">Software</button>
+      <button data-g="ai" aria-pressed="false">AI / ML</button>
+      <button data-g="co" aria-pressed="false">Content</button>
+      <button data-g="de" aria-pressed="false">Design</button>
+    </div>
+    <div class="wellmask"><div class="well" id="skwell"></div></div>
+    <div class="sk-foot">
+      <span class="lbl" id="skcount">&mdash;</span>
+      <span class="lbl">click a row for evidence</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="timeline" data-secname="Timeline">
+  <div class="chapter">
+    <span class="num">&sect; 03</span>
+    <div><h2 class="rv"><span>Timeline</span></h2>
+    <p class="sub">Short, because there isn&rsquo;t much of it yet.</p></div>
+  </div>
+  <div class="tl">
+    <div class="tlrow" data-anim style="--i:0">
+      <time>2024 &mdash; now</time><i class="tldot b"></i>
+      <div><h3>Velarox</h3><p>Founded it. Three products, all of the work.</p></div>
+      <span class="rt">Founder</span>
+    </div>
+    <div class="tlrow" data-anim style="--i:1">
+      <time>2025</time><i class="tldot b"></i>
+      <div><h3>Aperis beta</h3><p>Shipped the first working version and put it in front of people.</p></div>
+      <span class="rt">Milestone</span>
+    </div>
+    <div class="tlrow" data-anim style="--i:2">
+      <time>2023 &mdash; 2028</time><i class="tldot s"></i>
+      <div><h3>University of Alberta</h3><p>Computer Engineering, Software Option, Co-op.</p></div>
+      <span class="rt">Education</span>
+    </div>
+    <div class="tlrow" data-anim style="--i:3">
+      <time>Before 2023</time><i class="tldot"></i>
+      <div><h3>Sri Lanka</h3><p>Cricket, then basketball, then computers.</p></div>
+      <span class="rt">Life</span>
+    </div>
+  </div>
+</section>
+
+<section data-sec="learning" data-secname="Learning">
+  <div class="chapter">
+    <span class="num">&sect; 04</span>
+    <div><h2 class="rv"><span>Languages &amp; learning</span></h2></div>
+  </div>
+  <div class="langs">
+    <div class="lang" data-anim style="--i:0"><span>Sinhala</span><span class="bar" style="--p:100%"><i></i></span><span>native</span></div>
+    <div class="lang" data-anim style="--i:1"><span>English</span><span class="bar" style="--p:100%"><i></i></span><span>fluent</span></div>
+    <div class="lang" data-anim style="--i:2"><span>French</span><span class="bar" style="--p:34%"><i></i></span><span>A2 &rarr; B2</span></div>
+    <div class="lang" data-anim style="--i:3"><span>SQL</span><span class="bar" style="--p:48%"><i></i></span><span>ongoing</span></div>
+    <div class="lang" data-anim style="--i:4"><span>Contrastive learning</span><span class="bar" style="--p:26%"><i></i></span><span>reading</span></div>
+  </div>
+</section>
+
+<section data-sec="hobbies" data-secname="Off-screen">
+  <div class="chapter">
+    <span class="num">&sect; 05</span>
+    <div><h2 class="rv"><span>Off-screen</span></h2></div>
+  </div>
+  <div class="grid3">
+    <div class="card" data-anim style="--i:0">
+      <span class="kcount">Basketball</span><h3>Still can&rsquo;t dunk</h3>
+      <p>About four inches away, for longer than I&rsquo;d like to admit.</p></div>
+    <div class="card" data-anim style="--i:1">
+      <span class="kcount">Chess &middot; 1240</span><h3>Aggressively mediocre</h3>
+      <p>I play too fast and lose to people who don&rsquo;t.</p></div>
+    <div class="card" data-anim style="--i:2">
+      <span class="kcount">Gym</span><h3>Getting heavier</h3>
+      <p>Rehabbing a shoulder and adding weight on purpose.</p></div>
+  </div>
+</section>
+
+<section data-sec="photos" data-secname="Photos">
+  <div class="chapter">
+    <span class="num">&sect; 06</span>
+    <div><h2 class="rv"><span>Photos</span></h2>
+    <p class="sub">Scroll sideways.</p></div>
+  </div>
+  <div class="strip">
+    <div class="ph rot" data-cap="Winter, first year" data-meta="Edmonton &middot; 2024"><b>Edmonton</b></div>
+    <div class="ph" data-cap="Home court" data-meta="Colombo &middot; 2023"><b>Colombo</b></div>
+    <div class="ph rot2" data-cap="Late build night" data-meta="Cameron &middot; 2025"><b>Cameron</b></div>
+    <div class="ph" data-cap="Launch day" data-meta="Edmonton &middot; 2025"><b>Launch</b></div>
+    <div class="ph rot" data-cap="Pickup game" data-meta="Van Vliet &middot; 2026"><b>Van Vliet</b></div>
+    <div class="ph" data-cap="Reading week" data-meta="Jasper &middot; 2026"><b>Jasper</b></div>
+    <div class="ph rot2" data-cap="River valley" data-meta="Edmonton &middot; 2026"><b>Valley</b></div>
+  </div>
+  <p class="quiet" style="margin-top:16px">Placeholders</p>
+</section>
+'''
+
+# ============================= LIBRARY =============================
+B["library"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><span>Library</span></div>
+  <h1 class="rv"><span>Library</span></h1>
+  <p class="lede-xl">Everything I learn, <em>given away</em>. No email gate, no catch.</p>
+  <div class="stats" style="margin-top:clamp(40px,6vw,74px)">
+    <div class="stat b" data-anim style="--i:0"><b><span class="count" data-to="33">0</span></b><span>Items</span></div>
+    <div class="stat" data-anim style="--i:1"><b><span class="count" data-to="6">0</span></b><span>Templates</span></div>
+    <div class="stat s" data-anim style="--i:2"><b><span class="count" data-to="4">0</span></b><span>Course notes</span></div>
+    <div class="stat" data-anim style="--i:3"><b><span class="count" data-to="23">0</span></b><span>Books</span></div>
+  </div>
+</div>
+
+<section data-sec="cats" data-secname="Browse">
+  <div class="chapter">
+    <span class="num">&sect; 01</span>
+    <div><h2 class="rv"><span>Browse</span></h2></div>
+  </div>
+  <div class="grid3">
+    <a class="card" href="library-templates.html" data-lane-item="build" data-anim style="--i:0">
+      <span class="kcount"><span class="count" data-to="6">0</span> templates</span><h3>Templates</h3>
+      <p>Starting points for software, AI, and content work.</p></a>
+    <a class="card" href="library-courses.html" data-lane-item="study" data-anim style="--i:1">
+      <span class="kcount"><span class="count" data-to="4">0</span> courses</span><h3>Course notes</h3>
+      <p>Lectures condensed into sheets I study from.</p></a>
+    <a class="card" href="library-books.html" data-lane-item="study" data-anim style="--i:2">
+      <span class="kcount"><span class="count" data-to="23">0</span> books</span><h3>Books</h3>
+      <p>What I read and whether it was worth it.</p></a>
+  </div>
+</section>
+
+<section data-sec="latest" data-secname="Latest">
+  <div class="chapter">
+    <span class="num">&sect; 02</span>
+    <div><h2 class="rv"><span>Latest</span></h2></div>
+  </div>
+  <div class="res">
+    <a class="ritem" href="library-courses.html" data-anim style="--i:0">
+      <div><h3>ENGG 404 &mdash; Risk Management</h3><p>Hazard recognition, safety culture, Lac-M&eacute;gantic.</p></div>
+      <span class="rtype">Course</span><span class="dl">Open &rarr;</span></a>
+    <a class="ritem" href="library-templates.html" data-anim style="--i:1">
+      <div><h3>Cold email &mdash; professors</h3><p>The structure I use for research outreach, and why.</p></div>
+      <span class="rtype">Template</span><span class="dl">Open &rarr;</span></a>
+    <a class="ritem" href="library-books.html" data-anim style="--i:2">
+      <div><h3>The Mom Test &mdash; notes</h3><p>How to ask about your idea without being lied to.</p></div>
+      <span class="rtype">Book</span><span class="dl">Open &rarr;</span></a>
+    <a class="ritem" href="library-templates.html" data-anim style="--i:3">
+      <div><h3>FastAPI + Firebase starter</h3><p>Auth, sessions, and a structure that holds up.</p></div>
+      <span class="rtype">Template</span><span class="dl">Open &rarr;</span></a>
+  </div>
+</section>
+'''
+
+# ============================= BOOKS =============================
+BOOKS = [
+ ("The Mom Test","now","Reading"),("Deep Learning","now","Reading"),
+ ("Shape Up","","Worth it"),("The Pragmatic Programmer","","Worth it"),
+ ("Make It Stick","","Worth it"),("Thinking, Fast and Slow","","Worth it"),
+ ("Hackers &amp; Painters","","Worth it"),("Refactoring UI","","Worth it"),
+ ("Zero to One","","Mixed"),("The Almanack","","Mixed"),
+ ("Atomic Habits","","Skim it"),("Designing Data-Intensive Applications","","Shelved"),
+]
+wall = "\n".join(
+ f'    <a class="wbook {c}" href="#" data-anim style="--i:{i}"><div class="wcover"><b>{t}</b></div>'
+ f'<div class="wmeta"><strong>{t}</strong><span>{s}</span></div></a>'
+ for i,(t,c,s) in enumerate(BOOKS))
+
+B["books"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><a href="library.html">Library</a><span>/</span><span>Books</span></div>
+  <h1 class="rv"><span>Books</span></h1>
+  <p class="lede-xl">What I read, and whether I&rsquo;d tell you to <em>bother</em>.</p>
+  <div class="metarow">
+    <span class="lbl scr"><span class="count" data-to="23">0</span> total</span>
+    <span class="lbl scr"><span class="count" data-to="2">0</span> reading</span>
+    <span class="lbl scr"><span class="count" data-to="9">0</span> this year</span>
+  </div>
+</div>
+
+<section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="shelf" data-secname="Shelf">
+  <div class="chapter">
+    <span class="num">&sect; 01</span>
+    <div><h2 class="rv"><span>The shelf</span></h2>
+    <p class="sub">A magenta spine means I&rsquo;m in the middle of it.</p></div>
+  </div>
+  <div class="wall">
+''' + wall + '''
+  </div>
+  <p class="quiet" style="margin-top:20px">Placeholder covers</p>
+</section>
+
+<section class="roomy" data-sec="one" data-secname="One line">
+  <p class="words">Everyone lies to you about your idea. It&rsquo;s your fault for <em>asking badly</em>.</p>
+  <p data-anim style="max-width:34ch;margin:44px 0 0;color:var(--muted);font-size:15px;line-height:1.75">
+    <b style="color:var(--ink);font-weight:500">The Mom Test</b> &mdash; Rob Fitzpatrick. It
+    reframed every conversation I&rsquo;d had about Aperis as evidence of nothing.</p>
+</section>
+
+<section data-sec="notes" data-secname="Notes">
+  <div class="chapter">
+    <span class="num">&sect; 02</span>
+    <div><h2 class="rv"><span>What I kept</span></h2>
+    <p class="sub">One line each. Not summaries &mdash; the bit that stuck.</p></div>
+  </div>
+  <div class="books">
+    <div class="book" data-anim style="--i:0"><div class="cover"></div>
+      <div><h3>Shape Up</h3><p class="by">Ryan Singer</p>
+      <p class="take">Fixed time, variable scope. Changed how I plan a week.</p></div>
+      <span class="bstat">Worth it</span></div>
+    <div class="book" data-anim style="--i:1"><div class="cover"></div>
+      <div><h3>The Pragmatic Programmer</h3><p class="by">Hunt &amp; Thomas</p>
+      <p class="take">The bit about not keeping code you can&rsquo;t explain is now a rule I follow.</p></div>
+      <span class="bstat">Worth it</span></div>
+    <div class="book" data-anim style="--i:2"><div class="cover"></div>
+      <div><h3>Make It Stick</h3><p class="by">Brown, Roediger, McDaniel</p>
+      <p class="take">Spaced retrieval over rereading. Felt worse, worked better.</p></div>
+      <span class="bstat">Worth it</span></div>
+    <div class="book" data-anim style="--i:3"><div class="cover"></div>
+      <div><h3>Zero to One</h3><p class="by">Peter Thiel</p>
+      <p class="take">Useful for one idea, and very confident about a lot of others.</p></div>
+      <span class="bstat">Mixed</span></div>
+    <div class="book" data-anim style="--i:4"><div class="cover"></div>
+      <div><h3>Atomic Habits</h3><p class="by">James Clear</p>
+      <p class="take">Thirty pages of ideas stretched across three hundred.</p></div>
+      <span class="bstat">Skim it</span></div>
+    <div class="book" data-anim style="--i:5"><div class="cover"></div>
+      <div><h3>Designing Data-Intensive Applications</h3><p class="by">Martin Kleppmann</p>
+      <p class="take">Shelved at chapter four. I don&rsquo;t yet have the problems it solves.</p></div>
+      <span class="bstat">Shelved</span></div>
+  </div>
+</section>
+'''
+
+# ============================= COURSES =============================
+B["courses"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><a href="library.html">Library</a><span>/</span><span>Courses</span></div>
+  <h1 class="rv"><span>Course notes</span></h1>
+  <p class="lede-xl">My lectures, condensed into sheets I <em>actually study from</em>.</p>
+  <div class="metarow">
+    <span class="lbl scr"><span class="count" data-to="4">0</span> courses</span>
+    <span class="lbl scr">University of Alberta</span>
+    <span class="lbl scr">Free</span>
+  </div>
+</div>
+
+<section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="all" data-secname="Courses">
+  <div class="chapter">
+    <span class="num">&sect; 01</span>
+    <div><h2 class="rv"><span>All courses</span></h2></div>
+  </div>
+  <div class="docs">
+    <a class="doc" href="#" data-anim style="--i:0">
+      <div class="docpg"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="docbody"><h3>ENGG 404</h3><p>Risk management. Hazard recognition, safety culture, Lac-M&eacute;gantic.</p>
+        <div class="docfoot"><span class="rtype">12 pages</span><span class="dl">Download &darr;</span></div></div></a>
+    <a class="doc" href="#" data-anim style="--i:1">
+      <div class="docpg"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="docbody"><h3>CMPUT 379</h3><p>Operating systems. Processes, scheduling, memory, concurrency.</p>
+        <div class="docfoot"><span class="rtype">18 pages</span><span class="dl">Download &darr;</span></div></div></a>
+    <a class="doc" href="#" data-anim style="--i:2">
+      <div class="docpg"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="docbody"><h3>ECE 320</h3><p>Embedded systems. Interrupts, timers, memory-mapped I/O.</p>
+        <div class="docfoot"><span class="rtype">14 pages</span><span class="dl">Download &darr;</span></div></div></a>
+    <a class="doc" href="#" data-anim style="--i:3">
+      <div class="docpg"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="docbody"><h3>STAT 235</h3><p>Distributions, hypothesis testing, regression.</p>
+        <div class="docfoot"><span class="rtype">10 pages</span><span class="dl">Download &darr;</span></div></div></a>
+  </div>
+</section>
+
+<section class="roomy" data-sec="why" data-secname="Why">
+  <p class="words">If these disagree with your instructor, <em>your instructor is right</em>.</p>
+  <p data-anim style="max-width:34ch;margin:44px 0 0;color:var(--muted);font-size:15px;line-height:1.75">
+    These are study aids, not authority. They&rsquo;re shaped around where I got confused, which
+    is sometimes useful to someone else and occasionally misleading.</p>
+</section>
+'''
+
+# ============================= TEMPLATES =============================
+B["templates"] = '''
+<div class="phead" data-sec="top" data-secname="Top">
+  <div class="crumb"><a href="index.html">Home</a><span>/</span><a href="library.html">Library</a><span>/</span><span>Templates</span></div>
+  <h1 class="rv"><span>Templates</span></h1>
+  <p class="lede-xl">Things I built for myself and <em>kept using</em>.</p>
+  <div class="metarow">
+    <span class="lbl scr"><span class="count" data-to="6">0</span> templates</span>
+    <span class="lbl scr">Free</span><span class="lbl scr">MIT</span>
+  </div>
+</div>
+
+<section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="soft" data-secname="Software">
+  <div class="chapter">
+    <span class="num">&sect; 01</span>
+    <div><h2 class="rv"><span>Software</span></h2>
+    <p class="sub">Scaffolding I stopped rewriting from scratch.</p></div>
+  </div>
+  <div class="res">
+    <a class="ritem" href="#" data-anim style="--i:0">
+      <div><h3>FastAPI + Firebase starter</h3><p>Auth, sessions, and the security rules that took me longest.</p></div>
+      <span class="rtype">Repo</span><span class="dl">Open &#8599;</span></a>
+    <a class="ritem" href="#" data-anim style="--i:1">
+      <div><h3>React app skeleton</h3><p>A component structure that survives past week three.</p></div>
+      <span class="rtype">Repo</span><span class="dl">Open &#8599;</span></a>
+  </div>
+</section>
+
+<section data-sec="ai" data-secname="AI">
+  <div class="chapter">
+    <span class="num">&sect; 02</span>
+    <div><h2 class="rv"><span>AI</span></h2>
+    <p class="sub">Patterns pulled out of Reflct.</p></div>
+  </div>
+  <div class="res">
+    <a class="ritem" href="#" data-anim style="--i:0">
+      <div><h3>Contextual memory pattern</h3><p>Carrying context across sessions without blowing the window.</p></div>
+      <span class="rtype">Guide</span><span class="dl">Read &rarr;</span></a>
+    <a class="ritem" href="#" data-anim style="--i:1">
+      <div><h3>Prompt structure I reuse</h3><p>Role, constraints, examples, format. Boring, and it works.</p></div>
+      <span class="rtype">Guide</span><span class="dl">Read &rarr;</span></a>
+  </div>
+</section>
+
+<section data-sec="content" data-secname="Content">
+  <div class="chapter">
+    <span class="num">&sect; 03</span>
+    <div><h2 class="rv"><span>Content</span></h2>
+    <p class="sub">Written after a lot of emails that got no reply.</p></div>
+  </div>
+  <div class="res">
+    <a class="ritem" href="#" data-anim style="--i:0">
+      <div><h3>Cold email &mdash; professors</h3><p>The structure I use, and why each paragraph is there.</p></div>
+      <span class="rtype">Doc</span><span class="dl">Copy &#8998;</span></a>
+    <a class="ritem" href="#" data-anim style="--i:1">
+      <div><h3>Short-form hook framework</h3><p>Three post types and how I pick between them.</p></div>
+      <span class="rtype">Doc</span><span class="dl">Copy &#8998;</span></a>
+  </div>
+</section>
+'''
+
+# ============================= CV / 404 (carried) =============================
+old = json.load(open(f"{P}/_old.json"))
+B["cv"] = old["cv"].replace('<div class="quick noprint" style="margin-top:22px">',
+                            '<div class="quick noprint" style="margin-top:22px">')
+B["nf"] = '''
+<div class="nf" data-sec="top" data-secname="404">
+  <span class="lbl">404</span>
+  <h1 class="rv"><span>Nothing here.</span></h1>
+  <p class="prose" style="margin-top:8px">This page doesn&rsquo;t exist, or it did once and doesn&rsquo;t now.</p>
+  <div class="quick" style="margin-top:30px">
+    <a class="primary mag" href="index.html">&larr; Home</a>
+    <a class="mag" href="work.html">Work</a>
+    <a class="mag" href="library.html">Library</a>
+  </div>
+</div>
+'''
+
+order = ["home","work","aperis","about","library","books","courses","templates","cv","nf"]
+out = []
+for k in order:
+    out.append(f"{k}: |")
+    out.append("\n".join("  " + l for l in B[k].strip("\n").split("\n")))
+    out.append("")
+open(f"{P}/bodies.yaml","w").write("\n".join(out))
+print("wrote bodies.yaml —", sum(len(B[k]) for k in order)//1024, "kb")
+for k in order:
+    print(f"  {k:10} words={len(B[k].split()):4}  words-anim={B[k].count('class=\"words\"')}")
