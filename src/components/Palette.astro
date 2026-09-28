@@ -1,0 +1,16 @@
+---
+import { paletteCommands } from '../lib/palette';
+const cmds = await paletteCommands();
+---
+<div class="pal" id="pal" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div class="pal-box">
+    <div class="pal-in">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="palinput" type="text" placeholder="Search pages, projects, books, actions…" aria-label="Search" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="pal-list" id="pallist" role="listbox"></div>
+    <div class="pal-foot"><span><kbd>↑↓</kbd>move</span><span><kbd>↵</kbd>open</span><span><kbd>esc</kbd>close</span></div>
+  </div>
+</div>
+<script type="application/json" id="pal-data" set:html={JSON.stringify(cmds)} />
+<script>import '../scripts/palette';</script>

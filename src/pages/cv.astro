@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../data/site';
+import { CV } from '../data/cv';
+---
+<Base title="Résumé" description="Experience, projects, skills, and education." lanes={false} contact={false}>
+  <div class="cv">
+    <div class="cvhead" data-sec="top" data-secname="Top">
+      <nav class="crumb noprint" aria-label="Breadcrumb"><a href="/">Home</a><span class="sep">/</span><span aria-current="page">Résumé</span></nav>
+      <h1>{SITE.name}</h1>
+      <div class="cvcontact">
+        <span>{SITE.location}, Canada</span>
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        {SITE.socials.map((s) => <a href={s.href}>{s.href.replace(/^https:\/\/(www\.)?/, '').replace(/\/in\/.*/, '/in/…')}</a>)}
+      </div>
+      <div class="quick noprint" style="margin-top:22px">
+        <a class="btn primary" href={SITE.resumePdf}>Download PDF ↓</a>
+        <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+    </div>
+    <div class="cvsec" data-sec="summary" data-secname="Summary"><h2>Summary</h2><div class="prose" style="max-width:none"><p>{CV.summary}</p></div></div>
+    <div class="cvsec" data-sec="exp" data-secname="Experience">
+      <h2>Experience</h2>
+      {CV.experience.map((e) => (
+        <div class="cvitem">
+          <div class="cvitem-h"><h3>{e.title}</h3><time>{e.when}</time></div>
+          <p class="org">{e.org}</p>
+          <ul>{e.points.map((p) => <li>{p}</li>)}</ul>
+        </div>
+      ))}
+    </div>
+    <div class="cvsec" data-sec="proj" data-secname="Projects">
+      <h2>Projects</h2>
+      {CV.projects.map((p) => <div class="cvitem"><div class="cvitem-h"><h3>{p.title}</h3><time>{p.when}</time></div><ul><li>{p.text}</li></ul></div>)}
+    </div>
+    <div class="cvsec" data-sec="skills" data-secname="Skills"><h2>Skills</h2><dl class="cvskills">{CV.skills.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></div>
+    <div class="cvsec" data-sec="edu" data-secname="Education">
+      <h2>Education</h2>
+      {CV.education.map((e) => <div class="cvitem"><div class="cvitem-h"><h3>{e.title}</h3><time>{e.when}</time></div><p class="org">{e.org}</p></div>)}
+    </div>
+    <div class="cvsec"><h2>Languages</h2><dl class="cvskills">{CV.languages.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></div>
+    <div class="cvsec noprint">
+      <h2>Availability</h2>
+      <div class="prose" style="max-width:none"><p>Open to internships, co-op placements, and research positions where I’d be building. Reach me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p></div>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,148 @@
+# group: sw = Software, ai = AI/ML, co = Content, de = Design. level: 1–12
+- id: python
+  name: "Python"
+  group: sw
+  level: 11
+  years: "3 yrs"
+  where: "Aperis \u00b7 Reflct \u00b7 Cadence \u00b7 coursework"
+  note: "Primary language. Backends, data work, and every ML experiment I've run."
+- id: fastapi
+  name: "FastAPI"
+  group: sw
+  level: 10
+  years: "2 yrs"
+  where: "Aperis \u00b7 Reflct \u00b7 Cadence"
+  note: "Every backend I've shipped. Auth, background workers, and the Cadence scheduler."
+- id: react
+  name: "React"
+  group: sw
+  level: 9
+  years: "2 yrs"
+  where: "Aperis \u00b7 Cadence \u00b7 Reflct"
+  note: "All three product frontends. Hooks, state, and a lot of form handling."
+- id: typescript
+  name: "TypeScript"
+  group: sw
+  level: 8
+  years: "2 yrs"
+  where: "Aperis \u00b7 Cadence"
+  note: "Typed the Aperis frontend after the untyped version got painful to change."
+- id: firestore
+  name: "Firestore"
+  group: sw
+  level: 8
+  years: "2 yrs"
+  where: "Aperis \u00b7 Reflct"
+  note: "Data modelling, security rules, and the nested-query problems that come with them."
+- id: git
+  name: "Git"
+  group: sw
+  level: 9
+  years: "3 yrs"
+  where: "everything"
+  note: "Branching, rebasing, and cleaning up after myself."
+- id: sql
+  name: "SQL"
+  group: sw
+  level: 5
+  years: "1 yr"
+  where: "coursework"
+  note: "Joins and schema design. Actively getting better — it's the highest-signal thing I'd skipped."
+- id: docker
+  name: "Docker"
+  group: sw
+  level: 5
+  years: "1 yr"
+  where: "Cadence"
+  note: "Containerised the Cadence backend for deployment."
+- id: c
+  name: "C"
+  group: sw
+  level: 6
+  years: "2 yrs"
+  where: "coursework"
+  note: "Embedded and systems coursework. Where I learned what memory actually is."
+- id: pytorch
+  name: "PyTorch"
+  group: ai
+  level: 7
+  years: "2 yrs"
+  where: "experiments \u00b7 coursework"
+  note: "Training loops, custom losses, and reading other people's model code."
+- id: numpy-pandas
+  name: "NumPy / Pandas"
+  group: ai
+  level: 9
+  years: "3 yrs"
+  where: "experiments \u00b7 coursework"
+  note: "The default tools for any data question I have."
+- id: anthropic-api
+  name: "Anthropic API"
+  group: ai
+  level: 9
+  years: "1 yr"
+  where: "Reflct"
+  note: "Built Reflct's contextual memory layer — prompt design, context windows, streaming."
+- id: scikit-learn
+  name: "scikit-learn"
+  group: ai
+  level: 7
+  years: "2 yrs"
+  where: "coursework \u00b7 Aperis scoring"
+  note: "Where the Aperis compatibility model started before it got custom."
+- id: embeddings
+  name: "Embeddings"
+  group: ai
+  level: 6
+  years: "1 yr"
+  where: "reading \u00b7 Reflct"
+  note: "Vector search, similarity, and why contrastive models leave a gap between modalities."
+- id: rl-sb3
+  name: "RL (SB3)"
+  group: ai
+  level: 5
+  years: "1 yr"
+  where: "side experiments"
+  note: "MaskablePPO and Gymnasium. Enough to build an environment and train an agent."
+- id: short-form-video
+  name: "Short-form video"
+  group: co
+  level: 9
+  years: "2 yrs"
+  where: "Aperis Instagram"
+  note: "Wrote, shot, and edited the Aperis reels. Learned more about hooks than I expected to."
+- id: copywriting
+  name: "Copywriting"
+  group: co
+  level: 8
+  years: "2 yrs"
+  where: "Aperis \u00b7 Velarox"
+  note: "Product copy, landing pages, and the content that actually gets watched."
+- id: content-strategy
+  name: "Content strategy"
+  group: co
+  level: 7
+  years: "1 yr"
+  where: "Aperis"
+  note: "Three post types, four times a week, tracked against what converts."
+- id: figma
+  name: "Figma"
+  group: de
+  level: 7
+  years: "2 yrs"
+  where: "Aperis \u00b7 Cadence"
+  note: "Designed both product UIs before building them."
+- id: ui-systems
+  name: "UI systems"
+  group: de
+  level: 7
+  years: "2 yrs"
+  where: "Aperis \u00b7 Cadence"
+  note: "Tokens, components, and keeping three products visually coherent."
+- id: typography
+  name: "Typography"
+  group: de
+  level: 5
+  years: "1 yr"
+  where: "Velarox brand"
+  note: "Enough to make deliberate choices instead of defaults."

@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import Chapter from '../../components/Chapter.astro';
+import Words from '../../components/Words.astro';
+import { projects } from '../../lib/content';
+import { getCollection } from 'astro:content';
+
+const proj = await projects();
+const exps = (await getCollection('experiments')).sort((a, b) => b.data.year - a.data.year);
+const beta = proj.filter((p) => /beta/i.test(p.data.status)).length;
+---
+<Base title="Work" description="Three products under Velarox: Aperis, Reflct, and Cadence.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Work' }]} title="Work"
+    lede={`${proj.length === 3 ? 'Three' : proj.length} products under Velarox. I built <em>all of them</em> alone.`}
+    meta={[`${proj.length} active`, `${beta} in beta`, 'Since 2024']} />
+
+  <section style="padding-top:0" data-sec="products" data-secname="Products">
+    {proj.map((p, i) => (
+      <a class={`feature acc-${p.data.accent} ${i % 2 ? 'flip' : ''}`} href={`/work/${p.id}`} data-lane-item="build">
+        <span class="fnum">{String(i + 1).padStart(2, '0')} — {String(proj.length).padStart(2, '0')}</span>
+        <div class="fmain">
+          <h3 class="rv"><span>{p.data.title}</span></h3>
+          <p class="ftag">{p.data.tagline}</p>
+          <p>{p.data.summary}</p>
+          {p.data.role && <p>{p.data.role}</p>}
+          <span class="golink mag">Read the case study <i></i></span>
+          <div class="fmeta">
+            <div><span>Status</span><span style={p.data.hot ? 'color:var(--build)' : ''}>{p.data.status}</span></div>
+            <div><span>Stack</span><span>{p.data.stack.join(' · ')}</span></div>
+            <div><span>Started</span><span>{p.data.started}</span></div>
+          </div>
+        </div>
+        <div class="fvis" data-drift="22">
+          <div class="frame"><div class="fbar"><i></i><i></i><i></i><span>{p.id}.velarox</span></div><b>{p.data.title}</b></div>
+        </div>
+      </a>
+    ))}
+  </section>
+
+  <Words sec="how" name="How I work"
+    text="I don’t keep code I <em>couldn’t rewrite</em> myself."
+    side="I use AI heavily when I build. The rule is that nothing ships if I couldn’t rewrite, extend, and debug it on my own." />
+
+  <section data-sec="archive" data-secname="Archive">
+    <Chapter num="arch" title="Smaller things" sub="The ones I’d still defend." />
+    <div class="res">
+      {exps.map((e, i) => {
+        const Tag = e.data.href ? 'a' : 'div';
+        return (
+          <Tag class="ritem" href={e.data.href} data-anim style={`--i:${i}`}>
+            <div><h3>{e.data.title}</h3><p>{e.data.text}</p></div>
+            <span class="rtype">{e.data.kind}</span><span class="dl">{e.data.year}</span>
+          </Tag>
+        );
+      })}
+    </div>
+  </section>
+</Base>

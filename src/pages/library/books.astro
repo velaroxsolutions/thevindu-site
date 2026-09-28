@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import Chapter from '../../components/Chapter.astro';
+import Words from '../../components/Words.astro';
+import Cover from '../../components/Cover.astro';
+import { books } from '../../lib/content';
+const all = await books();
+const verdicts = ['Reading', 'Worth it', 'Mixed', 'Skim it', 'Shelved'] as const;
+const featured = all.find((b) => b.data.featured);
+const withTake = all.filter((b) => b.data.take && !b.data.quote);
+const slug = (v: string) => v.toLowerCase().replace(/\s+/g, '-');
+---
+<Base title="Books" description="What I've read and what I kept from it.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { href: '/library', label: 'Library' }, { label: 'Books' }]} title="Books"
+    lede="What I read, and whether I’d tell you to <em>bother</em>."
+    meta={[`<span class="count" data-to="${all.length}">0</span> total`, `<span class="count" data-to="${all.filter((b) => b.data.verdict === 'Reading').length}">0</span> reading`, 'Honest verdicts']} />
+
+  <section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="shelf" data-secname="Shelf">
+    <Chapter num="01" title="The shelf" sub="An outlined cover means I’m in the middle of it. Filter by verdict." />
+    <div class="filters" role="group" aria-label="Filter by verdict" id="bookfilter">
+      <button data-v="all" aria-pressed="true">All<sup>{all.length}</sup></button>
+      {verdicts.map((v) => { const n = all.filter((b) => b.data.verdict === v).length; return n > 0 && <button data-v={slug(v)} aria-pressed="false">{v}<sup>{n}</sup></button>; })}
+    </div>
+    <div class="wall">
+      {all.map((b, i) => (
+        <a class={`wbook ${b.data.verdict === 'Reading' ? 'now' : ''}`} href={withTake.includes(b) ? `#${b.id}` : undefined} data-v={slug(b.data.verdict)} data-anim style={`--i:${i % 6}`}>
+          <Cover title={b.data.title} author={b.data.author} src={b.data.cover} />
+          <div class="wmeta"><strong>{b.data.title}</strong><span>{b.data.verdict}</span></div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {featured?.data.quote && (
+    <Words sec="one" name="One line" text={featured.data.quote}
+      side={`<b style="color:var(--ink);font-weight:500">${featured.data.title}</b> — ${featured.data.author}. ${featured.data.take ?? ''}`} />
+  )}
+
+  <section data-sec="notes" data-secname="Notes">
+    <Chapter num="02" title="What I kept" sub="One line each. Not summaries — the bit that stuck." />
+    <div class="books">
+      {withTake.map((b, i) => (
+        <div class="book" id={b.id} data-anim style={`--i:${i}`}>
+          <Cover title={b.data.title} src={b.data.cover} small />
+          <div><h3>{b.data.title}</h3><p class="by">{b.data.author}</p><p class="take">{b.data.take}</p></div>
+          <span class={`bstat ${b.data.verdict === 'Reading' ? 'now' : ''}`}>{b.data.verdict}</span>
+        </div>
+      ))}
+      {all.filter((b) => !withTake.includes(b)).map((b) => <span id={b.id} />)}
+    </div>
+  </section>
+</Base>
+<script>
+  import { $$ } from '../../scripts/util';
+  const btns = $$('#bookfilter button');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    $$('.wbook').forEach((w) => w.classList.toggle('hide', b.dataset.v !== 'all' && w.dataset.v !== b.dataset.v));
+  }));
+</script>

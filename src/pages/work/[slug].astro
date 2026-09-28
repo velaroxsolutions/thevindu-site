@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import { render } from 'astro:content';
+import { projects } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const all = await projects();
+  return all.map((p, i) => ({ params: { slug: p.id }, props: { p, prev: all[(i - 1 + all.length) % all.length], next: all[(i + 1) % all.length] } }));
+}
+const { p, prev, next } = Astro.props;
+const { Content, headings } = await render(p);
+const d = p.data;
+const toc = [...headings.filter((h) => h.depth === 2), ...(d.shots.length ? [{ depth: 2, slug: 'screens', text: 'Screens' }] : [])];
+---
+<Base title={d.title} description={d.summary} lanes={false} bodyClass={`acc-${d.accent}`}>
+  <div class={`phead cs-hero acc-${d.accent}`} data-sec="top" data-secname="Top">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a><span class="sep">/</span><a href="/work">Work</a><span class="sep">/</span><span aria-current="page">{d.title}</span></nav>
+    <h1 class="rv cs-title"><span>{d.title}</span></h1>
+    <p class="lede-xl" set:html={d.lede} />
+    <div class="quick">
+      {d.links.map((l) => <a class={`btn mag ${l.primary ? 'primary' : ''}`} href={l.href} aria-disabled={l.href === '#' ? 'true' : undefined}>{l.label} ↗</a>)}
+      <span class="chips" style="align-self:center;margin-left:6px">{d.stack.map((s) => <span class="chip">{s}</span>)}</span>
+    </div>
+    {d.stats.length > 0 && (
+      <div class="stats" style="margin-top:clamp(44px,7vw,90px)">
+        {d.stats.map((s, i) => (
+          <div class={`stat ${i === 0 ? (d.accent === 'study' ? 's' : 'b') : ''}`} data-anim style={`--i:${i}`}>
+            <b>{s.count != null ? <span class="count" data-to={s.count}>0</span> : s.value}</b><span>{s.label}</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <section style="padding-top:clamp(50px,6vw,90px)" data-sec="study" data-secname="Case study" class={`acc-${d.accent}`}>
+    <div class="split">
+      <nav class="sidenav" aria-label="Sections">
+        <span class="lbl">Contents</span>
+        {toc.map((h, i) => <a href={`#${h.slug}`} class={i === 0 ? 'on' : ''}>{h.text}</a>)}
+      </nav>
+      <div class="prose cs-body">
+        <Content />
+        {d.shots.length > 0 && (
+          <>
+            <h2 id="screens">Screens</h2>
+            <div class="shots">{d.shots.map((s, i) => <div class="shot" data-anim style={`--i:${i}`}>{s}</div>)}</div>
+            <p class="quiet">Placeholders — drop captures in public/work/{p.id}/</p>
+          </>
+        )}
+        <nav class="pnav" aria-label="More work">
+          <a href={`/work/${prev.id}`}><span class="lbl">← Previous</span><b>{prev.data.title}</b></a>
+          <a href={`/work/${next.id}`}><span class="lbl">Next →</span><b>{next.data.title}</b></a>
+        </nav>
+      </div>
+    </div>
+  </section>
+</Base>

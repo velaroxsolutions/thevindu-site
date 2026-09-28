@@ -1,0 +1,13 @@
+---
+import { SITE } from '../data/site';
+---
+<div class="contact" id="contact" data-sec="contact" data-secname="Contact">
+  <span class="lbl">Get in touch</span><br>
+  <a class="mail" href={`mailto:${SITE.email}`} data-email={SITE.email}>{SITE.email}</a>
+  <div class="contact-row">
+    <button class="btn" data-copy-email>Copy address</button>
+    {SITE.socials.map((s) => <a class="btn mag" href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}
+    <a class="btn mag" href="/cv">Résumé</a>
+  </div>
+  <p class="avail">Open to interesting work — internships, research, or anything where I’d be building. <a href="/cv">Résumé here</a>.</p>
+</div>

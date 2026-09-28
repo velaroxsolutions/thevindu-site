@@ -1,0 +1,54 @@
+---
+title: Cadence
+order: 3
+tagline: Post on repeat, never miss a beat.
+lede: I was scheduling posts by hand at midnight. So I <em>built the scheduler</em>.
+summary: Free content scheduling across platforms. A queue, a calendar, and a worker that publishes on time.
+status: In dev
+accent: neutral
+stack: [React, FastAPI, OAuth, Tauri]
+started: "2025"
+role: I built it because I was scheduling posts by hand at midnight.
+stats:
+  - { value: "1", label: Adapter per platform }
+  - { value: "2", label: Builds — web and desktop }
+  - { value: "0", label: Dollars to use it }
+  - { value: "’25", label: Started }
+shots: [Composer, Queue, Calendar]
+tradeoffs:
+  - decision: One adapter per platform
+    cost: Adding a platform is one file. But every platform’s quirks leak into its adapter, and some adapters are much uglier than others.
+  - decision: A background worker, not cron jobs per post
+    cost: One place to reason about timing and retries. It’s also one place that can double-post if the locking is wrong. It was.
+arch:
+  nodes:
+    - { id: client, label: React + Tauri, sub: web · desktop, x: 8, y: 86 }
+    - { id: api, label: FastAPI, sub: queue · calendar, x: 196, y: 86 }
+    - { id: oauth, label: OAuth, sub: per-account tokens, x: 394, y: 16 }
+    - { id: worker, label: Worker, sub: publishes on time, x: 196, y: 176 }
+    - { id: adapters, label: Adapters, sub: one per platform, x: 394, y: 176 }
+  edges: [[client, api], [api, oauth], [api, worker], [worker, adapters]]
+---
+import Arch from '../../components/Arch.astro';
+import Tradeoffs from '../../components/Tradeoffs.astro';
+
+## The problem
+
+Posting consistently across platforms means either paying for a scheduler or doing it by
+hand at the time the post needs to go out. I was doing it by hand, at midnight.
+
+## What I’m building
+
+A queue, a calendar, and a worker that publishes on time. There’s a desktop build too.
+
+## How it fits together
+
+<Arch data={frontmatter.arch} />
+
+## What each choice costs
+
+<Tradeoffs items={frontmatter.tradeoffs} />
+
+## Next
+
+Idempotency keys on every publish, so a retry can never become a second post.

@@ -1,0 +1,9 @@
+---
+// A single scroll-lit statement. Wrap the accent in <em>.
+interface Props { text: string; side?: string; sec: string; name: string }
+const { text, side, sec, name } = Astro.props;
+---
+<section class="roomy" data-sec={sec} data-secname={name}>
+  <p class="words" set:html={text} />
+  {side && <p class="words-side" data-anim set:html={side} />}
+</section>

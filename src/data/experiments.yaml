@@ -1,0 +1,15 @@
+- id: chess-engine
+  title: Chess engine, badly
+  text: Minimax with alpha-beta pruning. Beat me, lost to everyone else.
+  kind: Python
+  year: 2024
+- id: snake-agent
+  title: Snake agent
+  text: MaskablePPO on a custom environment. Learned to avoid its own tail, eventually.
+  kind: RL
+  year: 2025
+- id: this-site
+  title: This website
+  text: Astro, content as data, one set of design tokens. Hand-tuned motion, no UI framework.
+  kind: Web
+  year: 2026

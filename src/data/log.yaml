@@ -1,0 +1,35 @@
+# The changelog. Newest first is not required — it's sorted by date.
+# kind: Shipped | Broke | Learned | Stuck | Reading | Started
+# The homepage ticker, "last shipped" and /log all read from this file.
+- id: aperis-onboarding
+  date: 2026-08-12
+  kind: Shipped
+  project: Aperis
+  text: Aperis onboarding, three screens to one.
+- id: contrastive-gap
+  date: 2026-08-04
+  kind: Reading
+  text: The contrastive gap — why image and text embeddings sit in separate regions of the same space.
+- id: cadence-double-post
+  date: 2026-07-29
+  kind: Broke
+  project: Cadence
+  text: The Cadence worker double-posted. Two workers, one lock, no idempotency key.
+- id: firestore-rules
+  date: 2026-07-20
+  kind: Learned
+  text: Firestore rules don't nest the way I thought they did.
+- id: reflct-memory
+  date: 2026-07-08
+  kind: Shipped
+  project: Reflct
+  text: Reflct memory layer, first version.
+- id: dunk
+  date: 2026-06-30
+  kind: Stuck
+  text: Still four inches off a dunk.
+- id: aperis-beta
+  date: 2025-09-01
+  kind: Started
+  project: Aperis
+  text: Aperis closed beta opened to the first group of real users.

@@ -1,0 +1,55 @@
+---
+title: Reflct
+order: 2
+tagline: A journal that remembers.
+lede: Most journals forget you the moment you close them. This one <em>keeps the thread</em>.
+summary: An AI journaling companion that carries context between entries, so what comes back is about your life.
+status: In dev
+accent: study
+stack: [React, Claude SDK, FastAPI]
+started: "2025"
+role: The memory layer is the hard part and the whole point.
+stats:
+  - { value: "1", label: Memory layer, rewritten twice }
+  - { value: "∞", label: Entries it should remember }
+  - { value: "1", label: Person building it }
+  - { value: "’25", label: Started }
+shots: [Entry, Recall, Threads]
+tradeoffs:
+  - decision: Summarised memory, not raw history
+    cost: Fits in the context window and stays cheap. But every summary throws something away, and you don’t get to choose what.
+  - decision: One model call per entry, not an agent loop
+    cost: Predictable latency and cost. Less clever about when to go looking for older context.
+arch:
+  nodes:
+    - { id: client, label: React client, sub: web, x: 8, y: 86 }
+    - { id: api, label: FastAPI, sub: entries · sessions, x: 196, y: 86 }
+    - { id: llm, label: Claude API, sub: reflection, x: 394, y: 16 }
+    - { id: mem, label: Memory layer, sub: summaries · threads, x: 394, y: 96 }
+    - { id: db, label: Store, sub: entries, x: 394, y: 176 }
+  edges: [[client, api], [api, llm], [api, mem], [mem, db]]
+---
+import Arch from '../../components/Arch.astro';
+import Tradeoffs from '../../components/Tradeoffs.astro';
+
+## The problem
+
+Most journaling tools treat every entry as a blank page. You can write for a year and the
+tool knows nothing more about you than it did on day one.
+
+## What I’m building
+
+Reflct carries context between entries. When you write about a hard week, what comes back
+can reference the thing you wrote about three weeks ago, because it’s still holding it.
+
+## How it fits together
+
+<Arch data={frontmatter.arch} />
+
+## What each choice costs
+
+<Tradeoffs items={frontmatter.tradeoffs} />
+
+## Next
+
+Rewriting the memory so entries carry context across months, not days.

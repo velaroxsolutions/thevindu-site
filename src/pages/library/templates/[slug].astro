@@ -1,0 +1,25 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { render } from 'astro:content';
+import { templates } from '../../../lib/content';
+export async function getStaticPaths() {
+  return (await templates()).filter((t) => !t.data.href).map((t) => ({ params: { slug: t.id }, props: { t } }));
+}
+const { t } = Astro.props;
+const { Content } = await render(t);
+---
+<Base title={t.data.title} description={t.data.blurb}>
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { href: '/library', label: 'Library' }, { href: '/library/templates', label: 'Templates' }, { label: t.data.title }]}
+    title={t.data.title} lede={t.data.blurb} meta={[t.data.group, t.data.kind, 'Free to use']} />
+  <section style="padding-top:0" data-sec="body" data-secname="Template">
+    <div class="tpl">
+      <div class="tpl-h">
+        <span class="lbl">{t.id}.md</span>
+        {t.data.copyable && <button class="btn" data-copy-target="tplbody">Copy ⎘</button>}
+      </div>
+      <div class="tpl-body prose" id="tplbody"><Content /></div>
+    </div>
+    <p style="margin-top:30px"><a class="btn" href="/library/templates">← All templates</a></p>
+  </section>
+</Base>

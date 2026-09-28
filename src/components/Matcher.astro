@@ -1,0 +1,33 @@
+---
+// A toy of the Aperis scoring: weighted distance across five dimensions.
+// The dimension names and profiles below are illustrative placeholders —
+// swap them for the real ones in src/data/matcher.ts.
+import { DIMS, PROFILES, YOU } from '../data/matcher';
+---
+<div class="matcher" id="matcher">
+  <div class="mt-h">
+    <span class="lbl">aperis / scoring — toy model</span>
+    <span class="lbl mt-intro">Top 3 get an introduction</span>
+  </div>
+  <div class="mt-body">
+    <div class="mt-weights">
+      <p class="lbl">Your weights</p>
+      {DIMS.map((d, i) => (
+        <label class="mt-w">
+          <span>{d.name}<small>{d.hint}</small></span>
+          <input type="range" min="0" max="5" step="1" value={d.w} data-dim={i} aria-label={`Weight for ${d.name}`}>
+          <output>{d.w}</output>
+        </label>
+      ))}
+      <div class="mt-radar">
+        <svg viewBox="-110 -110 220 220" aria-hidden="true" id="mtradar"></svg>
+        <div class="mt-key"><span><i class="you"></i>You</span><span><i class="them"></i><em id="mtsel">—</em></span></div>
+      </div>
+      <button class="btn" id="mtshuffle" type="button">Answer differently ↻</button>
+    </div>
+    <ol class="mt-list" id="mtlist" aria-live="polite"></ol>
+  </div>
+  <p class="mt-foot quiet">No photos in this list. That’s the product.</p>
+</div>
+<script type="application/json" id="mt-data" set:html={JSON.stringify({ DIMS, PROFILES, YOU })} />
+<script>import '../scripts/matcher';</script>

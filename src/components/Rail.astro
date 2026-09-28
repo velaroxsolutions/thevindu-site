@@ -1,0 +1,11 @@
+---
+import Mark from './Mark.astro';
+import { SITE } from '../data/site';
+---
+<aside class="rail" aria-hidden="true">
+  <a class="rail-mark" href="/" tabindex="-1"><Mark size={22} /></a>
+  <div class="rail-scale" id="railscale"><div id="railfill"></div></div>
+  <div class="rail-read">{SITE.location.split(',')[0].toUpperCase()} <u id="railtime">—</u></div>
+  <div class="rail-pct" id="railpct">00%</div>
+</aside>
+<script>import '../scripts/rail';</script>

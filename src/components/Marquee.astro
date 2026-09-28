@@ -1,0 +1,13 @@
+---
+import { logEntries, fmtDate } from '../lib/content';
+const entries = (await logEntries()).slice(0, 8);
+---
+<div class="marq">
+  <div class="marq-in">
+    {entries.map((e) => (
+      <a href={`/log#${e.id}`} class={e.data.kind === 'Shipped' || e.data.kind === 'Learned' ? 'hot' : ''}>
+        <i></i>{e.data.kind} — {e.data.text.replace(/\.$/, '')} <time>{fmtDate(e.data.date, { month: 'short', day: 'numeric' })}</time>
+      </a>
+    ))}
+  </div>
+</div>

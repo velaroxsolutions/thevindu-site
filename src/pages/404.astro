@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Not found" description="Page not found." lanes={false} contact={false}>
+  <div class="nf" data-sec="top" data-secname="404">
+    <span class="lbl">Error 404 · out of distribution</span>
+    <h1 class="rv"><span>Nothing here.</span></h1>
+    <p class="prose" style="margin-top:8px">This page doesn’t exist, or it did once and doesn’t now. Press <b>⌘K</b> to search everything.</p>
+    <div class="quick" style="margin-top:30px">
+      <a class="btn primary mag" href="/">← Home</a>
+      <a class="btn mag" href="/work">Work</a>
+      <a class="btn mag" href="/library">Library</a>
+      <button class="btn" data-open-palette>Search</button>
+    </div>
+  </div>
+</Base>

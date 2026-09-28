@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { logEntries, fmtDate } from '../lib/content';
+const all = await logEntries();
+const years = [...new Set(all.map((e) => e.data.date.getUTCFullYear()))];
+const kinds = [...new Set(all.map((e) => e.data.kind))];
+---
+<Base title="Log" description="A running log of what I shipped, broke, learned, and got stuck on.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Log' }]} title="Log"
+    lede="What I shipped, what I broke, and <em>what I got stuck on</em>."
+    meta={[`${all.length} entries`, 'Newest first', 'One line each']} />
+  <section style="padding-top:0" data-sec="log" data-secname="Log">
+    <div class="filters" role="group" aria-label="Filter by kind" id="logfilter">
+      <button data-k="all" aria-pressed="true">All<sup>{all.length}</sup></button>
+      {kinds.map((k) => <button data-k={k} aria-pressed="false">{k}<sup>{all.filter((e) => e.data.kind === k).length}</sup></button>)}
+    </div>
+    {years.map((y) => (
+      <>
+        <div class="logyear" aria-hidden="true">{y}</div>
+        <div class="logs">
+          {all.filter((e) => e.data.date.getUTCFullYear() === y).map((e, i) => (
+            <div class="logrow" id={e.id} data-k={e.data.kind} data-anim style={`--i:${i % 8}`}>
+              <time datetime={e.data.date.toISOString()}>{fmtDate(e.data.date, { month: 'short', day: 'numeric' })}</time>
+              <span class={`kind ${e.data.kind}`}>{e.data.kind}</span>
+              <p>{e.data.text}</p>
+              <span class="lbl">{e.data.project ?? ''}</span>
+            </div>
+          ))}
+        </div>
+      </>
+    ))}
+    <p class="quiet" style="margin-top:28px">Add entries in src/data/log.yaml</p>
+  </section>
+</Base>
+<script>
+  import { $$ } from '../scripts/util';
+  const btns = $$('#logfilter button');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    $$('.logrow').forEach((r) => r.classList.toggle('hide', b.dataset.k !== 'all' && r.dataset.k !== b.dataset.k));
+  }));
+</script>

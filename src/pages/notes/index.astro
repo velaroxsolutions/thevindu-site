@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { notes, fmtDate } from '../../lib/content';
+const all = await notes();
+---
+<Base title="Notes" description="Field notes on what I'm reading, building, and working out.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Notes' }]} title="Field notes"
+    lede="Things I’m working out, <em>written down</em> before I forget why they mattered."
+    meta={[`${all.length} ${all.length === 1 ? 'note' : 'notes'}`, 'RSS available', 'No newsletter']} />
+  <section style="padding-top:0" data-sec="list" data-secname="Notes">
+    <div class="nlist">
+      {all.map((n, i) => (
+        <a class="nitem" href={`/notes/${n.id}`} data-lane-item={n.data.lane} data-anim style={`--i:${i}`}>
+          <time datetime={n.data.date.toISOString()}>{fmtDate(n.data.date)}</time>
+          <div><h3>{n.data.title}</h3><p>{n.data.dek}</p></div>
+          <span class="dl">Read →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
