@@ -1,0 +1,20 @@
+---
+import Sparkline from './Sparkline.astro';
+import type { Chess } from '../lib/live/chess';
+import { PROFILES } from '../data/profiles';
+import { NOW } from '../data/now';
+interface Props { ch: Chess | null; i?: number }
+const { ch, i = 4 } = Astro.props;
+const rapid = ch?.chesscom?.rapid ?? ch?.lichess?.rapid ?? NOW.panel.chess;
+const href = ch?.chesscom?.url ?? ch?.lichess?.url ?? PROFILES.chesscom.url;
+const hist = ch?.lichess?.history ?? [];
+const line = [ch?.chesscom?.rapid && `chess.com ${ch.chesscom.rapid}`, ch?.lichess?.rapid && `lichess ${ch.lichess.rapid}`, ch?.lichess?.puzzle && `puzzles ${ch.lichess.puzzle}`].filter(Boolean).join(' · ');
+---
+<a class="cell c-chess" href={href} target="_blank" rel="noopener" data-anim style={`--i:${i}`} data-lane-item="study">
+  <span class="lbl"><span>Chess · rapid</span><span>{ch ? 'live' : 'Aggressively mediocre'}</span></span>
+  <span class="cell-big"><span class="count" data-to={rapid}>0</span></span>
+  {hist.length > 1
+    ? <Sparkline points={hist.map((x) => x.r)} label="Lichess" />
+    : <div class="board" aria-hidden="true">{Array.from({ length: 64 }, (_, k) => <i class={k === 27 ? 'q' : (Math.floor(k / 8) + k) % 2 ? 'd' : ''} />)}</div>}
+  {line && <small>{line}</small>}
+</a>

@@ -49,9 +49,3 @@ if (clk) {
   };
   tick(); setInterval(tick, 20000);
 }
-
-/* ---- "n days ago" ---- */
-$$('[data-ago]').forEach((el) => {
-  const d = Math.round((Date.now() - +new Date(el.dataset.ago!)) / 864e5);
-  el.textContent = d <= 0 ? 'today' : d === 1 ? 'yesterday' : `${d} days ago`;
-});

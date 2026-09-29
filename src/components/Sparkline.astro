@@ -1,0 +1,17 @@
+---
+// Tiny rating chart. Draws itself on entry; min/max labelled.
+interface Props { points: number[]; w?: number; h?: number; label?: string }
+const { points, w = 220, h = 54, label = '' } = Astro.props;
+if (points.length < 2) return;
+const min = Math.min(...points), max = Math.max(...points), span = max - min || 1;
+const xy = points.map((p, i) => [(i / (points.length - 1)) * w, h - 4 - ((p - min) / span) * (h - 10)]);
+const d = xy.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+const last = xy[xy.length - 1];
+const id = 'sg' + Math.random().toString(36).slice(2, 7);
+---
+<svg class="spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" role="img" aria-label={`${label} rating trend, ${min} to ${max}`}>
+  <defs><linearGradient id={id} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--study)" stop-opacity=".22"/><stop offset="1" stop-color="var(--study)" stop-opacity="0"/></linearGradient></defs>
+  <path d={`${d} L${w} ${h} L0 ${h} Z`} fill={`url(#${id})`} class="spark-area" />
+  <path d={d} class="spark-ln" pathLength="1" />
+  <circle cx={last[0]} cy={last[1]} r="2.6" class="spark-dot" />
+</svg>

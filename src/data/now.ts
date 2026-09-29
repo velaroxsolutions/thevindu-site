@@ -3,7 +3,7 @@
 export const NOW = {
   updated: '2026-09-28',
   items: [
-    { label: 'Aperis', lane: 'build', text: 'Closed beta. Most of my week goes into getting real people on it and watching what they do.' },
+    { label: 'Aperis', lane: 'build', text: 'Live on the App Store. Most of my week goes into getting real people on it and watching what they do.' },
     { label: 'Reading', lane: 'study', text: 'Why image and text embeddings end up in separate regions of the same space.' },
     { label: 'Building', lane: 'build', text: 'Rewriting Reflct’s memory so entries carry context across months, not days.' },
     { label: 'Off-screen', lane: 'study', text: 'Basketball, chess, and a stubborn attempt to dunk.' },

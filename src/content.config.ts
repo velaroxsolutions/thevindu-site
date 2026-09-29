@@ -22,6 +22,7 @@ const projects = defineCollection({
     links: z.array(z.object({ label: z.string(), href: z.string(), primary: z.boolean().optional() })).default([]),
     stats: z.array(z.object({ value: z.string(), label: z.string(), count: z.number().optional() })).default([]),
     shots: z.array(z.string()).default([]),
+    appstore: z.boolean().default(false), // pull live version, rating and screenshots from the App Store
     tradeoffs: z.array(z.object({ decision: z.string(), cost: z.string() })).default([]),
     arch: z
       .object({

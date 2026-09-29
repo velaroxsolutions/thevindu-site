@@ -5,15 +5,20 @@ import Chapter from '../../components/Chapter.astro';
 import Words from '../../components/Words.astro';
 import { projects } from '../../lib/content';
 import { getCollection } from 'astro:content';
+import { github } from '../../lib/live';
+import { PROFILES } from '../../data/profiles';
+import { fmtDate } from '../../lib/content';
 
 const proj = await projects();
 const exps = (await getCollection('experiments')).sort((a, b) => b.data.year - a.data.year);
-const beta = proj.filter((p) => /beta/i.test(p.data.status)).length;
+const live = proj.filter((p) => /app store|live|beta/i.test(p.data.status)).length;
+const gh = await github();
+const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C12C', Python: '#3A75A8', Astro: '#FF5D01', HTML: '#E34C26', CSS: '#663399', 'Jupyter Notebook': '#DA5B0B', C: '#555', Rust: '#DEA584', Swift: '#F05138' };
 ---
 <Base title="Work" description="Three products under Velarox: Aperis, Reflct, and Cadence.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Work' }]} title="Work"
     lede={`${proj.length === 3 ? 'Three' : proj.length} products under Velarox. I built <em>all of them</em> alone.`}
-    meta={[`${proj.length} active`, `${beta} in beta`, 'Since 2024']} />
+    meta={[`${proj.length} active`, `${live} shipped`, 'Since 2024']} />
 
   <section style="padding-top:0" data-sec="products" data-secname="Products">
     {proj.map((p, i) => (
@@ -41,6 +46,24 @@ const beta = proj.filter((p) => /beta/i.test(p.data.status)).length;
   <Words sec="how" name="How I work"
     text="I don’t keep code I <em>couldn’t rewrite</em> myself."
     side="I use AI heavily when I build. The rule is that nothing ships if I couldn’t rewrite, extend, and debug it on my own." />
+
+  {gh && gh.repos.length > 0 && (
+    <section data-sec="code" data-secname="In the open">
+      <Chapter num="code" title="In the open" sub={`Public repositories on GitHub, pulled at build time. ${gh.profile.repos} total.`} more={{ href: PROFILES.github.url, label: '@' + PROFILES.github.user }} />
+      <div class="repos">
+        {gh.repos.slice(0, 9).map((r, i) => (
+          <a class="repo ret" href={r.url} target="_blank" rel="noopener" data-anim style={`--i:${i % 3}`} data-lane-item="build">
+            <span class="repo-h"><b>{r.name}</b>{r.stars > 0 && <span class="lbl">★ {r.stars}</span>}</span>
+            <p>{r.description ?? 'No description.'}</p>
+            <span class="repo-f">
+              {r.language && <span class="lang-dot"><i style={`background:${LANG[r.language] ?? 'var(--muted)'}`}></i>{r.language}</span>}
+              <span>updated <span data-ago={r.pushed}>{fmtDate(new Date(r.pushed))}</span></span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
 
   <section data-sec="archive" data-secname="Archive">
     <Chapter num="arch" title="Smaller things" sub="The ones I’d still defend." />

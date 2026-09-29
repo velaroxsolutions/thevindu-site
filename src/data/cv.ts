@@ -8,7 +8,7 @@ export const CV = {
       when: '2024 — present',
       org: 'Edmonton, Alberta · Solo',
       points: [
-        'Designed and shipped Aperis, a dating app matching on a weighted five-dimension compatibility model rather than photos; currently in closed beta.',
+        'Designed and shipped Aperis, a dating app matching on a weighted five-dimension compatibility model rather than photos; now live on the App Store.',
         'Built Reflct, an AI journaling tool on the Anthropic API with a contextual memory layer that carries state across sessions.',
         'Built Cadence, a multi-platform content scheduler with an adapter-per-platform architecture, OAuth integration, and a background publishing worker.',
         'Own the full stack across all three: React/TypeScript frontends, FastAPI backends, Firestore, Firebase Auth, and deployment.',

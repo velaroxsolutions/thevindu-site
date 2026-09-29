@@ -1,0 +1,30 @@
+---
+// Every account, with one live number each when the source is reachable.
+import { PROFILES } from '../data/profiles';
+import { github, chess, duolingo, appstore, photos, notionCourses, notionBooks } from '../lib/live';
+const [gh, ch, duo, app, ph, nc, nb] = await Promise.all([github(), chess(), duolingo(), appstore(), photos(), notionCourses(), notionBooks()]);
+const k = (n?: number | null) => (n == null ? null : n >= 1e3 ? (n / 1e3).toFixed(n >= 1e4 ? 0 : 1) + 'k' : String(n));
+const cards = [
+  { g: 'GH', name: 'GitHub', handle: '@' + PROFILES.github.user, href: PROFILES.github.url, stat: gh ? `${gh.profile.repos} repos` : null, lane: 'build' },
+  { g: 'in', name: 'LinkedIn', handle: 'Projects, courses, experience', href: PROFILES.linkedin.url, stat: null, lane: 'build' },
+  { g: 'A', name: 'Aperis', handle: 'App Store', href: PROFILES.appstore.url, stat: app ? `v${app.version}${app.rating ? ` · ★ ${app.rating.toFixed(1)}` : ''}` : 'Live', lane: 'build' },
+  { g: 'V', name: 'Velarox', handle: 'velaroxsolutions.com', href: PROFILES.velarox[0].url, stat: null, lane: 'build' },
+  { g: 'V', name: 'velarox.app', handle: 'velarox.app', href: PROFILES.velarox[1].url, stat: null, lane: 'build' },
+  { g: 'N', name: 'Course summaries', handle: 'Notion', href: PROFILES.notion.courses.url, stat: nc ? `${nc.length} courses` : null, lane: 'study' },
+  { g: 'N', name: 'Reading notes', handle: 'Notion', href: PROFILES.notion.reading.url, stat: nb ? `${nb.length} books` : null, lane: 'study' },
+  { g: '♞', name: 'Lichess', handle: '@' + PROFILES.lichess.user, href: PROFILES.lichess.url, stat: ch?.lichess?.rapid ? `${ch.lichess.rapid} rapid` : ch?.lichess?.blitz ? `${ch.lichess.blitz} blitz` : null, lane: 'study' },
+  { g: '♟', name: 'Chess.com', handle: '@' + PROFILES.chesscom.user, href: PROFILES.chesscom.url, stat: ch?.chesscom?.rapid ? `${ch.chesscom.rapid} rapid` : null, lane: 'study' },
+  { g: 'Fr', name: 'Duolingo', handle: '@' + PROFILES.duolingo.user, href: PROFILES.duolingo.url, stat: duo ? `${duo.streak}-day streak` : null, lane: 'study' },
+  { g: '◐', name: 'Unsplash', handle: '@' + PROFILES.unsplash.user, href: PROFILES.unsplash.url, stat: ph?.stats.views ? `${k(ph.stats.views)} views` : null, lane: 'study' },
+  { g: '◑', name: 'Pexels', handle: '@' + PROFILES.pexels.user, href: PROFILES.pexels.url, stat: null, lane: 'study' },
+];
+---
+<div class="elsewhere">
+  {cards.map((c, i) => (
+    <a class="ew ret" href={c.href} target="_blank" rel="noopener" data-anim style={`--i:${i % 4}`} data-lane-item={c.lane}>
+      <span class={`ew-g ${c.lane}`} aria-hidden="true">{c.g}</span>
+      <span class="ew-t"><b>{c.name}</b><small>{c.handle}</small></span>
+      {c.stat ? <span class="ew-s">{c.stat}</span> : <span class="ew-s dim">↗</span>}
+    </a>
+  ))}
+</div>

@@ -1,0 +1,11 @@
+---
+// A phone frame. Pass `src` for a real screenshot, otherwise a labelled placeholder.
+interface Props { src?: string; label?: string; tilt?: number; i?: number }
+const { src, label = '', tilt = 0, i = 0 } = Astro.props;
+---
+<figure class="phone" style={`--tilt:${tilt}deg;--i:${i}`} data-anim>
+  <div class="phone-in">
+    <span class="phone-island" aria-hidden="true"></span>
+    {src ? <img src={src} alt={label ? `Aperis — ${label}` : 'App screenshot'} loading="lazy" decoding="async" /> : <span class="phone-ph">{label}</span>}
+  </div>
+</figure>

@@ -5,7 +5,7 @@ group: AI
 kind: Guide
 copyable: false
 added: 2026-07-01
-# href: https://github.com/NitroSkyliner/...
+# href: https://github.com/thevindun/...
 ---
 
 Placeholder — write the guide here in Markdown. It renders on its own page.

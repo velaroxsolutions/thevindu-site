@@ -2,53 +2,80 @@
 title: Cadence
 order: 3
 tagline: Post on repeat, never miss a beat.
-lede: I was scheduling posts by hand at midnight. So I <em>built the scheduler</em>.
-summary: Free content scheduling across platforms. A queue, a calendar, and a worker that publishes on time.
+lede: Write it once, pick the accounts, set a time. It posts <em>with the app closed</em>.
+summary: A free, desktop-native content scheduler. One composer, many accounts, a server-side worker that publishes on time and pulls back real engagement.
 status: In dev
 accent: neutral
-stack: [React, FastAPI, OAuth, Tauri]
+stack: [React, FastAPI, SQLite, Tauri]
 started: "2025"
 role: I built it because I was scheduling posts by hand at midnight.
+links:
+  - { label: Repo, href: "https://github.com/thevindun/cadence", primary: true }
 stats:
-  - { value: "1", label: Adapter per platform }
-  - { value: "2", label: Builds — web and desktop }
-  - { value: "0", label: Dollars to use it }
-  - { value: "’25", label: Started }
-shots: [Composer, Queue, Calendar]
+  - { value: "2", count: 2, label: Platforms live — Bluesky, Mastodon }
+  - { value: "2", label: Real-by-config — Threads, LinkedIn }
+  - { value: "15", count: 15, label: Build phases }
+  - { value: "$0", label: To use it }
+shots: [Composer, Calendar, Insights]
 tradeoffs:
-  - decision: One adapter per platform
-    cost: Adding a platform is one file. But every platform’s quirks leak into its adapter, and some adapters are much uglier than others.
-  - decision: A background worker, not cron jobs per post
-    cost: One place to reason about timing and retries. It’s also one place that can double-post if the locking is wrong. It was.
+  - decision: One adapter per platform, and core never imports a platform
+    cost: Adding a platform is one file plus a registry line. But every platform’s quirks leak into its adapter — Mastodon counts favourites, LinkedIn hides the post id in a header.
+  - decision: Publishing runs server-side, not in the app
+    cost: Posts go out with the laptop closed, and tokens never touch the browser. It also means running an always-on worker, which is its own failure mode.
+  - decision: Mock adapters first, real ones switched on by config
+    cost: The whole app works with zero platform approvals, and I could build fifteen phases without waiting on anyone. Real behaviour only shows up once the credentials exist.
+  - decision: SQLite and stdlib, no ORM
+    cost: One file to back up, trivially packaged into the desktop build. Migrations are hand-written additive ALTERs, forever.
+  - decision: Skip X
+    cost: Its API is paid. Leaving out the platform most people ask about first is a real cost to adoption.
 arch:
   nodes:
-    - { id: client, label: React + Tauri, sub: web · desktop, x: 8, y: 86 }
-    - { id: api, label: FastAPI, sub: queue · calendar, x: 196, y: 86 }
-    - { id: oauth, label: OAuth, sub: per-account tokens, x: 394, y: 16 }
-    - { id: worker, label: Worker, sub: publishes on time, x: 196, y: 176 }
+    - { id: client, label: React + Vite, sub: web · Tauri desktop, x: 8, y: 86 }
+    - { id: api, label: FastAPI, sub: routes · auth, x: 196, y: 86 }
+    - { id: db, label: SQLite, sub: posts · metrics, x: 394, y: 16 }
+    - { id: oauth, label: OAuth + tokens, sub: encrypted at rest, x: 394, y: 96 }
+    - { id: worker, label: Worker, sub: polls · publishes, x: 196, y: 176 }
     - { id: adapters, label: Adapters, sub: one per platform, x: 394, y: 176 }
-  edges: [[client, api], [api, oauth], [api, worker], [worker, adapters]]
+  edges: [[client, api], [api, db], [api, oauth], [api, worker], [worker, adapters]]
 ---
 import Arch from '../../components/Arch.astro';
 import Tradeoffs from '../../components/Tradeoffs.astro';
 
 ## The problem
 
-Posting consistently across platforms means either paying for a scheduler or doing it by
-hand at the time the post needs to go out. I was doing it by hand, at midnight.
+Posting consistently across platforms means either paying for a scheduler or doing it by hand
+at the moment the post needs to go out. I was doing it by hand, at midnight.
 
-## What I’m building
+## What I built
 
-A queue, a calendar, and a worker that publishes on time. There’s a desktop build too.
+A composer that targets any mix of connected accounts, with per-platform variants, threads,
+first comments, images and video. A queue, a calendar with drag-to-reschedule, and recurring
+posts. An Insights view with real engagement, follower growth, a best-time heatmap and
+tracked links.
+
+It ships as a web app and as a self-contained desktop app: Tauri wraps the UI, and the FastAPI
+server rides along as a sidecar.
 
 ## How it fits together
 
 <Arch data={frontmatter.arch} />
 
+Accounts are *connections*, keyed by platform and handle, so one person can run several
+accounts on the same platform. The worker only ever sees a post and a list of connection ids.
+
 ## What each choice costs
 
 <Tradeoffs items={frontmatter.tradeoffs} />
 
+## What I learned
+
+Every platform’s docs are slightly wrong, or slightly out of date. I stopped writing any
+integration until I’d checked the current API first. It caught a problem almost every time.
+
+Retries are where double-posts come from. The failures dashboard now retries only the targets
+that didn’t succeed.
+
 ## Next
 
-Idempotency keys on every publish, so a retry can never become a second post.
+Instagram, Facebook, TikTok, YouTube and Pinterest are waiting on platform app approvals, not
+code. Their adapters slot into the same pattern.

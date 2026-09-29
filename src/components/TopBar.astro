@@ -2,6 +2,9 @@
 import Mark from './Mark.astro';
 import Lanes from './Lanes.astro';
 import { SITE, NAV } from '../data/site';
+import { PROFILES } from '../data/profiles';
+import { appstore } from '../lib/live';
+const app = await appstore();
 const { lanes = true } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => path === href || path.startsWith(href + '/');
@@ -13,6 +16,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + '/');
       {NAV.map((n) => <a href={n.href} aria-current={isActive(n.href) ? 'page' : undefined}>{n.label}</a>)}
     </nav>
     <div class="top-right">
+      <a class="topchip" href={app?.url ?? PROFILES.appstore.url} target="_blank" rel="noopener"><i class="dot"></i>Aperis{app ? ` v${app.version}` : ''} on the App Store</a>
       {lanes && <Lanes />}
       <button class="kbd" id="palbtn" aria-label="Open command palette (Ctrl K)"><span class="kmod">⌘</span>K</button>
       <button class="iconbtn theme" data-theme-toggle aria-label="Toggle dark mode">

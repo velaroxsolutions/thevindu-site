@@ -10,8 +10,9 @@ export const SITE = {
   description:
     'I ship software under Velarox and study how machines represent meaning. Computer engineering at the University of Alberta.',
   resumePdf: '/resume.pdf', // drop the file in /public
+  // Shown in the header, contact block, menu and footer.
   socials: [
-    { label: 'GitHub', href: 'https://github.com/NitroSkyliner' },
+    { label: 'GitHub', href: 'https://github.com/thevindun' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/thevindu-nagasinghe-9ba2a4342' },
   ],
 } as const;
@@ -20,6 +21,6 @@ export const NAV = [
   { href: '/work', label: 'Work' },
   { href: '/notes', label: 'Notes' },
   { href: '/library', label: 'Library' },
-  { href: '/log', label: 'Log' },
+  { href: '/photos', label: 'Photos' },
   { href: '/about', label: 'About' },
 ] as const;

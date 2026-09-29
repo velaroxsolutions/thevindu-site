@@ -7,8 +7,15 @@ import SkillsExplorer from '../components/SkillsExplorer.astro';
 import { getCollection } from 'astro:content';
 import { NOW } from '../data/now';
 import { PHOTOS, HOBBIES } from '../data/about';
+import Elsewhere from '../components/Elsewhere.astro';
+import { photos } from '../lib/live';
+import { PROFILES } from '../data/profiles';
 
 const tl = (await getCollection('timeline')).sort((a, b) => a.data.order - b.data.order);
+const livePhotos = (await photos())?.photos ?? [];
+const strip = livePhotos.length
+  ? livePhotos.slice(0, 8).map((p) => ({ label: p.source, cap: p.alt, meta: p.source === 'unsplash' ? 'Unsplash' : 'Pexels', src: p.src }))
+  : PHOTOS;
 ---
 <Base title="About" description="Computer engineering student in Edmonton. I build software under Velarox.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'About' }]} title="About"
@@ -64,17 +71,22 @@ const tl = (await getCollection('timeline')).sort((a, b) => a.data.order - b.dat
     </div>
   </section>
 
+  <section data-sec="elsewhere" data-secname="Elsewhere">
+    <Chapter num="06" title="Elsewhere" sub="Everywhere else I leave a trail. Numbers refresh on every deploy." />
+    <Elsewhere />
+  </section>
+
   <section data-sec="photos" data-secname="Photos">
-    <Chapter num="06" title="Photos" sub="Scroll sideways." />
+    <Chapter num="07" title="Photos" sub="Scroll sideways." more={{ href: '/photos', label: 'Full gallery' }} />
     <div class="strip">
-      {PHOTOS.map((p) => (
+      {strip.map((p) => (
         <button class="ph" type="button" data-cap={p.cap} data-meta={p.meta} data-src={p.src}>
           {p.src && <img src={p.src} alt={p.cap} loading="lazy" />}
-          <b>{p.label}</b><small>{p.meta.split('·')[1]?.trim()}</small>
+          {!p.src && <><b>{p.label}</b><small>{p.meta.split('·')[1]?.trim()}</small></>}
         </button>
       ))}
     </div>
-    <p class="quiet" style="margin-top:16px">Placeholders — add photos in src/data/about.ts</p>
+    {!livePhotos.length && <p class="quiet" style="margin-top:16px">Placeholders — the strip fills from <a href={PROFILES.unsplash.url}>Unsplash</a> on deploy</p>}
   </section>
 
   <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo">

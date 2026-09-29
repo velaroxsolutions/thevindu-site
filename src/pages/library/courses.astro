@@ -3,27 +3,35 @@ import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import Chapter from '../../components/Chapter.astro';
 import Words from '../../components/Words.astro';
-import { courses } from '../../lib/content';
-const all = await courses();
+import { allCourses } from '../../lib/content';
+import { PROFILES } from '../../data/profiles';
+const all = await allCourses();
 ---
 <Base title="Course notes" description="My lecture notes, condensed into concept sheets. Free.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { href: '/library', label: 'Library' }, { label: 'Courses' }]} title="Course notes"
     lede="My lectures, condensed into sheets I <em>actually study from</em>."
-    meta={[`<span class="count" data-to="${all.length}">0</span> courses`, 'University of Alberta', 'Free']} />
+    meta={[`<span class="count" data-to="${all.length}">0</span> courses`, 'University of Alberta', 'Free']}>
+    <div class="quick" style="margin-top:8px"><a class="btn mag" href={PROFILES.notion.courses.url} target="_blank" rel="noopener">All summaries on Notion ↗</a></div>
+  </PageHead>
 
   <section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="all" data-secname="Courses">
     <Chapter num="01" title="All courses" />
     <div class="docs">
       {all.map((c, i) => {
-        const Tag = c.data.pdf ? 'a' : 'div';
+        const href = c.pdf ?? c.href;
+        const Tag = href ? 'a' : 'div';
         return (
-          <Tag class="doc" id={c.id} href={c.data.pdf} download={c.data.pdf ? '' : undefined} data-anim style={`--i:${i}`} data-lane-item="study">
-            <div class="docpg"><b>{c.data.pages}pp</b><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <Tag class="doc" id={c.id} href={href} download={c.pdf ? '' : undefined} target={c.href && !c.pdf ? '_blank' : undefined} rel={c.href && !c.pdf ? 'noopener' : undefined}
+               data-anim style={`--i:${i % 4}`} data-lane-item="study">
+            <div class="docpg">{c.pages ? <b>{c.pages}pp</b> : c.icon ? <b class="docicon">{c.icon}</b> : null}<i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             <div class="docbody">
-              <p class="code">{c.data.code}</p>
-              <h3>{c.data.name}</h3>
-              <p>{c.data.blurb}</p>
-              <div class="docfoot"><span class="rtype">{c.data.pages} pages</span><span class="dl">{c.data.pdf ? 'Download ↓' : 'PDF coming'}</span></div>
+              <p class="code">{c.code}</p>
+              {c.name && <h3>{c.name}</h3>}
+              {c.blurb && <p>{c.blurb}</p>}
+              <div class="docfoot">
+                <span class="rtype">{c.pages ? `${c.pages} pages` : c.source === 'notion' ? 'Notion' : 'Summary'}</span>
+                <span class="dl">{c.pdf ? 'Download ↓' : c.href ? 'Open on Notion ↗' : 'PDF coming'}</span>
+              </div>
             </div>
           </Tag>
         );

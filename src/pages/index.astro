@@ -7,12 +7,18 @@ import Words from '../components/Words.astro';
 import SkillsExplorer from '../components/SkillsExplorer.astro';
 import { SITE } from '../data/site';
 import { NOW } from '../data/now';
-import { projects, logEntries, libraryCounts, notes, books, fmtDate } from '../lib/content';
+import Heatmap from '../components/Heatmap.astro';
+import ChessCell from '../components/ChessCell.astro';
+import { projects, logEntries, libraryCounts, notes, allBooks, fmtDate } from '../lib/content';
+import { github, chess, duolingo, appstore } from '../lib/live';
+import { PROFILES } from '../data/profiles';
 
-const [proj, log, counts, ns, bs] = await Promise.all([projects(), logEntries(), libraryCounts(), notes(), books()]);
+const [proj, log, counts, ns, bs, gh, ch, duo, app] = await Promise.all([projects(), logEntries(), libraryCounts(), notes(), allBooks(), github(), chess(), duolingo(), appstore()]);
 const shipped = log.find((l) => l.data.kind === 'Shipped');
 const current = proj.find((p) => p.data.hot) ?? proj[0];
-const reading = bs.find((b) => b.data.verdict === 'Reading');
+const reading = bs.find((b) => b.verdict === 'Reading');
+const french = duo?.courses.find((c) => c.lang === 'fr');
+const lastPush = gh?.activity[0];
 const split = (s: string, off = 0) => [...s].map((c, i) => ({ c, k: i + off }));
 const first = split('Thevindu'), last = split('Nagasinghe', 8);
 const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } as const;
@@ -69,24 +75,45 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
       {shipped && (
         <a class="cell c-ship" href={`/log#${shipped.id}`} data-anim style="--i:2" data-lane-item="build">
           <span class="lbl"><span>Last shipped</span><span data-ago={shipped.data.date.toISOString()}>{fmtDate(shipped.data.date, { month: 'short', day: 'numeric' })}</span></span>
-          <p style="font-size:18px;font-family:var(--display);font-weight:600;letter-spacing:-.01em;color:var(--ink)">{shipped.data.text}</p>
+          <p class="cell-lead">{shipped.data.text}</p>
           <small>{shipped.data.project ?? 'Velarox'} · see the log →</small>
         </a>
       )}
-      <a class="cell c-read" href={reading ? `/library/books#${reading.id}` : '/library/books'} data-anim style="--i:3" data-lane-item="study">
+      {gh && (
+        <a class="cell c-gh" href={PROFILES.github.url} target="_blank" rel="noopener" data-anim style="--i:3" data-lane-item="build">
+          <span class="lbl"><span>GitHub · @{PROFILES.github.user}</span><span>{gh.calendar ? `${gh.calendar.total} contributions` : `${gh.profile.repos} repos`}</span></span>
+          {gh.calendar && <Heatmap days={gh.calendar.days} weeks={30} />}
+          {lastPush && <small class="gh-last"><span class="gh-repo">{lastPush.repo.replace(`${PROFILES.github.user}/`, '')}</span> {lastPush.text} · <span data-ago={lastPush.at}>{fmtDate(new Date(lastPush.at), { month: 'short', day: 'numeric' })}</span></small>}
+        </a>
+      )}
+      {gh && <ChessCell ch={ch} />}
+      <div class="bento-tail">
+        {!gh && <ChessCell ch={ch} />}
+      {duo && (
+        <a class="cell c-duo" href={duo.url} target="_blank" rel="noopener" data-anim style="--i:5" data-lane-item="study">
+          <span class="lbl"><span>Duolingo streak</span><span>{french ? 'French' : duo.courses[0]?.title}</span></span>
+          <span class="cell-big"><span class="count" data-to={duo.streak}>0</span><em class="unit">days</em></span>
+          <div class="streak" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <i class={i < Math.min(14, duo.streak) ? 'on' : ''} style={`--k:${i}`} />)}</div>
+          <small>{duo.xp.toLocaleString('en-CA')} XP{french ? ` · ${french.xp.toLocaleString('en-CA')} in French` : ''}</small>
+        </a>
+      )}
+      <a class="cell c-read" href={reading?.href ?? (reading ? `/library/books#${reading.id}` : '/library/books')} data-anim style="--i:6" data-lane-item="study">
         <span class="lbl"><span>Reading</span><span>{counts.reading} open</span></span>
-        <p style="color:var(--ink);font-size:17px">{NOW.panel.reading}</p>
-        {reading && <small>+ {reading.data.title}</small>}
+        <p class="cell-lead">{reading?.title ?? NOW.panel.reading}</p>
+        <small>{reading?.author ? `${reading.author} · ` : ''}{NOW.panel.reading}</small>
       </a>
-      <a class="cell c-lib" href="/library" data-anim style="--i:4">
+      <a class="cell c-lib" href="/library" data-anim style="--i:7">
         <span class="lbl"><span>Library</span><span>Free</span></span>
         <span class="cell-big"><span class="count" data-to={counts.total}>0</span></span>
         <small>{counts.templates} templates · {counts.courses} courses · {counts.books} books</small>
       </a>
-      <div class="cell c-chess" data-anim style="--i:5" data-lane-item="study">
-        <span class="lbl"><span>Chess · rapid</span><span>Aggressively mediocre</span></span>
-        <span class="cell-big"><span class="count" data-to={NOW.panel.chess}>0</span></span>
-        <div class="board" aria-hidden="true">{Array.from({ length: 64 }, (_, i) => <i class={i === 27 ? 'q' : (Math.floor(i / 8) + i) % 2 ? 'd' : ''} />)}</div>
+      {app && (
+        <a class="cell c-app" href={app.url} target="_blank" rel="noopener" data-anim style="--i:8" data-lane-item="build">
+          <span class="lbl"><span>App Store</span><span>v{app.version}</span></span>
+          <p class="cell-lead">{app.name}{app.rating ? <span class="stars"> ★ {app.rating.toFixed(1)}</span> : null}</p>
+          <small>{app.genre} · {app.price} · updated <span data-ago={app.updated}>{fmtDate(new Date(app.updated))}</span></small>
+        </a>
+      )}
       </div>
     </div>
   </section>

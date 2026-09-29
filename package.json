@@ -7,7 +7,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "sync": "node scripts/env.mjs SNAPSHOT=1 astro build",
+    "dev:offline": "node scripts/env.mjs LIVE=0 astro dev",
+    "dev:fixtures": "node scripts/env.mjs LIVE_FIXTURES=tests/fixtures astro dev"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",
