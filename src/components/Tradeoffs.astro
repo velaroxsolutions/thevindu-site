@@ -1,0 +1,12 @@
+---
+interface Props { items: { decision: string; cost: string }[] }
+const { items = [] } = Astro.props;
+---
+<div class="tradeoff">
+  {items.map((t, i) => (
+    <div data-anim style={`--i:${i}`}>
+      <div><span class="lbl">Decision {String(i + 1).padStart(2, '0')}</span><b>{t.decision}</b></div>
+      <div><span class="lbl">Cost</span><p>{t.cost}</p></div>
+    </div>
+  ))}
+</div>

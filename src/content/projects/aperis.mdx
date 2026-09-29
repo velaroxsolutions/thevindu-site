@@ -1,0 +1,90 @@
+---
+title: Aperis
+order: 1
+tagline: A dating app with no swiping.
+lede: A dating app that won’t show you a face until you’ve <em>already decided</em> you like someone.
+summary: Matches on a weighted five-dimension score instead of a photo grid. Photos unlock after a conversation starts.
+status: Closed beta
+hot: true
+accent: build
+stack: [React Native, Expo, FastAPI, Firestore]
+started: Nov 2024
+role: I designed the model, built the stack, and run the beta.
+links:
+  - { label: Try it, href: "#", primary: true }
+  - { label: Instagram, href: "#" }
+  - { label: Repo, href: "#" }
+stats:
+  - { value: "5", count: 5, label: Dimensions scored }
+  - { value: "0", label: Swipes, by design }
+  - { value: "1", label: Person building it }
+  - { value: "’24", label: Started }
+shots: [Onboarding, Scoring, Introduction, Chat]
+tradeoffs:
+  - decision: Hide photos until a conversation starts
+    cost: Kills the instant-gratification loop every competitor runs on. Signups convert far more slowly.
+  - decision: Firestore over Postgres
+    cost: Fast to start, painful for the match query. I’d choose relational next time.
+  - decision: Nightly batch, not real-time
+    cost: Cheaper, simpler, and the scarcity is a feature. But a new user can wait a day for anything to happen.
+  - decision: Hand-tuned weights, not a learned model
+    cost: No cold start, and I can explain every match. But it can’t improve from data.
+arch:
+  nodes:
+    - { id: client, label: App, sub: iOS + Android, x: 8, y: 86 }
+    - { id: api, label: FastAPI, sub: REST · Fly.io, x: 196, y: 86 }
+    - { id: auth, label: Firebase Auth, sub: identity, x: 394, y: 16 }
+    - { id: db, label: Firestore, sub: profiles · vectors, x: 394, y: 96 }
+    - { id: worker, label: Match worker, sub: nightly batch, x: 196, y: 176 }
+    - { id: score, label: Scoring engine, sub: 5-dim weighted, x: 394, y: 176 }
+  edges: [[client, api], [api, auth], [api, db], [api, worker], [worker, score]]
+---
+import Arch from '../../components/Arch.astro';
+import Tradeoffs from '../../components/Tradeoffs.astro';
+import Matcher from '../../components/Matcher.astro';
+
+## The problem
+
+Every dating app has converged on the same interface: a photo, a swipe, a queue.
+It’s optimised for throughput. Rejecting a hundred people is faster than considering three.
+
+So appearance becomes the entire first filter. Everything else about a person only gets
+looked at after they’ve passed a two-second visual gate.
+
+I wanted to know what happens if you remove the gate.
+
+## What I built
+
+You answer a set of scenario questions. The system builds a profile vector and introduces
+you to people whose vectors sit close on the dimensions you weighted highest. Photos unlock
+once a conversation is running.
+
+No queue, no swipe. A small number of introductions, and the scarcity is the point.
+
+## Try the matcher
+
+A toy version of the scoring, running in your browser. Move the weights and watch who
+you’d be introduced to. No photos, obviously.
+
+<Matcher />
+
+## How it fits together
+
+<Arch data={frontmatter.arch} />
+
+## What each choice cost
+
+<Tradeoffs items={frontmatter.tradeoffs} />
+
+## What I learned
+
+The engineering was never the constraint. I could build features faster than I could find
+people to use them, so for a long stretch I was optimising something nobody had touched.
+
+What moved was messaging individuals instead of posting into the void. Slower, and the only
+thing that produced real feedback.
+
+## Next
+
+Grow the beta until the matching has something to work with, then replace the hand-tuned
+weights with something learned from real outcomes.

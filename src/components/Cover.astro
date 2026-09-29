@@ -1,0 +1,20 @@
+---
+// Generated book cover: hue + pattern derived from the title, so every book
+// looks designed until you drop a real cover in (frontmatter `cover:`).
+import { hash } from '../lib/content';
+interface Props { title: string; author?: string; src?: string; small?: boolean }
+const { title, author, src, small } = Astro.props;
+const h = hash(title);
+const hue = h % 360;
+const pats = [
+  'repeating-linear-gradient(45deg,transparent 0 7px,rgba(0,0,0,.06) 7px 8px)',
+  'radial-gradient(circle at 70% 30%,rgba(255,255,255,.5) 0 18%,transparent 19%)',
+  'repeating-linear-gradient(0deg,transparent 0 9px,rgba(0,0,0,.06) 9px 10px)',
+  'linear-gradient(160deg,transparent 55%,rgba(0,0,0,.1) 55%)',
+  'radial-gradient(circle at 0 100%,transparent 0 40%,rgba(0,0,0,.08) 40% 41%,transparent 41% 55%,rgba(0,0,0,.08) 55% 56%,transparent 56%)',
+];
+const pat = pats[(h >> 9) % pats.length];
+---
+<div class="wcover" style={`--h:${hue};--pat:${pat}`}>
+  {src ? <img src={src} alt="" loading="lazy" /> : !small && (<><b>{title}</b>{author && <small>{author}</small>}</>)}
+</div>

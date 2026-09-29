@@ -1,0 +1,103 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Chapter from '../components/Chapter.astro';
+import Words from '../components/Words.astro';
+import SkillsExplorer from '../components/SkillsExplorer.astro';
+import { getCollection } from 'astro:content';
+import { NOW } from '../data/now';
+import { PHOTOS, HOBBIES } from '../data/about';
+
+const tl = (await getCollection('timeline')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="About" description="Computer engineering student in Edmonton. I build software under Velarox.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'About' }]} title="About"
+    lede="I came at this from the build side, <em>not the theory side</em>."
+    meta={['Edmonton', 'Born in Sri Lanka', 'Class of 2028']} />
+
+  <section data-sec="origin" data-secname="Origin">
+    <Chapter num="01" title="How I got here" />
+    <div class="prose" data-anim style="font-size:18px">
+      <p>I wanted an app to exist, so I made it. Everything I know about backends, auth, and data modelling came from needing it to work at two in the morning.</p>
+      <p>That’s a good way to learn and a bad way to learn thoroughly. You end up with working code and a lot of holes. The last year has mostly been filling them in.</p>
+      <p>I grew up in Sri Lanka and moved to Edmonton for university. The cold was a surprise.</p>
+    </div>
+  </section>
+
+  <Words sec="view" name="Point of view"
+    text="Shipping beats planning, <em>but only just</em>."
+    side="I’ve lost more time to well-organised plans for things I never built than to anything I shipped badly. The more elegant the plan, the more suspicious I try to be." />
+
+  <section id="skills" data-sec="skills" data-secname="Skills">
+    <Chapter num="02" title="What I work in" sub="Evidence, not ratings. Click any row." />
+    <SkillsExplorer />
+  </section>
+
+  <section data-sec="timeline" data-secname="Timeline">
+    <Chapter num="03" title="Timeline" sub="Short, because there isn’t much of it yet." />
+    <div class="tl">
+      {tl.map((t, i) => (
+        <div class="tlrow" data-anim style={`--i:${i}`} data-lane-item={t.data.lane === 'life' ? undefined : t.data.lane}>
+          <time>{t.data.when}</time><i class={`tldot ${t.data.lane}`}></i>
+          <div><h3>{t.data.title}</h3><p>{t.data.text}</p></div>
+          <span class="rt">{t.data.tag}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section data-sec="learning" data-secname="Learning">
+    <Chapter num="04" title="Languages & learning" />
+    <div class="langs">
+      {NOW.panel.languages.map((l, i) => (
+        <div class="lang" data-anim style={`--i:${i}`}><span>{l.name}</span><span class="bar" style={`--p:${l.pct}%`}><i></i></span><span>{l.note}</span></div>
+      ))}
+    </div>
+  </section>
+
+  <section data-sec="hobbies" data-secname="Off-screen">
+    <Chapter num="05" title="Off-screen" />
+    <div class="grid3">
+      {HOBBIES.map((h, i) => (
+        <div class="card" data-anim style={`--i:${i}`}><span class="kcount">{h.k}</span><h3>{h.title}</h3><p>{h.text}</p></div>
+      ))}
+    </div>
+  </section>
+
+  <section data-sec="photos" data-secname="Photos">
+    <Chapter num="06" title="Photos" sub="Scroll sideways." />
+    <div class="strip">
+      {PHOTOS.map((p) => (
+        <button class="ph" type="button" data-cap={p.cap} data-meta={p.meta} data-src={p.src}>
+          {p.src && <img src={p.src} alt={p.cap} loading="lazy" />}
+          <b>{p.label}</b><small>{p.meta.split('·')[1]?.trim()}</small>
+        </button>
+      ))}
+    </div>
+    <p class="quiet" style="margin-top:16px">Placeholders — add photos in src/data/about.ts</p>
+  </section>
+
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="lb-x">ESC ×</button>
+    <div class="lb-in">
+      <div class="lb-img" id="lbimg">photo</div>
+      <div class="lb-cap"><span id="lbcap"></span><span class="lbl" id="lbmeta"></span></div>
+    </div>
+  </div>
+</Base>
+<script>
+  import { $, $$ } from '../scripts/util';
+  const lb = $('#lb');
+  if (lb) {
+    const cap = $('#lbcap')!, meta = $('#lbmeta')!, img = $('#lbimg')!;
+    let last: HTMLElement | null = null;
+    const close = () => { lb.classList.remove('show'); last?.focus(); };
+    $$('.ph').forEach((p) => p.addEventListener('click', () => {
+      last = p; cap.textContent = p.dataset.cap || ''; meta.textContent = p.dataset.meta || '';
+      img.innerHTML = p.dataset.src ? `<img src="${p.dataset.src}" alt="">` : 'photo';
+      lb.classList.add('show'); lb.querySelector<HTMLElement>('.lb-x')!.focus();
+    }));
+    lb.addEventListener('click', (e) => { const t = e.target as Element; if (t === lb || t.classList.contains('lb-x')) close(); });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('show')) close(); });
+  }
+</script>

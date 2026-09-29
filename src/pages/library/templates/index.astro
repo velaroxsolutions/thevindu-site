@@ -1,0 +1,31 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import Chapter from '../../../components/Chapter.astro';
+import { templates, templateHref, templateIsExternal } from '../../../lib/content';
+const all = await templates();
+const groups = [
+  { g: 'Software', sub: 'Scaffolding I stopped rewriting from scratch.', lane: 'build' },
+  { g: 'AI', sub: 'Patterns pulled out of Reflct.', lane: 'study' },
+  { g: 'Content', sub: 'Written after a lot of emails that got no reply.', lane: 'build' },
+] as const;
+const verb = { Repo: 'Open ↗', Guide: 'Read →', Doc: 'Copy ⎘' } as const;
+---
+<Base title="Templates" description="Starting points for software, AI, and content work.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { href: '/library', label: 'Library' }, { label: 'Templates' }]} title="Templates"
+    lede="Things I built for myself and <em>kept using</em>."
+    meta={[`<span class="count" data-to="${all.length}">0</span> templates`, 'Free', 'MIT']} />
+  {groups.map((gr, gi) => (
+    <section style={gi === 0 ? 'padding-top:clamp(34px,4.5vw,56px)' : ''} data-sec={gr.g.toLowerCase()} data-secname={gr.g}>
+      <Chapter num={String(gi + 1).padStart(2, '0')} title={gr.g} sub={gr.sub} />
+      <div class="res">
+        {all.filter((t) => t.data.group === gr.g).map((t, i) => (
+          <a class="ritem" href={templateHref(t)} target={templateIsExternal(t) ? '_blank' : undefined} rel={templateIsExternal(t) ? 'noopener' : undefined} data-anim style={`--i:${i}`} data-lane-item={gr.lane}>
+            <div><h3>{t.data.title}</h3><p>{t.data.blurb}</p></div>
+            <span class="rtype">{t.data.kind}</span><span class="dl">{templateIsExternal(t) ? 'Open ↗' : verb[t.data.kind]}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  ))}
+</Base>

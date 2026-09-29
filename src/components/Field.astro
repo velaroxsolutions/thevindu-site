@@ -1,0 +1,33 @@
+---
+// The hero instrument: the site's own content plotted as an embedding space.
+// Build work clusters bottom-left (magenta), study top-right (blue) — the logo, literally.
+import { projects, notes, books, courses, templates, skills, templateHref } from '../lib/content';
+const [p, n, b, c, t, s] = await Promise.all([projects(), notes(), books(), courses(), templates(), skills()]);
+const pts = [
+  ...p.map((x) => ({ l: x.data.title, k: 'project', lane: 'build', h: `/work/${x.id}`, w: 3 })),
+  ...t.map((x) => ({ l: x.data.title, k: 'template', lane: 'build', h: templateHref(x), w: 1 })),
+  ...s.filter((x) => x.group !== 'ai').map((x) => ({ l: x.name, k: 'skill', lane: 'build', h: '/about#skills', w: 1 })),
+  ...n.map((x) => ({ l: x.data.title, k: 'note', lane: 'study', h: `/notes/${x.id}`, w: 2 })),
+  ...c.map((x) => ({ l: x.data.code, k: 'course', lane: 'study', h: `/library/courses#${x.id}`, w: 1 })),
+  ...b.map((x) => ({ l: x.data.title, k: 'book', lane: 'study', h: `/library/books#${x.id}`, w: 1 })),
+  ...s.filter((x) => x.group === 'ai').map((x) => ({ l: x.name, k: 'skill', lane: 'study', h: '/about#skills', w: 1 })),
+];
+---
+<div class="field panel" data-lane-root>
+  <div class="field-h">
+    <span class="lbl">Latent field <span class="dim">· {pts.length} items · 2-D</span></span>
+    <span class="live"><i class="dot"></i>Live</span>
+  </div>
+  <div class="field-c">
+    <canvas id="field" aria-label="An interactive map of everything on this site, clustered into build and study. Use the command palette to search the same items." role="img"></canvas>
+    <a class="field-tip" id="fieldtip" href="/" tabindex="-1" aria-hidden="true"><b></b><small></small></a>
+    <span class="field-ax x lbl">build → study</span>
+    <span class="field-ax y lbl">abstract ↑</span>
+  </div>
+  <div class="field-f">
+    <span class="lbl" id="fieldread">q = (—, —)</span>
+    <span class="lbl" id="fieldnn">move to query</span>
+  </div>
+</div>
+<script type="application/json" id="field-data" set:html={JSON.stringify(pts)} />
+<script>import '../scripts/field';</script>

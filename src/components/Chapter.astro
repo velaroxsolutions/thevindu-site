@@ -1,0 +1,12 @@
+---
+interface Props { num: string; title: string; sub?: string; more?: { href: string; label: string } }
+const { num, title, sub, more } = Astro.props;
+---
+<div class="chapter">
+  <span class="num">§ {num}</span>
+  <div>
+    <h2 class="rv"><span>{title}</span></h2>
+    {sub && <p class="sub">{sub}</p>}
+  </div>
+  {more && <a class="more" href={more.href}>{more.label} →</a>}
+</div>

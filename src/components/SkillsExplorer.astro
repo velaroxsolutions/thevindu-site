@@ -1,0 +1,27 @@
+---
+import { skills } from '../lib/content';
+const data = await skills();
+---
+<div class="sk" data-anim>
+  <div class="sk-top">
+    <span class="lbl">Skills</span>
+    <div class="sk-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="sksearch" type="search" placeholder="search…" aria-label="Search skills">
+    </div>
+  </div>
+  <div class="pills" id="skpills" role="group" aria-label="Skill groups">
+    <button data-g="all" aria-pressed="true">All</button>
+    <button data-g="sw" aria-pressed="false">Software</button>
+    <button data-g="ai" aria-pressed="false">AI / ML</button>
+    <button data-g="co" aria-pressed="false">Content</button>
+    <button data-g="de" aria-pressed="false">Design</button>
+  </div>
+  <div class="wellmask"><div class="well" id="skwell"></div></div>
+  <div class="sk-foot">
+    <span class="lbl" id="skcount">—</span>
+    <span class="lbl">click a row for evidence</span>
+  </div>
+</div>
+<script type="application/json" id="sk-data" set:html={JSON.stringify(data)} />
+<script>import '../scripts/skills';</script>

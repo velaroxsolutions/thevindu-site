@@ -1,0 +1,68 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+import '../styles/pages.css';
+import Rail from '../components/Rail.astro';
+import TopBar from '../components/TopBar.astro';
+import Palette from '../components/Palette.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lanes?: boolean;
+  contact?: boolean;
+  image?: string;
+  type?: 'website' | 'article';
+  bodyClass?: string;
+}
+const { title, description = SITE.description, lanes = true, contact = true, image = '/og.png', type = 'website', bodyClass } = Astro.props;
+const fullTitle = title ? `${title} — ${SITE.name}` : SITE.name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+---
+<!doctype html>
+<html lang="en" data-theme="light" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script is:inline>
+    (function(){var d=document.documentElement;d.classList.remove('no-js');var t;try{t=localStorage.getItem('theme')}catch(e){}
+    if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.dataset.theme=t;})();
+  </script>
+  <title>{fullTitle}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+  <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#090B10" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml">
+  <link rel="sitemap" href="/sitemap-index.xml">
+  <meta property="og:title" content={fullTitle}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content={type}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={ogImage}>
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+  <slot name="head" />
+</head>
+<body data-filter="all" class={bodyClass}>
+  <a class="skip" href="#main">Skip to content</a>
+  <Rail />
+  <TopBar lanes={lanes} />
+  <main id="main" class="w">
+    <slot />
+    {contact && <Contact />}
+  </main>
+  <Footer />
+  <Palette />
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>import '../scripts/site';</script>
+</body>
+</html>

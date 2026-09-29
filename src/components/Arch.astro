@@ -1,0 +1,35 @@
+---
+// Architecture diagram drawn from frontmatter: nodes (top-left x/y) + edges.
+interface Node { id: string; label: string; sub: string; x: number; y: number }
+interface Props { data?: { nodes: Node[]; edges: [string, string][] } }
+const { data } = Astro.props;
+if (!data) return;
+const W = 130, H = 52;
+const byId = Object.fromEntries(data.nodes.map((n) => [n.id, n]));
+const maxX = Math.max(...data.nodes.map((n) => n.x + W)) + 8;
+const maxY = Math.max(...data.nodes.map((n) => n.y + H)) + 16;
+// Connect from the nearest side of each box.
+const edge = ([a, b]: [string, string]) => {
+  const A = byId[a], B = byId[b];
+  if (!A || !B) return '';
+  if (Math.abs(A.x - B.x) < 10) return `M${A.x + W / 2} ${A.y + H} L${B.x + W / 2} ${B.y - 4}`;
+  const ax = A.x + W, ay = A.y + H / 2, bx = B.x - 4, by = B.y + H / 2;
+  const mx = (ax + bx) / 2;
+  return `M${ax} ${ay} C${mx} ${ay} ${mx} ${by} ${bx} ${by}`;
+};
+const uid = 'ar' + Math.random().toString(36).slice(2, 7);
+---
+<figure class="arch" data-anim>
+  <svg viewBox={`0 0 ${maxX} ${maxY}`} xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram">
+    <defs><marker id={uid} markerWidth="7" markerHeight="7" refX="6" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" class="arr"/></marker></defs>
+    {data.edges.map((e, i) => <path class="ln" d={edge(e)} marker-end={`url(#${uid})`} style={`--d:${i + 2}`} />)}
+    {data.nodes.map((n, i) => (
+      <g class="bx" style={`--d:${i}`}>
+        <rect x={n.x} y={n.y} width={W} height={H} rx="2" />
+        <text class="t1" x={n.x + W / 2} y={n.y + 22}>{n.label}</text>
+        <text class="t2" x={n.x + W / 2} y={n.y + 38}>{n.sub}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption class="quiet">Hover a box · drawn from data</figcaption>
+</figure>

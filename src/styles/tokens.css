@@ -1,0 +1,59 @@
+/* ============================================================
+   TOKENS — the instrument palette.
+   Light is "day instrument", dark is "night instrument".
+   Every colour in the site comes from here.
+   ============================================================ */
+:root{
+  color-scheme:light;
+  --paper:#F6F7F9;
+  --card:#FFFFFF;
+  --sunk:#EEF1F5;           /* inset wells, hover fills */
+  --ink:#0E1118;
+  --ink-rgb:14,17,24;
+  --body-ink:#39414F;
+  --muted:#5C6675;
+  --faint:#A3ACB9;
+  --rule:#D5DAE2;
+  --rule-soft:#E6E9EF;
+  --grid:rgba(14,17,24,.045);
+  --hatch:rgba(14,17,24,.03);
+  --shadow:0 18px 50px -18px rgba(14,17,24,.22);
+
+  --build:#D91A72; --build-rgb:217,26,114;
+  --study:#2B4CE8; --study-rgb:43,76,232;
+  --glow-a:.10;
+
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Inter Tight",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+
+  --pad:clamp(20px,4vw,56px);
+  --maxw:1180px;
+  --rail:66px;
+  --top:58px;
+  --ease:cubic-bezier(.19,.9,.26,1);
+  --ease-io:cubic-bezier(.65,0,.35,1);
+  --dur:.6s;
+  --r:2px;
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#090B10;
+  --card:#10131A;
+  --sunk:#161A23;
+  --ink:#ECEFF4;
+  --ink-rgb:236,239,244;
+  --body-ink:#B7BECB;
+  --muted:#8490A2;
+  --faint:#4F5869;
+  --rule:#232834;
+  --rule-soft:#1A1E27;
+  --grid:rgba(236,239,244,.035);
+  --hatch:rgba(236,239,244,.028);
+  --shadow:0 24px 60px -20px rgba(0,0,0,.7);
+
+  --build:#FF3D8E; --build-rgb:255,61,142;
+  --study:#6680FF; --study-rgb:102,128,255;
+  --glow-a:.16;
+}
