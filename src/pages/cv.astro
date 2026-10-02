@@ -38,10 +38,12 @@ import { CV } from '../data/cv';
       <h2>Education</h2>
       {CV.education.map((e) => <div class="cvitem"><div class="cvitem-h"><h3>{e.title}</h3><time>{e.when}</time></div><p class="org">{e.org}</p></div>)}
     </div>
+    <div class="cvsec" data-sec="certs" data-secname="Certificates"><h2>Certificates</h2><dl class="cvskills cvwide">{CV.certificates.map(([k, v]) => <><dt>{v}</dt><dd>{k}</dd></>)}</dl></div>
+    <div class="cvsec"><h2>Awards</h2><dl class="cvskills cvwide">{CV.awards.map(([k, v]) => <><dt>{v}</dt><dd>{k}</dd></>)}</dl></div>
     <div class="cvsec"><h2>Languages</h2><dl class="cvskills">{CV.languages.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></div>
     <div class="cvsec noprint">
       <h2>Availability</h2>
-      <div class="prose" style="max-width:none"><p>Open to internships, co-op placements, and research positions where I’d be building. Reach me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p></div>
+      <div class="prose" style="max-width:none"><p>Open to Summer 2027 roles in AI engineering and software. Reach me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p></div>
     </div>
   </div>
 </Base>

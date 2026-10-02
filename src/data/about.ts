@@ -1,16 +1,15 @@
-// Photos: drop images in public/photos/ and set `src: '/photos/edmonton.jpg'`.
+// Photos: drop your own images in public/photos/ and set `src`, caption and place.
+// Leave `src` empty and the strip shows blank frames (and fills from Unsplash on deploy if set up).
 export const PHOTOS: { label: string; cap: string; meta: string; src?: string }[] = [
-  { label: 'Edmonton', cap: 'Winter, first year', meta: 'Edmonton · 2024' },
-  { label: 'Colombo', cap: 'Home court', meta: 'Colombo · 2023' },
-  { label: 'Cameron', cap: 'Late build night', meta: 'Cameron · 2025' },
-  { label: 'Launch', cap: 'Launch day', meta: 'Edmonton · 2025' },
-  { label: 'Van Vliet', cap: 'Pickup game', meta: 'Van Vliet · 2026' },
-  { label: 'Jasper', cap: 'Reading week', meta: 'Jasper · 2026' },
-  { label: 'Valley', cap: 'River valley', meta: 'Edmonton · 2026' },
+  { label: 'Photo', cap: '', meta: '' },
+  { label: 'Photo', cap: '', meta: '' },
+  { label: 'Photo', cap: '', meta: '' },
+  { label: 'Photo', cap: '', meta: '' },
+  { label: 'Photo', cap: '', meta: '' },
 ];
 
 export const HOBBIES = [
-  { k: 'Basketball', title: 'Still can’t dunk', text: 'About four inches away, for longer than I’d like to admit.' },
-  { k: 'Chess · 1240', title: 'Aggressively mediocre', text: 'I play too fast and lose to people who don’t.' },
-  { k: 'Gym', title: 'Getting heavier', text: 'Rehabbing a shoulder and adding weight on purpose.' },
+  { k: 'Photography', title: 'Mostly nature', text: '72.5K+ views on Pexels and a few features. I like catching places when nobody’s around.' }, // VERIFY last sentence
+  { k: 'Chess · 1450+', title: 'For fun', text: 'Played since I was a kid. Won a school-team national title once (Division B), and still enjoy a slow game.' },
+  { k: 'French', title: 'Beginner', text: 'Learning on Duolingo, one lesson at a time.' },
 ];

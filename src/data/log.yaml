@@ -1,35 +1,53 @@
-# The changelog. Newest first is not required — it's sorted by date.
-# kind: Shipped | Broke | Learned | Stuck | Reading | Started
-# The homepage ticker, "last shipped" and /log all read from this file.
-- id: aperis-onboarding
-  date: 2026-08-12
+# The changelog. kind: Shipped | Broke | Learned | Stuck | Reading | Started
+# The homepage ticker, "last shipped" and /log read from this file.
+# App Store releases are added automatically from the live listing.
+- id: curriculum-dev
+  date: 2026-09-14
+  kind: Started
+  text: Started as a junior curriculum developer at the University of Alberta.
+- id: cadence-built
+  date: 2026-09-01
   kind: Shipped
-  project: Aperis
-  text: Aperis onboarding, three screens to one.
-- id: contrastive-gap
-  date: 2026-08-04
-  kind: Reading
-  text: The contrastive gap — why image and text embeddings sit in separate regions of the same space.
-- id: cadence-double-post
-  date: 2026-07-29
-  kind: Broke
   project: Cadence
-  text: The Cadence worker double-posted. Two workers, one lock, no idempotency key.
-- id: firestore-rules
-  date: 2026-07-20
-  kind: Learned
-  text: Firestore rules don't nest the way I thought they did.
-- id: reflct-memory
-  date: 2026-07-08
+  text: Cadence, a free content scheduler, is up on GitHub.
+- id: reflct-built
+  date: 2026-09-01
   kind: Shipped
   project: Reflct
-  text: Reflct memory layer, first version.
-- id: dunk
-  date: 2026-06-30
-  kind: Stuck
-  text: Still four inches off a dunk.
-- id: aperis-beta
-  date: 2025-09-01
+  text: Reflct, a journal that remembers, is up on GitHub.
+- id: aperis-closed-testing
+  date: 2026-08-01 # VERIFY date
+  kind: Shipped
+  project: Aperis
+  text: Aperis is in closed testing on Google Play.
+- id: aperis-start
+  date: 2026-04-01
   kind: Started
   project: Aperis
-  text: Aperis closed beta opened to the first group of real users.
+  text: Started building Aperis, a dating app that doesn’t lead with photos.
+- id: rl-tictactoe
+  date: 2026-02-01
+  kind: Shipped
+  text: Trained an RL agent to a 100% win rate at tic-tac-toe through self-play, no hardcoded strategy.
+- id: athenyx-done
+  date: 2026-01-01
+  kind: Shipped
+  project: Athenyx
+  text: Wrapped up Athenyx. Flashcards, to-dos, and an AI assistant for students.
+- id: athenyx-start
+  date: 2025-07-01
+  kind: Started
+  project: Athenyx
+  text: Started Athenyx.
+- id: overhill
+  date: 2025-06-01
+  kind: Started
+  text: Marketing intern at Overhill Games for the summer co-op term.
+- id: feps
+  date: 2024-03-01
+  kind: Shipped
+  text: Presented FEPS, two assistive accessories for people with limited hand mobility.
+- id: ualberta
+  date: 2023-09-01
+  kind: Started
+  text: Moved from Sri Lanka to Edmonton to start computer engineering.

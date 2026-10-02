@@ -69,7 +69,7 @@ if (cv && data) {
     ctx.setLineDash([3, 5]); ctx.strokeStyle = col.faint; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(sx, sy); ctx.stroke(); ctx.setLineDash([]);
     ctx.font = '500 9.5px "IBM Plex Mono", monospace'; ctx.fillStyle = col.muted; ctx.textAlign = 'center';
     ctx.save(); ctx.translate((bx + sx) / 2, (by + sy) / 2); ctx.rotate(Math.atan2(sy - by, sx - bx));
-    ctx.fillText('Δ  THE GAP', 0, -8); ctx.restore();
+    ctx.fillText('WHERE THEY MEET', 0, -8); ctx.restore();
     [[bx, by, col.build, 'BUILD'], [sx, sy, col.study, 'STUDY']].forEach(([x, y, c, l]) => {
       ctx.strokeStyle = c as string; ctx.beginPath(); ctx.arc(x as number, y as number, 5, 0, 7); ctx.stroke();
       ctx.fillStyle = c as string; ctx.textAlign = 'left'; ctx.fillText(l as string, (x as number) + 10, (y as number) + 3);

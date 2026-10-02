@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { appstore, notionBooks, photos } from './live';
 
 export const fmtDate = (d: Date, opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }) =>
   d.toLocaleDateString('en-CA', { timeZone: 'UTC', ...opts });
@@ -9,18 +10,31 @@ export async function projects() {
   return (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 }
 
-export async function logEntries() {
-  return (await getCollection('log')).sort((a, b) => +b.data.date - +a.data.date);
+export type LogEntry = { id: string; data: { date: Date; kind: CollectionEntry<'log'>['data']['kind']; text: string; project?: string } };
+
+/** The hand-written log, plus entries derived from live sources (App Store releases). */
+export async function logEntries(): Promise<LogEntry[]> {
+  const [local, app] = await Promise.all([getCollection('log'), appstore()]);
+  const out: LogEntry[] = local.map((e) => ({ id: e.id, data: e.data }));
+  if (app) {
+    const rel = new Date(app.released), upd = new Date(app.updated);
+    out.push({ id: 'appstore-launch', data: { date: rel, kind: 'Shipped', project: 'Aperis', text: `${app.name} launched on the App Store.` } });
+    if (+upd - +rel > 864e5) out.push({ id: 'appstore-version', data: { date: upd, kind: 'Shipped', project: 'Aperis', text: `${app.name} ${app.version} is out${app.notes ? ' — ' + app.notes.split('\n')[0].replace(/[.\s]+$/, '') : ''}.` } });
+  }
+  return out.sort((a, b) => +b.data.date - +a.data.date);
 }
 
-export async function notes() {
-  return (await getCollection('notes', (n) => import.meta.env.DEV || !n.data.draft)).sort(
+export async function lessons() {
+  return (await getCollection('lessons', (n) => import.meta.env.DEV || !n.data.draft)).sort(
     (a, b) => +b.data.date - +a.data.date,
   );
 }
 
 const VERDICT_ORDER = ['Reading', 'Worth it', 'Mixed', 'Skim it', 'Shelved'];
+// Skip the lookup (and Astro's empty-collection warning) until the first book file exists.
+const HAS_BOOKS = Object.keys(import.meta.glob('../content/books/*.md')).length > 0;
 export async function books() {
+  if (!HAS_BOOKS) return [];
   return (await getCollection('books')).sort(
     (a, b) =>
       VERDICT_ORDER.indexOf(a.data.verdict) - VERDICT_ORDER.indexOf(b.data.verdict) ||
@@ -28,41 +42,45 @@ export async function books() {
   );
 }
 
+/** Completed courses and certificates, newest first. */
 export async function courses() {
-  return (await getCollection('courses')).sort((a, b) => +b.data.added - +a.data.added);
-}
-
-export async function templates() {
-  return (await getCollection('templates')).sort((a, b) => +b.data.added - +a.data.added);
+  return (await getCollection('courses')).sort((a, b) => +b.data.date - +a.data.date);
 }
 
 export async function skills() {
   return (await getCollection('skills')).map((s) => s.data).sort((a, b) => b.level - a.level);
 }
 
+/* ---------- Books: local markdown + the Notion reading database ---------- */
+export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; href?: string; featured: boolean; source: 'local' | 'notion' };
+const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+const READING = /reading|progress|current|started|now/i;
+
+export async function allBooks(): Promise<Book[]> {
+  const [local, remote] = await Promise.all([books(), notionBooks()]);
+  const out: Book[] = local.map((b) => ({ id: b.id, ...b.data, source: 'local' as const }));
+  const seen = new Set(out.map((b) => norm(b.title)));
+  for (const r of remote ?? []) {
+    const key = norm(r.title);
+    const existing = out.find((b) => norm(b.title) === key);
+    if (existing) { existing.href ??= r.url; existing.cover ??= r.cover ?? undefined; existing.take ??= r.take || undefined; continue; }
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      id: 'n-' + key.slice(0, 40), title: r.title, author: r.author, featured: false, source: 'notion',
+      verdict: READING.test(r.status) ? 'Reading' : r.status || 'Read', take: r.take || undefined, cover: r.cover ?? undefined, href: r.url,
+    });
+  }
+  const order = ['Reading', 'Worth it', 'Mixed', 'Skim it', 'Shelved'];
+  const rank = (v: string) => (order.indexOf(v) + 1 || order.length + 1);
+  return out.sort((a, b) => rank(a.verdict) - rank(b.verdict) || a.title.localeCompare(b.title));
+}
+
 export async function libraryCounts() {
-  const [b, c, t] = await Promise.all([getCollection('books'), getCollection('courses'), getCollection('templates')]);
-  return {
-    books: b.length,
-    reading: b.filter((x) => x.data.verdict === 'Reading').length,
-    courses: c.length,
-    templates: t.length,
-    total: b.length + c.length + t.length,
-  };
+  const [b, c, p] = await Promise.all([allBooks(), courses(), photos()]);
+  const books = b.length, crs = c.length, pics = p?.photos.length ?? 0;
+  return { books, reading: b.filter((x) => x.verdict === 'Reading').length, courses: crs, photos: pics, total: books + crs + pics };
 }
-
-/** Everything the library "Latest" list and the palette can point at. */
-export async function libraryLatest(limit = 4) {
-  const [c, t] = await Promise.all([courses(), templates()]);
-  const items = [
-    ...c.map((x) => ({ date: x.data.added, title: `${x.data.code} — ${x.data.name}`, text: x.data.blurb, type: 'Course', href: `/library/courses#${x.id}` })),
-    ...t.map((x) => ({ date: x.data.added, title: x.data.title, text: x.data.blurb, type: 'Template', href: templateHref(x) })),
-  ];
-  return items.sort((a, b) => +b.date - +a.date).slice(0, limit);
-}
-
-export const templateHref = (t: CollectionEntry<'templates'>) => t.data.href ?? `/library/templates/${t.id}`;
-export const templateIsExternal = (t: CollectionEntry<'templates'>) => !!t.data.href;
 
 /** Deterministic hash → used for generated covers and field positions. */
 export function hash(s: string) {

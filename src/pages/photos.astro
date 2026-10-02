@@ -1,0 +1,76 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { photos } from '../lib/live';
+import { PROFILES } from '../data/profiles';
+const data = await photos();
+const list = data?.photos ?? [];
+const fmt = (n?: number) => (n == null ? null : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(n));
+const meta = [
+  list.length ? `${list.length} photos` : 'Unsplash + Pexels',
+  ...(data?.stats.views ? [`${fmt(data.stats.views)} views`] : []),
+  ...(data?.stats.downloads ? [`${fmt(data.stats.downloads)} downloads`] : []),
+  'Free to use',
+];
+---
+<Base title="Photos" description="Photographs I've published on Unsplash and Pexels. Free to use.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Photos' }]} title="Photos"
+    lede="Things I pointed a camera at, <em>free for anyone</em> to use." meta={meta}>
+    <div class="quick" style="margin-top:8px">
+      <a class="btn mag" href={PROFILES.unsplash.url} target="_blank" rel="noopener">Unsplash ↗</a>
+      <a class="btn mag" href={PROFILES.pexels.url} target="_blank" rel="noopener">Pexels ↗</a>
+    </div>
+  </PageHead>
+
+  <section style="padding-top:0" data-sec="grid" data-secname="Gallery">
+    {list.length > 0 ? (
+      <div class="masonry" id="masonry">
+        {list.map((p, i) => (
+          <button class="shot-m" type="button" data-full={p.full} data-href={p.href} data-alt={p.alt} data-src-label={p.source}
+            style={`--c:${p.color};aspect-ratio:${p.w}/${p.h}`} data-anim>
+            <img src={p.src} alt={p.alt} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" width={p.w} height={p.h} onload="this.classList.add('ok')" />
+            <span class="shot-cap"><span>{p.alt}</span><small>{p.source}</small></span>
+          </button>
+        ))}
+      </div>
+    ) : (
+      <div class="grid3 photo-empty">
+        <a class="card ret" href={PROFILES.unsplash.url} target="_blank" rel="noopener"><span class="arrow">↗</span><span class="kcount">@{PROFILES.unsplash.user}</span><h3>On Unsplash</h3><p>The full set, with EXIF and download counts.</p></a>
+        <a class="card ret" href={PROFILES.pexels.url} target="_blank" rel="noopener"><span class="arrow">↗</span><span class="kcount">@{PROFILES.pexels.user}</span><h3>On Pexels</h3><p>Same photos, different crowd.</p></a>
+        <div class="card"><span class="kcount">Setup</span><h3>Gallery loads on deploy</h3><p>Add UNSPLASH_ACCESS_KEY in Vercel, or list Pexels photo IDs in src/data/profiles.ts.</p></div>
+      </div>
+    )}
+  </section>
+
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo">
+    <button class="lb-x">ESC ×</button>
+    <div class="lb-in lb-wide">
+      <div class="lb-img" id="lbimg"></div>
+      <div class="lb-cap"><span id="lbcap"></span><a class="lbl" id="lblink" target="_blank" rel="noopener">View original ↗</a></div>
+    </div>
+  </div>
+</Base>
+<script>
+  import { $, $$ } from '../scripts/util';
+  const lb = $('#lb');
+  if (lb) {
+    const img = $('#lbimg')!, cap = $('#lbcap')!, link = $<HTMLAnchorElement>('#lblink')!;
+    const items = $$('.shot-m');
+    let cur = -1, last: HTMLElement | null = null;
+    const show = (i: number) => {
+      cur = (i + items.length) % items.length;
+      const b = items[cur];
+      img.innerHTML = ''; const im = new Image(); im.src = b.dataset.full!; im.alt = b.dataset.alt || ''; img.appendChild(im);
+      cap.textContent = b.dataset.alt || ''; link.href = b.dataset.href!; link.textContent = `View on ${b.dataset.srcLabel} ↗`;
+    };
+    const close = () => { lb.classList.remove('show'); cur = -1; last?.focus(); };
+    items.forEach((b, i) => b.addEventListener('click', () => { last = b; show(i); lb.classList.add('show'); lb.querySelector<HTMLElement>('.lb-x')!.focus(); }));
+    lb.addEventListener('click', (e) => { const t = e.target as Element; if (t === lb || t.classList.contains('lb-x')) close(); });
+    addEventListener('keydown', (e) => {
+      if (cur < 0) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowRight') show(cur + 1);
+      if (e.key === 'ArrowLeft') show(cur - 1);
+    });
+  }
+</script>

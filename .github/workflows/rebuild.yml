@@ -1,0 +1,18 @@
+# Rebuild the site daily so chess ratings, streaks, repos and App Store data stay fresh.
+# Setup: Vercel → Project → Settings → Git → Deploy Hooks → create one for `main`,
+# then add it here as a repository secret named VERCEL_DEPLOY_HOOK.
+name: Daily rebuild
+on:
+  schedule:
+    - cron: '17 11 * * *' # 05:17 in Edmonton (MDT)
+  workflow_dispatch:
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "VERCEL_DEPLOY_HOOK not set — skipping"; exit 0; fi
+          curl -fsS -X POST "$HOOK"

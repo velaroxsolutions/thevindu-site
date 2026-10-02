@@ -1,0 +1,31 @@
+# Completed courses and certificates. Add `url:` to link a certificate.
+- id: cs50x
+  title: CS50x — Introduction to Computer Science
+  provider: Harvard · edX
+  date: 2025-02-01
+  topics: [C, Python, SQL, algorithms]
+  lane: study
+- id: ml-a-z
+  title: Machine Learning A-Z
+  provider: Udemy
+  date: 2025-05-01
+  topics: [regression, classification, clustering]
+  lane: study
+- id: full-stack-bootcamp
+  title: The Complete Full-Stack Web Development Bootcamp
+  provider: Udemy
+  date: 2025-03-01
+  topics: [HTML/CSS, JavaScript, Node.js, React]
+  lane: build
+- id: ai-foundations
+  title: "AI Foundations: Thinking Machines"
+  provider: LinkedIn Learning
+  date: 2024-12-01
+  topics: [AI concepts]
+  lane: study
+- id: intro-genai
+  title: Introduction to Generative AI
+  provider: Google Cloud
+  date: 2024-12-01
+  topics: [generative AI]
+  lane: study

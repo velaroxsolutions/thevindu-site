@@ -1,28 +1,6 @@
-- id: velarox
-  order: 1
-  when: 2024 — now
-  title: Velarox
-  text: Founded it. Three products, all of the work.
-  tag: Founder
-  lane: build
-- id: aperis-beta
-  order: 2
-  when: "2025"
-  title: Aperis beta
-  text: Shipped the first working version and put it in front of people.
-  tag: Milestone
-  lane: build
-- id: ualberta
-  order: 3
-  when: 2023 — 2028
-  title: University of Alberta
-  text: Computer Engineering, Software Option, Co-op.
-  tag: Education
-  lane: study
-- id: sri-lanka
-  order: 4
-  when: Before 2023
-  title: Sri Lanka
-  text: Cricket, then basketball, then computers.
-  tag: Life
-  lane: life
+- { id: curriculum, order: 1, when: "2026 — now", title: Junior Curriculum Developer, text: "University of Alberta. Research and development on making learning more effective.", tag: Work, lane: study }
+- { id: aperis, order: 2, when: "2026 — now", title: Aperis, text: "A dating app that matches on who you are before what you look like.", tag: Build, lane: build }
+- { id: athenyx, order: 3, when: "2025", title: Athenyx, text: "A study platform for students: flashcards, to-dos, and an AI assistant.", tag: Build, lane: build }
+- { id: overhill, order: 4, when: "Summer 2025", title: Overhill Games, text: "Marketing intern. Campaigns, crowdfunding, and a lot of short-form video.", tag: Co-op, lane: build }
+- { id: ualberta, order: 5, when: "2023 — 2028", title: University of Alberta, text: "Computer Engineering, Software Option, Co-op.", tag: Education, lane: study }
+- { id: sri-lanka, order: 6, when: "Before 2023", title: Sri Lanka, text: "Where I grew up.", tag: Life, lane: life }

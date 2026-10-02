@@ -1,43 +1,41 @@
 ---
 title: Aperis
 order: 1
-tagline: A dating app with no swiping.
-lede: A dating app that won’t show you a face until you’ve <em>already decided</em> you like someone.
-summary: Matches on a weighted five-dimension score instead of a photo grid. Photos unlock after a conversation starts.
-status: Closed beta
+tagline: A dating app that leads with who you are.
+lede: A dating app where you get to know someone <em>before</em> you see them.
+summary: Matches people across five psychological dimensions instead of a photo grid. Profiles reveal themselves in layers as the conversation grows.
+status: Live on iOS
 hot: true
 accent: build
 stack: [React Native, Expo, FastAPI, Firestore]
-started: Nov 2024
-role: I designed the model, built the stack, and run the beta.
+started: Apr 2026
+role: I designed the matching, built the app end to end, and run the testing.
 links:
-  - { label: Try it, href: "#", primary: true }
-  - { label: Instagram, href: "#" }
-  - { label: Repo, href: "#" }
+  - { label: Website, href: "https://aperis.velarox.app", primary: true }
+  - { label: App Store, href: "https://apps.apple.com/gb/app/aperis/id6768458084" }
 stats:
-  - { value: "5", count: 5, label: Dimensions scored }
+  - { value: "5", count: 5, label: Compatibility dimensions }
+  - { value: "5", count: 5, label: Reveal layers }
   - { value: "0", label: Swipes, by design }
-  - { value: "1", label: Person building it }
-  - { value: "’24", label: Started }
-shots: [Onboarding, Scoring, Introduction, Chat]
+  - { value: "’26", label: Started }
+shots: [Onboarding, Matching, Reveal, Chat]
+appstore: true
 tradeoffs:
-  - decision: Hide photos until a conversation starts
-    cost: Kills the instant-gratification loop every competitor runs on. Signups convert far more slowly.
-  - decision: Firestore over Postgres
-    cost: Fast to start, painful for the match query. I’d choose relational next time.
-  - decision: Nightly batch, not real-time
-    cost: Cheaper, simpler, and the scarcity is a feature. But a new user can wait a day for anything to happen.
-  - decision: Hand-tuned weights, not a learned model
-    cost: No cold start, and I can explain every match. But it can’t improve from data.
+  - decision: Reveal profiles in layers instead of showing photos first
+    cost: Slower first impressions than any swipe app. That's the point, but it asks more patience of new users.
+  - decision: Firestore for the database
+    cost: Fast to get started and pairs well with Firebase Auth, but matching queries are harder than they'd be in a relational database. # VERIFY
+  - decision: Weights designed by hand, not learned
+    cost: Every match is explainable from day one, with no data needed. But it can't improve itself until there are real outcomes to learn from. # VERIFY
 arch:
   nodes:
-    - { id: client, label: App, sub: iOS + Android, x: 8, y: 86 }
-    - { id: api, label: FastAPI, sub: REST · Fly.io, x: 196, y: 86 }
+    - { id: client, label: App, sub: React Native · Expo, x: 8, y: 86 }
+    - { id: api, label: FastAPI, sub: REST, x: 196, y: 86 }
     - { id: auth, label: Firebase Auth, sub: identity, x: 394, y: 16 }
-    - { id: db, label: Firestore, sub: profiles · vectors, x: 394, y: 96 }
-    - { id: worker, label: Match worker, sub: nightly batch, x: 196, y: 176 }
-    - { id: score, label: Scoring engine, sub: 5-dim weighted, x: 394, y: 176 }
-  edges: [[client, api], [api, auth], [api, db], [api, worker], [worker, score]]
+    - { id: db, label: Firestore, sub: profiles · chats, x: 394, y: 96 }
+    - { id: score, label: Matching engine, sub: 5 dims · attachment ×, x: 196, y: 176 }
+    - { id: reveal, label: Reveal system, sub: health → 5 layers, x: 394, y: 176 }
+  edges: [[client, api], [api, auth], [api, db], [api, score], [api, reveal]]
 ---
 import Arch from '../../components/Arch.astro';
 import Tradeoffs from '../../components/Tradeoffs.astro';
@@ -45,21 +43,19 @@ import Matcher from '../../components/Matcher.astro';
 
 ## The problem
 
-Every dating app has converged on the same interface: a photo, a swipe, a queue.
-It’s optimised for throughput. Rejecting a hundred people is faster than considering three.
+Most dating apps make appearance the first and fastest filter. Everything else about a person
+gets looked at only after a two-second judgement.
 
-So appearance becomes the entire first filter. Everything else about a person only gets
-looked at after they’ve passed a two-second visual gate.
-
-I wanted to know what happens if you remove the gate.
+I wanted to see what happens if you flip the order.
 
 ## What I built
 
-You answer a set of scenario questions. The system builds a profile vector and introduces
-you to people whose vectors sit close on the dimensions you weighted highest. Photos unlock
-once a conversation is running.
+You answer questions across five dimensions: values, conflict, love language, empathy, and
+ambition. An attachment-style multiplier adjusts how those scores combine.
 
-No queue, no swipe. A small number of introductions, and the scarcity is the point.
+You're introduced to people you're compatible with, and as the conversation stays healthy, each
+profile opens up one layer at a time, across five layers. It's live on the App Store, and in
+closed testing on Google Play.
 
 ## Try the matcher
 
@@ -76,15 +72,8 @@ you’d be introduced to. No photos, obviously.
 
 <Tradeoffs items={frontmatter.tradeoffs} />
 
-## What I learned
-
-The engineering was never the constraint. I could build features faster than I could find
-people to use them, so for a long stretch I was optimising something nobody had touched.
-
-What moved was messaging individuals instead of posting into the void. Slower, and the only
-thing that produced real feedback.
+{/* TODO(Thev): "## What I learned" — write this yourself; it stays hidden until you do. */}
 
 ## Next
 
-Grow the beta until the matching has something to work with, then replace the hand-tuned
-weights with something learned from real outcomes.
+Getting it to more people, then learning from real conversations to improve the matching.
