@@ -2,12 +2,15 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { photos } from '../lib/live';
+import { localPhotos } from '../lib/localPhotos';
 import { PROFILES } from '../data/profiles';
-const data = await photos();
-const list = data?.photos ?? [];
+const [data, mine] = await Promise.all([photos(), localPhotos()]);
+const seen = new Set<string>();
+const list = [...mine, ...(data?.photos ?? [])].filter((p) => !seen.has(p.src) && seen.add(p.src));
 const fmt = (n?: number) => (n == null ? null : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(n));
 const meta = [
-  list.length ? `${list.length} photos` : 'Unsplash + Pexels',
+  list.length ? `${list.length} photos` : 'Pexels',
+  `${PROFILES.pexels.views} views on Pexels`,
   ...(data?.stats.views ? [`${fmt(data.stats.views)} views`] : []),
   ...(data?.stats.downloads ? [`${fmt(data.stats.downloads)} downloads`] : []),
   'Free to use',
@@ -15,7 +18,7 @@ const meta = [
 ---
 <Base title="Photos" description="Photographs I've published on Unsplash and Pexels. Free to use.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Photos' }]} title="Photos"
-    lede="Things I pointed a camera at, <em>free for anyone</em> to use." meta={meta}>
+    lede="Mostly nature, <em>free for anyone</em> to use." meta={meta}>
     <div class="quick" style="margin-top:8px">
       <a class="btn mag" href={PROFILES.unsplash.url} target="_blank" rel="noopener">Unsplash ↗</a>
       <a class="btn mag" href={PROFILES.pexels.url} target="_blank" rel="noopener">Pexels ↗</a>
@@ -29,7 +32,7 @@ const meta = [
           <button class="shot-m" type="button" data-full={p.full} data-href={p.href} data-alt={p.alt} data-src-label={p.source}
             style={`--c:${p.color};aspect-ratio:${p.w}/${p.h}`} data-anim>
             <img src={p.src} alt={p.alt} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" width={p.w} height={p.h} onload="this.classList.add('ok')" />
-            <span class="shot-cap"><span>{p.alt}</span><small>{p.source}</small></span>
+            <span class="shot-cap"><span>{p.alt}</span><small>{p.id.startsWith('l-') ? 'Free to use' : p.source}</small></span>
           </button>
         ))}
       </div>

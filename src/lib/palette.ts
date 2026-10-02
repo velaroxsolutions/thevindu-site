@@ -14,7 +14,7 @@ export async function paletteCommands(): Promise<Cmd[]> {
     { t: 'Résumé', k: 'page', g: 'Go to', url: '/cv' },
     ...p.map((x) => ({ t: x.data.title, k: x.data.status, g: 'Projects', url: `/work/${x.id}`, lane: 'build' })),
     ...n.map((x) => ({ t: x.data.title, k: 'lesson', g: 'Lessons', url: `/lessons#${x.id}`, lane: x.data.lane })),
-    ...c.map((x) => ({ t: x.data.title, k: x.data.provider, g: 'Library', url: `/library/courses#${x.id}`, lane: x.data.lane })),
+    ...c.map((x) => ({ t: x.data.title, k: x.data.certificate ? 'certificate' : 'course', g: 'Library', url: `/library/courses#${x.id}`, lane: x.data.lane })),
     ...b.map((x) => ({ t: x.title, k: x.verdict, g: 'Books', url: `/library/books#${x.id}`, lane: 'study' })),
     ...(gh?.repos ?? []).map((r) => ({ t: r.name, k: r.language ?? 'repo', g: 'Code', ext: r.url, lane: 'build' })),
     { t: 'Copy email address', k: 'action', g: 'Actions', act: 'copy-email' },

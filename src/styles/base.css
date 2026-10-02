@@ -78,14 +78,21 @@ p{margin:0 0 14px}
 .mk i{display:block;width:7px;height:7px;border-radius:50%;background:var(--paper);border:1.5px solid var(--rule);
   transition:background .2s var(--ease),border-color .2s var(--ease),transform .2s var(--ease)}
 .mk:hover i{border-color:var(--muted)}
-.mk.on i{background:var(--build);border-color:var(--build);transform:scale(1.35);box-shadow:0 0 0 4px rgba(var(--build-rgb),.14)}
+.mk.on i{border-color:var(--build)}
 .mk.past i{border-color:var(--muted);background:var(--muted)}
 .mk b{position:absolute;left:20px;top:50%;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted);white-space:nowrap;font-weight:400;
   transform:translateY(-50%) translateX(-4px);opacity:0;pointer-events:none;
   transition:opacity .18s var(--ease),transform .18s var(--ease)}
-.mk:hover b,.mk.on b{opacity:1;transform:translateY(-50%) translateX(0)}
-.mk.on b{color:var(--build)}
+.mk:hover b{opacity:1;transform:translateY(-50%) translateX(0)}
+.mk.on b{opacity:0!important}
+/* the gliding marker */
+.mk-cur{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);pointer-events:none;z-index:2;padding:4px}
+.mk-cur.ready{transition:top .7s cubic-bezier(.65,0,.35,1)}
+.mk-cur i{display:block;width:10px;height:10px;border-radius:50%;background:var(--build);box-shadow:0 0 0 4px rgba(var(--build-rgb),.16),0 0 14px rgba(var(--build-rgb),.45)}
+.mk-cur b{position:absolute;left:22px;top:50%;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--build);
+  white-space:nowrap;font-weight:400;transform:translateY(-50%);transition:opacity .22s var(--ease),transform .3s var(--ease)}
+.mk-cur.swap b{opacity:0;transform:translateY(-50%) translateX(-6px)}
 .rail-read{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;
   letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:20px;flex-shrink:0}
 .rail-read u{text-decoration:none;color:var(--ink)}
@@ -129,7 +136,17 @@ nav.main a[aria-current]::after{right:0;background:var(--ink)}
 @media(max-width:1050px){nav.main,.kbd,.top .lanes,.cvlink{display:none}.burger{display:inline-flex}}
 [data-lane-item]{transition:opacity .3s var(--ease),filter .3s var(--ease)}
 body[data-filter="build"] [data-lane-item="study"],
-body[data-filter="study"] [data-lane-item="build"]{opacity:.18;filter:grayscale(1)}
+body[data-filter="study"] [data-lane-item="build"]{opacity:.45}
+body[data-filter="build"] [data-lane-item="study"]:hover,body[data-filter="study"] [data-lane-item="build"]:hover,
+body[data-filter="build"] [data-lane-item="study"]:focus-within,body[data-filter="study"] [data-lane-item="build"]:focus-within{opacity:1}
+/* tells you a filter is on, and turns it off */
+.lanepill{position:fixed;left:50%;bottom:22px;z-index:60;transform:translate(-50%,16px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;background:var(--ink);color:var(--paper);padding:8px 8px 8px 16px;border-radius:999px;
+  box-shadow:var(--shadow);transition:opacity .35s var(--ease),transform .45s var(--ease)}
+.lanepill.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.lanepill b{font-weight:500;color:var(--build)} .lanepill b.study{color:var(--study)}
+:root[data-theme="dark"] .lanepill b{filter:brightness(.8)}
+.lanepill button{border:0;background:var(--paper);color:var(--ink);font:inherit;padding:5px 12px;border-radius:999px;cursor:pointer}
 
 /* ============================================================
    MOBILE MENU

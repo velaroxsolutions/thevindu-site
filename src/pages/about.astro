@@ -9,13 +9,14 @@ import { PHOTOS, HOBBIES } from '../data/about';
 import { TERM } from '../data/term';
 import Elsewhere from '../components/Elsewhere.astro';
 import { photos } from '../lib/live';
+import { localPhotos } from '../lib/localPhotos';
 import { PROFILES } from '../data/profiles';
 
 const tl = (await getCollection('timeline')).sort((a, b) => a.data.order - b.data.order);
-const livePhotos = (await photos())?.photos ?? [];
+const livePhotos = [...(await localPhotos()), ...((await photos())?.photos ?? [])];
 const strip = livePhotos.length
-  ? livePhotos.slice(0, 8).map((p) => ({ label: p.source, cap: p.alt, meta: p.source === 'unsplash' ? 'Unsplash' : 'Pexels', src: p.src }))
-  : PHOTOS;
+  ? livePhotos.slice(0, 8).map((p) => ({ label: '', cap: p.alt, meta: 'Photo · Thevindu Nagasinghe', src: p.src, full: p.full }))
+  : PHOTOS.map((p) => ({ ...p, full: p.src }));
 ---
 <Base title="About" description="Computer engineering student in Edmonton. I build software under Velarox.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'About' }]} title="About"
@@ -89,7 +90,7 @@ const strip = livePhotos.length
     <Chapter num="07" title="Photos" sub="Mostly nature. More on Pexels." more={{ href: '/photos', label: 'Full gallery' }} />
     <div class="strip">
       {strip.map((p) => (
-        <button class="ph" type="button" data-cap={p.cap} data-meta={p.meta} data-src={p.src}>
+        <button class="ph" type="button" data-cap={p.cap} data-meta={p.meta} data-src={p.full ?? p.src}>
           {p.src && <img src={p.src} alt={p.cap} loading="lazy" />}
           {!p.src && <><b>{p.label}</b><small>{p.meta.split('·')[1]?.trim()}</small></>}
         </button>

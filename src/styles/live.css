@@ -223,3 +223,6 @@
 .sk-status.on{color:var(--build)}
 .sk-status.on .sk-plug{background:var(--build);animation:pulse 1.2s infinite}
 @media (prefers-reduced-motion:reduce){.bat.go .bat-fill{transition:none}.bat-fill::after{display:none}}
+.cert{min-height:170px}
+.cert-badge{align-self:flex-start;margin-top:auto;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--build);border:1px solid rgba(var(--build-rgb),.4);padding:3px 8px}
+.cert:not(.is-cert) .cert-seal path{stroke:var(--faint)}
