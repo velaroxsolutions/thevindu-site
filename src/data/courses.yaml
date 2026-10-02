@@ -1,31 +1,38 @@
-# Completed courses and certificates. Add `url:` to link a certificate.
-- id: cs50x
-  title: CS50x — Introduction to Computer Science
-  provider: Harvard · edX
-  date: 2025-02-01
-  topics: [C, Python, SQL, algorithms]
-  lane: study
-- id: ml-a-z
-  title: Machine Learning A-Z
-  provider: Udemy
-  date: 2025-05-01
-  topics: [regression, classification, clustering]
-  lane: study
-- id: full-stack-bootcamp
-  title: The Complete Full-Stack Web Development Bootcamp
-  provider: Udemy
-  date: 2025-03-01
-  topics: [HTML/CSS, JavaScript, Node.js, React]
-  lane: build
-- id: ai-foundations
-  title: "AI Foundations: Thinking Machines"
-  provider: LinkedIn Learning
-  date: 2024-12-01
-  topics: [AI concepts]
-  lane: study
-- id: intro-genai
-  title: Introduction to Generative AI
-  provider: Google Cloud
-  date: 2024-12-01
-  topics: [generative AI]
-  lane: study
+# Completed courses, grouped the same way as the Notion "Course summaries" page:
+# https://thevindu.notion.site/Course-summaries-217870ccc7224762bb81d397472e93cc
+# certificate: true marks ones with a certificate. Add `url:` to link a certificate or summary.
+# Titles copied from Notion; ones cut off in the screenshot are marked VERIFY.
+
+# ---- Artificial Intelligence & Prompt Engineering
+- { id: intro-genai, title: Introduction to Generative AI, provider: Google Cloud, date: 2024-12-01, category: "Artificial Intelligence & Prompt Engineering", certificate: true, lane: study }
+- { id: build-your-own-gpts, title: Build Your Own GPTs, category: "Artificial Intelligence & Prompt Engineering", lane: study }
+- { id: prompt-engineering-bootcamp, title: The Complete Prompt Engineering for AI Bootcamp, category: "Artificial Intelligence & Prompt Engineering", lane: study }
+- { id: ai-engineer-roadmap, title: AI Engineer Roadmap, category: "Artificial Intelligence & Prompt Engineering", lane: study }
+- { id: ai-foundations, title: "AI Foundations: Thinking Machines", provider: LinkedIn Learning, date: 2024-12-01, category: "Artificial Intelligence & Prompt Engineering", certificate: true, lane: study }
+- { id: ml-a-z, title: Machine Learning A-Z, provider: Udemy, date: 2025-05-01, category: "Artificial Intelligence & Prompt Engineering", certificate: true, lane: study }
+
+# ---- Branding and Entrepreneurship
+- { id: brand-identity, title: Brand Identity Design, category: Branding and Entrepreneurship, lane: build }
+- { id: conflict-ei, title: Conflict Management and Emotional Intelligence, category: Branding and Entrepreneurship, lane: build }
+- { id: business-plan, title: Everything You Need to Make a Great Business Plan, category: Branding and Entrepreneurship, lane: build } # VERIFY full title (cut off in screenshot)
+- { id: habits-leadership, title: "Change Your Day-to-Day Habits to Become a Powerful Motivator", category: Branding and Entrepreneurship, lane: build } # VERIFY full title
+- { id: become-entrepreneur, title: Learn Everything You Need to Know to Become an Entrepreneur, category: Branding and Entrepreneurship, lane: build } # VERIFY full title
+
+# ---- Coding (general)
+- { id: cs50x, title: CS50x — Introduction to Computer Science, provider: Harvard · edX, date: 2025-02-01, category: Coding (general), certificate: true, lane: study }
+- { id: full-stack-bootcamp, title: The Complete Full-Stack Web Development Bootcamp, provider: Udemy, date: 2025-03-01, category: Coding (general), certificate: true, lane: build }
+- { id: 100-days-of-code, title: 100 Days of Code, category: Coding (general), lane: build }
+- { id: web-dev-bootcamp-2022, title: 2022 Web Development Bootcamp, category: Coding (general), lane: build }
+- { id: web-design-interface, title: Web Design Interface, category: Coding (general), lane: build }
+- { id: js-mosh, title: JavaScript Tutorials — Programming with Mosh, category: Coding (general), lane: build }
+
+# ---- College
+- { id: se-year-2-udemy, title: Software Engineering Year 2 Udemy Courses, category: College, lane: study }
+
+# ---- Full-Stack Creative
+- { id: after-effects, title: After Effects Ultimate Tutorials, category: Full-Stack Creative, lane: build }
+- { id: indesign-essentials, title: InDesign Essentials, category: Full-Stack Creative, lane: build }
+- { id: motion-graphics, title: Motion Graphics, category: Full-Stack Creative, lane: build }
+
+# TODO(Thev): the Notion page continues past "Full-Stack Creative" (a section starting with "M…").
+# Paste those courses here in the same format.

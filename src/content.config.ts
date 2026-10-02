@@ -54,9 +54,11 @@ const courses = defineCollection({
   loader: file('./src/data/courses.yaml'),
   schema: z.object({
     title: z.string(),
-    provider: z.string(),
-    date: z.coerce.date(),
-    url: z.string().optional(), // certificate or course link
+    category: z.string(),
+    provider: z.string().optional(),
+    date: z.coerce.date().optional(),
+    certificate: z.boolean().default(false),
+    url: z.string().optional(), // certificate or Notion summary link
     topics: z.array(z.string()).default([]),
     lane: lane.default('study'),
   }),

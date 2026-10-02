@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { appstore, notionBooks, photos } from './live';
+import { localPhotos } from './localPhotos';
 
 export const fmtDate = (d: Date, opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }) =>
   d.toLocaleDateString('en-CA', { timeZone: 'UTC', ...opts });
@@ -42,9 +43,17 @@ export async function books() {
   );
 }
 
-/** Completed courses and certificates, newest first. */
+// Same order as the Notion "Course summaries" page. New categories go to the end.
+const CATEGORY_ORDER = ['Artificial Intelligence & Prompt Engineering', 'Branding and Entrepreneurship', 'Coding (general)', 'College', 'Full-Stack Creative'];
+const catRank = (c: string) => { const i = CATEGORY_ORDER.indexOf(c); return i < 0 ? 99 : i; };
+
+/** Completed courses grouped by category; certificates first within each. */
 export async function courses() {
-  return (await getCollection('courses')).sort((a, b) => +b.data.date - +a.data.date);
+  return (await getCollection('courses')).sort((a, b) =>
+    catRank(a.data.category) - catRank(b.data.category) ||
+    a.data.category.localeCompare(b.data.category) ||
+    Number(b.data.certificate) - Number(a.data.certificate) ||
+    a.data.title.localeCompare(b.data.title));
 }
 
 export async function skills() {
@@ -77,8 +86,8 @@ export async function allBooks(): Promise<Book[]> {
 }
 
 export async function libraryCounts() {
-  const [b, c, p] = await Promise.all([allBooks(), courses(), photos()]);
-  const books = b.length, crs = c.length, pics = p?.photos.length ?? 0;
+  const [b, c, p, mine] = await Promise.all([allBooks(), courses(), photos(), localPhotos()]);
+  const books = b.length, crs = c.length, pics = mine.length + (p?.photos.length ?? 0);
   return { books, reading: b.filter((x) => x.verdict === 'Reading').length, courses: crs, photos: pics, total: books + crs + pics };
 }
 

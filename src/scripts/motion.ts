@@ -90,7 +90,7 @@ if (wordEls.length && !reduce) {
     wordEls.forEach((el) => {
       const r = el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > vh) return;
-      const p = (vh * 0.85 - r.top) / (vh * 0.45);
+      const p = (vh * 0.92 - r.top) / (vh * 0.4);
       const ws = el.querySelectorAll('w');
       const n = Math.round(Math.max(0, Math.min(1, p)) * ws.length * 1.12);
       ws.forEach((w, i) => w.classList.toggle('lit', i < n));

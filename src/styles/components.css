@@ -44,7 +44,7 @@ section{padding:clamp(72px,10vw,150px) 0;border-top:1px solid var(--rule)}
 /* word-by-word scroll reveal */
 .words{font-family:var(--display);font-weight:700;font-stretch:112%;font-size:clamp(28px,5vw,62px);line-height:1.12;
   letter-spacing:-.034em;max-width:17ch;margin:0}
-.words w{display:inline-block;opacity:.1;transition:opacity .35s linear,color .35s}
+.words w{display:inline-block;opacity:.28;transition:opacity .45s var(--ease),color .45s}
 .words w.lit{opacity:1}
 .words w.acc.lit{color:var(--build)}
 .words-side{max-width:36ch;margin:48px 0 0;color:var(--muted);font-size:15.5px;line-height:1.75}
