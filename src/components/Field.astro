@@ -1,15 +1,14 @@
 ---
 // The hero instrument: the site's own content plotted as an embedding space.
 // Build work clusters bottom-left (magenta), study top-right (blue) — the logo, literally.
-import { projects, notes, allBooks, allCourses, templates, skills, templateHref } from '../lib/content';
+import { projects, lessons, allBooks, courses, skills } from '../lib/content';
 import { github } from '../lib/live';
-const [p, n, b, c, t, s, gh] = await Promise.all([projects(), notes(), allBooks(), allCourses(), templates(), skills(), github()]);
+const [p, n, b, c, s, gh] = await Promise.all([projects(), lessons(), allBooks(), courses(), skills(), github()]);
 const pts = [
   ...p.map((x) => ({ l: x.data.title, k: 'project', lane: 'build', h: `/work/${x.id}`, w: 3 })),
-  ...t.map((x) => ({ l: x.data.title, k: 'template', lane: 'build', h: templateHref(x), w: 1 })),
-  ...s.filter((x) => x.group !== 'ai').map((x) => ({ l: x.name, k: 'skill', lane: 'build', h: '/about#skills', w: 1 })),
-  ...n.map((x) => ({ l: x.data.title, k: 'note', lane: 'study', h: `/notes/${x.id}`, w: 2 })),
-  ...c.map((x) => ({ l: x.code, k: 'course', lane: 'study', h: `/library/courses#${x.id}`, w: 1 })),
+  ...s.filter((x) => !['ai'].includes(x.group)).map((x) => ({ l: x.name, k: 'skill', lane: 'build', h: '/about#skills', w: 1 })),
+  ...n.map((x) => ({ l: x.data.title, k: 'lesson', lane: x.data.lane, h: `/lessons#${x.id}`, w: 2 })),
+  ...c.map((x) => ({ l: x.data.title.split(' — ')[0], k: 'course', lane: x.data.lane, h: `/library/courses#${x.id}`, w: 1 })),
   ...b.map((x) => ({ l: x.title, k: 'book', lane: 'study', h: `/library/books#${x.id}`, w: 1 })),
   ...(gh?.repos ?? []).slice(0, 12).map((r) => ({ l: r.name, k: 'repo', lane: 'build', h: r.url, w: 1 })),
   ...s.filter((x) => x.group === 'ai').map((x) => ({ l: x.name, k: 'skill', lane: 'study', h: '/about#skills', w: 1 })),

@@ -2,7 +2,7 @@ import { live, token } from './core';
 import { PROFILES } from '../../data/profiles';
 
 // Official Notion API. Create an internal integration, copy its secret into
-// NOTION_TOKEN, then on each page (Course summaries, the reading database)
+// NOTION_TOKEN, then on the reading database
 // use "… → Connections → Add" to share it with the integration.
 const H = () => ({ headers: { Authorization: `Bearer ${token('NOTION_TOKEN')}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' } });
 const plain = (rt: any[] = []) => rt.map((t) => t.plain_text).join('').trim();
@@ -42,7 +42,6 @@ async function queryAll(get: any, db: string) {
 }
 
 export type NotionBook = { title: string; author: string; status: string; rating: string; take: string; tags: string[]; cover: string | null; url: string; date: string };
-export type NotionCourse = { title: string; url: string; icon: string | null; blurb: string; updated: string };
 
 export const notionBooks = () =>
   live<NotionBook[]>('notion-books', async (get) => {
@@ -64,32 +63,4 @@ export const notionBooks = () =>
         date: prop(find(P, /finish|date|read on|completed/i)) || r.last_edited_time,
       };
     }).filter((b) => b.title);
-  });
-
-export const notionCourses = () =>
-  live<NotionCourse[]>('notion-courses', async (get) => {
-    if (!token('NOTION_TOKEN')) return null;
-    const root = PROFILES.notion.courses.id;
-    const out: NotionCourse[] = [];
-    let cursor: string | undefined;
-    do {
-      const r = await get(`https://api.notion.com/v1/blocks/${root}/children?page_size=100${cursor ? `&start_cursor=${cursor}` : ''}`, H());
-      for (const b of r.results) {
-        if (b.type === 'child_page') {
-          out.push({ title: b.child_page.title, url: pub(b.id, b.child_page.title), icon: null, blurb: '', updated: b.last_edited_time });
-        } else if (b.type === 'child_database') {
-          const rows = await queryAll(get, b.id);
-          rows.forEach((row) => {
-            const P = row.properties || {};
-            const title = prop(Object.values(P).find((p: any) => p.type === 'title'));
-            out.push({
-              title, url: row.public_url || pub(row.id, title), icon: row.icon?.emoji ?? null,
-              blurb: prop(find(P, /desc|summary|topic|about|blurb/i)), updated: row.last_edited_time,
-            });
-          });
-        }
-      }
-      cursor = r.has_more ? r.next_cursor : undefined;
-    } while (cursor);
-    return out.filter((c) => c.title);
   });

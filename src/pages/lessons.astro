@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { lessons, fmtDate } from '../lib/content';
+const all = await lessons();
+---
+<Base title="Lessons learnt" description="Short, honest lessons from building things and getting them wrong first.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Lessons' }]} title="Lessons learnt"
+    lede="Things I learned <em>the hard way</em>, so you don’t have to."
+    meta={[`${all.length} ${all.length === 1 ? 'lesson' : 'lessons'}`, 'Short on purpose', 'Added as they happen']} />
+  <section style="padding-top:0" data-sec="lessons" data-secname="Lessons">
+    {all.length ? (
+      <ol class="lessons">
+        {all.map((l, i) => (
+          <li class="lesson" id={l.id} data-lane-item={l.data.lane} data-anim style={`--i:${i % 4}`}>
+            <span class="lesson-n">{String(all.length - i).padStart(2, '0')}</span>
+            <div>
+              <h2 class="lesson-t">{l.data.title}</h2>
+              <p class="lesson-c">{l.data.context}</p>
+            </div>
+            <span class="lesson-m"><span class={`kind ${l.data.lane === 'build' ? 'Shipped' : 'Learned'}`}>{l.data.from ?? 'Life'}</span><time datetime={l.data.date.toISOString()}>{fmtDate(l.data.date, { month: 'short', year: 'numeric' })}</time></span>
+          </li>
+        ))}
+      </ol>
+    ) : <p class="building-note">Being put together. Lessons are on their way.</p>}
+  </section>
+</Base>

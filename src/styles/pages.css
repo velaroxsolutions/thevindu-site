@@ -344,3 +344,4 @@ a.cell:hover{background:var(--sunk)}
   .cvitem{break-inside:avoid;margin-bottom:12px}
   .cvhead{padding-top:0}
 }
+.cvwide{grid-template-columns:200px 1fr}

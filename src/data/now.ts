@@ -1,22 +1,21 @@
 // The "Now" block and the live instrument panel on the homepage.
 // Update when it changes, not on a schedule.
 export const NOW = {
-  updated: '2026-09-28',
+  updated: '2026-10-01',
   items: [
-    { label: 'Aperis', lane: 'build', text: 'Live on the App Store. Most of my week goes into getting real people on it and watching what they do.' },
-    { label: 'Reading', lane: 'study', text: 'Why image and text embeddings end up in separate regions of the same space.' },
-    { label: 'Building', lane: 'build', text: 'Rewriting Reflct’s memory so entries carry context across months, not days.' },
-    { label: 'Off-screen', lane: 'study', text: 'Basketball, chess, and a stubborn attempt to dunk.' },
+    { label: 'Work', lane: 'study', text: 'Junior curriculum developer at the University of Alberta, working on ways to make learning more effective.' },
+    { label: 'Aperis', lane: 'build', text: 'Live on the App Store, in closed testing on Google Play. Getting it in front of more people.' },
+    { label: 'Learning', lane: 'study', text: 'French, from zero. Slowly.' },
+    { label: 'Off-screen', lane: 'study', text: 'Photographing nature, and the occasional game of chess.' },
   ],
   panel: {
-    reading: 'Contrastive learning',
-    chess: 1240,
+    reading: 'Nothing listed yet',
+    chess: 1450,
     languages: [
-      { name: 'Sinhala', pct: 100, note: 'native' },
       { name: 'English', pct: 100, note: 'fluent' },
-      { name: 'French', pct: 34, note: 'A2 → B2' },
-      { name: 'SQL', pct: 48, note: 'ongoing' },
-      { name: 'Contrastive learning', pct: 26, note: 'reading' },
+      { name: 'Sinhala', pct: 65, note: 'conversational' },
+      { name: 'French', pct: 12, note: 'beginner' },
+      { name: 'Hindi', pct: 15, note: 'basic' },
     ],
   },
 } as const;

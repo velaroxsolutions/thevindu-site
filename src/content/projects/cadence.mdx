@@ -2,21 +2,21 @@
 title: Cadence
 order: 3
 tagline: Post on repeat, never miss a beat.
-lede: Write it once, pick the accounts, set a time. It posts <em>with the app closed</em>.
+lede: I was posting by hand at midnight. So I <em>built the scheduler</em>. # VERIFY
 summary: A free, desktop-native content scheduler. One composer, many accounts, a server-side worker that publishes on time and pulls back real engagement.
-status: In dev
+status: On GitHub
 accent: neutral
-stack: [React, FastAPI, SQLite, Tauri]
-started: "2025"
+stack: [React, FastAPI, OAuth, Tauri]
+started: "2026"
 role: I built it because I was scheduling posts by hand at midnight.
 links:
   - { label: Repo, href: "https://github.com/thevindun/cadence", primary: true }
+repo: https://github.com/thevindun/cadence
 stats:
-  - { value: "2", count: 2, label: Platforms live — Bluesky, Mastodon }
-  - { value: "2", label: Real-by-config — Threads, LinkedIn }
-  - { value: "15", count: 15, label: Build phases }
-  - { value: "$0", label: To use it }
-shots: [Composer, Calendar, Insights]
+  - { value: "1", label: Adapter per platform }
+  - { value: "2", label: Builds — web and desktop }
+  - { value: "0", label: Dollars to use it }
+  - { value: "’26", label: Started }
 tradeoffs:
   - decision: One adapter per platform, and core never imports a platform
     cost: Adding a platform is one file plus a registry line. But every platform’s quirks leak into its adapter — Mastodon counts favourites, LinkedIn hides the post id in a header.
@@ -50,7 +50,7 @@ at the moment the post needs to go out. I was doing it by hand, at midnight.
 
 A composer that targets any mix of connected accounts, with per-platform variants, threads,
 first comments, images and video. A queue, a calendar with drag-to-reschedule, and recurring
-posts. An Insights view with real engagement, follower growth, a best-time heatmap and
+posts. Multi-account support, with OAuth per account. An Insights view with real engagement, follower growth, a best-time heatmap and
 tracked links.
 
 It ships as a web app and as a self-contained desktop app: Tauri wraps the UI, and the FastAPI
@@ -71,9 +71,6 @@ accounts on the same platform. The worker only ever sees a post and a list of co
 
 Every platform’s docs are slightly wrong, or slightly out of date. I stopped writing any
 integration until I’d checked the current API first. It caught a problem almost every time.
-
-Retries are where double-posts come from. The failures dashboard now retries only the targets
-that didn’t succeed.
 
 ## Next
 

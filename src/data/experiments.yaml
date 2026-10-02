@@ -1,21 +1,5 @@
-- id: mece-open-house
-  title: MEC E Open House 2026
-  text: Contributed the map routing, schedule page, searchable FAQ, and the passport stickers with collect animations.
-  kind: Team
-  year: 2026
-  href: https://github.com/aniketh1409/MEC-E-Open-House-2026
-- id: chess-engine
-  title: Chess engine, badly
-  text: Minimax with alpha-beta pruning. Beat me, lost to everyone else.
-  kind: Python
-  year: 2024
-- id: snake-agent
-  title: Snake agent
-  text: MaskablePPO on a custom environment. Learned to avoid its own tail, eventually.
-  kind: RL
-  year: 2025
-- id: this-site
-  title: This website
-  text: Astro, content as data, one set of design tokens. Hand-tuned motion, no UI framework.
-  kind: Web
-  year: 2026
+- { id: athenyx, title: Athenyx, text: "Study platform with auto-generated flashcards, calendar-synced to-dos, and an AI assistant. Also tried a BERT pipeline for reading syllabi.", kind: Web + AI, year: 2025, href: "https://athenyx.velaroxsolutions.com" }
+- { id: rl-tictactoe, title: Tic-tac-toe RL agent, text: "Custom Gymnasium environment, MaskablePPO, 100k timesteps of self-play. Never loses.", kind: RL, year: 2026 }
+- { id: feps, title: FEPS, text: "Two assistive accessories for people with limited hand mobility. First-year design project.", kind: Hardware, year: 2024 }
+- { id: mece-open-house, title: MEC E Open House 2026, text: "Contributed the map routing, schedule page, searchable FAQ, and passport stickers with collect animations.", kind: Team, year: 2026, href: "https://github.com/aniketh1409/MEC-E-Open-House-2026" }
+- { id: this-site, title: This website, text: "Astro, content as data, one set of design tokens, hand-written motion.", kind: Web, year: 2026 }

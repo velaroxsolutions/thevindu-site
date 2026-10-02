@@ -8,18 +8,19 @@ export const SITE = {
   location: 'Edmonton, Alberta',
   timezone: 'America/Edmonton',
   description:
-    'I ship software under Velarox and study how machines represent meaning. Computer engineering at the University of Alberta.',
+    'I build software and AI tools under Velarox, and share what I learn along the way. Computer engineering at the University of Alberta.',
   resumePdf: '/resume.pdf', // drop the file in /public
   // Shown in the header, contact block, menu and footer.
   socials: [
     { label: 'GitHub', href: 'https://github.com/thevindun' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/thevindu-nagasinghe-9ba2a4342' },
+    { label: 'Pexels', href: 'https://www.pexels.com/@thevindu19/' },
   ],
 } as const;
 
 export const NAV = [
   { href: '/work', label: 'Work' },
-  { href: '/notes', label: 'Notes' },
+  { href: '/lessons', label: 'Lessons' },
   { href: '/library', label: 'Library' },
   { href: '/photos', label: 'Photos' },
   { href: '/about', label: 'About' },

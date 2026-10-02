@@ -11,7 +11,7 @@ const built = new Date().toISOString().slice(0, 10);
     <div class="foot-row">
       <span class="lbl">{SITE.name} · {SITE.location}</span>
       <nav class="foot-links" aria-label="Footer">
-        <a href="/log">Log</a><a href="/notes">Notes</a><a href="/photos">Photos</a><a href="/rss.xml">RSS</a><a href="/cv">Résumé</a>
+        <a href="/log">Log</a><a href="/lessons">Lessons</a><a href="/photos">Photos</a><a href="/rss.xml">RSS</a><a href="/cv">Résumé</a>
         <a href={PROFILES.appstore.url} target="_blank" rel="noopener">App Store ↗</a>
         {PROFILES.velarox.map((v) => <a href={v.url} target="_blank" rel="noopener">{v.label} ↗</a>)}
         {SITE.socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}

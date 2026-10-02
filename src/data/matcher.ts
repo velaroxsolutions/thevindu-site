@@ -1,16 +1,17 @@
-// Placeholder data for the interactive matcher on /work/aperis.
-// Dimension names are illustrative — replace with the real five.
+// The interactive matcher on /work/aperis. The five dimensions are the real ones;
+// the weights are illustrative. Demo data, not real users.
 export const DIMS = [
   { name: 'Values', hint: 'what you won’t trade', w: 5 },
-  { name: 'Conflict', hint: 'how you argue', w: 4 },
-  { name: 'Ambition', hint: 'where you’re headed', w: 3 },
-  { name: 'Social energy', hint: 'nights in vs out', w: 2 },
-  { name: 'Humour', hint: 'what lands', w: 2 },
+  { name: 'Conflict', hint: 'how you handle disagreement', w: 4 },
+  { name: 'Love language', hint: 'how you show you care', w: 3 },
+  { name: 'Empathy', hint: 'how you read people', w: 3 },
+  { name: 'Ambition', hint: 'where you’re headed', w: 2 },
 ];
 
 // Answers are 0–1 on each dimension.
 export const YOU = [0.8, 0.35, 0.7, 0.4, 0.65];
 
+// Demo data, not real users.
 export const PROFILES = [
   { handle: 'Quiet kettle', note: 'Writes letters. Actually posts them.', v: [0.78, 0.3, 0.55, 0.2, 0.7] },
   { handle: 'Night runner', note: 'Training for something, won’t say what.', v: [0.6, 0.55, 0.92, 0.5, 0.4] },

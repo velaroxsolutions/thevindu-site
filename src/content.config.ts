@@ -22,6 +22,7 @@ const projects = defineCollection({
     links: z.array(z.object({ label: z.string(), href: z.string(), primary: z.boolean().optional() })).default([]),
     stats: z.array(z.object({ value: z.string(), label: z.string(), count: z.number().optional() })).default([]),
     shots: z.array(z.string()).default([]),
+    repo: z.string().optional(), // falls back to a same-named repo from the live GitHub data
     appstore: z.boolean().default(false), // pull live version, rating and screenshots from the App Store
     tradeoffs: z.array(z.object({ decision: z.string(), cost: z.string() })).default([]),
     arch: z
@@ -48,41 +49,28 @@ const books = defineCollection({
   }),
 });
 
+/* Completed courses + certificates (not lecture notes) */
 const courses = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/courses' }),
-  schema: z.object({
-    code: z.string(),
-    name: z.string(),
-    blurb: z.string(),
-    pages: z.number(),
-    term: z.string().optional(),
-    pdf: z.string().optional(), // /notes/engg-404.pdf in public
-    added: z.coerce.date(),
-  }),
-});
-
-const templates = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/templates' }),
+  loader: file('./src/data/courses.yaml'),
   schema: z.object({
     title: z.string(),
-    blurb: z.string(),
-    group: z.enum(['Software', 'AI', 'Content']),
-    kind: z.enum(['Repo', 'Guide', 'Doc']),
-    href: z.string().optional(), // external repo link; if absent the body is the template
-    copyable: z.boolean().default(false),
-    added: z.coerce.date(),
-  }),
-});
-
-/* ---------- Writing ---------- */
-const notes = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/notes' }),
-  schema: z.object({
-    title: z.string(),
-    dek: z.string(),
+    provider: z.string(),
     date: z.coerce.date(),
+    url: z.string().optional(), // certificate or course link
+    topics: z.array(z.string()).default([]),
     lane: lane.default('study'),
-    tags: z.array(z.string()).default([]),
+  }),
+});
+
+/* ---------- Lessons learnt (short, honest; longer ones can have a body) ---------- */
+const lessons = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/lessons' }),
+  schema: z.object({
+    title: z.string(), // the lesson itself, one line
+    context: z.string(), // where it came from, one or two sentences
+    from: z.string().optional(), // project or place
+    date: z.coerce.date(),
+    lane: lane.default('build'),
     draft: z.boolean().default(false),
   }),
 });
@@ -102,7 +90,7 @@ const skills = defineCollection({
   loader: file('./src/data/skills.yaml'),
   schema: z.object({
     name: z.string(),
-    group: z.enum(['sw', 'ai', 'co', 'de']),
+    group: z.enum(['sw', 'ai', 'to', 'co', 'de']),
     level: z.number().min(1).max(12),
     years: z.string(),
     where: z.string(),
@@ -133,4 +121,4 @@ const experiments = defineCollection({
   }),
 });
 
-export const collections = { projects, books, courses, templates, notes, log, skills, timeline, experiments };
+export const collections = { projects, books, courses, lessons, log, skills, timeline, experiments };

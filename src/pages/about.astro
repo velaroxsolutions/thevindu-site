@@ -2,11 +2,11 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Chapter from '../components/Chapter.astro';
-import Words from '../components/Words.astro';
 import SkillsExplorer from '../components/SkillsExplorer.astro';
 import { getCollection } from 'astro:content';
 import { NOW } from '../data/now';
 import { PHOTOS, HOBBIES } from '../data/about';
+import { TERM } from '../data/term';
 import Elsewhere from '../components/Elsewhere.astro';
 import { photos } from '../lib/live';
 import { PROFILES } from '../data/profiles';
@@ -19,29 +19,38 @@ const strip = livePhotos.length
 ---
 <Base title="About" description="Computer engineering student in Edmonton. I build software under Velarox.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'About' }]} title="About"
-    lede="I came at this from the build side, <em>not the theory side</em>."
-    meta={['Edmonton', 'Born in Sri Lanka', 'Class of 2028']} />
+    lede="I learn by building, and I build things <em>I wish existed</em>."
+    meta={['Edmonton', 'Grew up in Sri Lanka', 'Class of 2028']} />
 
   <section data-sec="origin" data-secname="Origin">
     <Chapter num="01" title="How I got here" />
     <div class="prose" data-anim style="font-size:18px">
-      <p>I wanted an app to exist, so I made it. Everything I know about backends, auth, and data modelling came from needing it to work at two in the morning.</p>
-      <p>That’s a good way to learn and a bad way to learn thoroughly. You end up with working code and a lot of holes. The last year has mostly been filling them in.</p>
-      <p>I grew up in Sri Lanka and moved to Edmonton for university. The cold was a surprise.</p>
+      <p>I grew up in Sri Lanka and moved to Edmonton for university. I study computer engineering, and right now I also work as a junior curriculum developer at the University of Alberta, working on ways to make learning more effective.</p>
+      <p>I build because I love solving problems. If a tool I need doesn’t exist, making it is the most fun way I know to learn. Most of what I know came from trial and error, which is also why I give away what I learn: if I already paid for the mistake, you don’t have to.</p>
+      <p>I’m quiet until you get to know me, and I care a lot about the people close to me. Mostly, I like making things that leave someone a little better off.</p>
     </div>
   </section>
-
-  <Words sec="view" name="Point of view"
-    text="Shipping beats planning, <em>but only just</em>."
-    side="I’ve lost more time to well-organised plans for things I never built than to anything I shipped badly. The more elegant the plan, the more suspicious I try to be." />
-
   <section id="skills" data-sec="skills" data-secname="Skills">
     <Chapter num="02" title="What I work in" sub="Evidence, not ratings. Click any row." />
     <SkillsExplorer />
   </section>
 
+  {TERM.courses.length > 0 && (
+    <section id="term" data-sec="term" data-secname="This term">
+      <Chapter num="—" title="This term" sub={`${TERM.label}. What I’m taking, and what I think of it so far.`} />
+      <div class="res">
+        {TERM.courses.map((c, i) => (
+          <div class="ritem" data-anim style={`--i:${i}`} data-lane-item="study">
+            <div><h3>{c.code} — {c.name}</h3>{c.take && <p>{c.take}</p>}</div>
+            <span class="rtype">{TERM.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
   <section data-sec="timeline" data-secname="Timeline">
-    <Chapter num="03" title="Timeline" sub="Short, because there isn’t much of it yet." />
+    <Chapter num="03" title="Timeline" sub="Short, because it’s still early." />
     <div class="tl">
       {tl.map((t, i) => (
         <div class="tlrow" data-anim style={`--i:${i}`} data-lane-item={t.data.lane === 'life' ? undefined : t.data.lane}>
@@ -54,7 +63,7 @@ const strip = livePhotos.length
   </section>
 
   <section data-sec="learning" data-secname="Learning">
-    <Chapter num="04" title="Languages & learning" />
+    <Chapter num="04" title="Languages" />
     <div class="langs">
       {NOW.panel.languages.map((l, i) => (
         <div class="lang" data-anim style={`--i:${i}`}><span>{l.name}</span><span class="bar" style={`--p:${l.pct}%`}><i></i></span><span>{l.note}</span></div>
@@ -77,7 +86,7 @@ const strip = livePhotos.length
   </section>
 
   <section data-sec="photos" data-secname="Photos">
-    <Chapter num="07" title="Photos" sub="Scroll sideways." more={{ href: '/photos', label: 'Full gallery' }} />
+    <Chapter num="07" title="Photos" sub="Mostly nature. More on Pexels." more={{ href: '/photos', label: 'Full gallery' }} />
     <div class="strip">
       {strip.map((p) => (
         <button class="ph" type="button" data-cap={p.cap} data-meta={p.meta} data-src={p.src}>
@@ -86,7 +95,7 @@ const strip = livePhotos.length
         </button>
       ))}
     </div>
-    {!livePhotos.length && <p class="quiet" style="margin-top:16px">Placeholders — the strip fills from <a href={PROFILES.unsplash.url}>Unsplash</a> on deploy</p>}
+    {!livePhotos.length && !PHOTOS.some((p) => p.src) && <p class="quiet" style="margin-top:16px">Photos coming — <a href={PROFILES.pexels.url}>see them on Pexels</a></p>}
   </section>
 
   <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo">

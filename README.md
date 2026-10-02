@@ -22,12 +22,14 @@ npm run dev:fixtures   # fake live data from tests/fixtures, to work on the UI
 | Add a log entry (ticker + /log)       | `src/data/log.yaml`                    |
 | Add a skill                           | `src/data/skills.yaml`                 |
 | Edit the timeline / side projects     | `src/data/timeline.yaml`, `experiments.yaml` |
-| Edit the résumé                       | `src/data/cv.ts`                       |
+| Edit the résumé (incl. certificates, awards) | `src/data/cv.ts`                |
+| Add a completed course / certificate  | `src/data/courses.yaml`                |
+| "This term" courses (About + homepage) | `src/data/term.ts`                     |
+| Add a lesson learnt                   | `src/content/lessons/*.md`             |
 | Photos + hobbies on /about            | `src/data/about.ts` (images → `public/photos/`) |
 | Aperis matcher dimensions & profiles  | `src/data/matcher.ts`                  |
 | Write a case study                    | `src/content/projects/*.mdx`           |
-| Write a note                          | `src/content/notes/*.md`               |
-| Add a book / course / template        | `src/content/{books,courses,templates}/*.md` |
+| Add a book                            | `src/content/books/*.md` (or the Notion reading DB) |
 
 Every count, list, the ⌘K palette, the homepage "latent field", the RSS feed and the sitemap
 are generated from those files, so nothing needs updating by hand.
@@ -37,8 +39,8 @@ Content is validated by the schemas in `src/content.config.ts`, so a typo in a f
 ### Placeholders to swap
 - `SITE.email` and `SITE.url` in `src/data/site.ts`
 - `public/resume.pdf` (the /cv page also prints cleanly to PDF)
-- Course PDFs → `public/notes/…` and uncomment `pdf:` in each course file
-- Template repo links → `href:` in each template file
+- Certificate links → `url:` in `src/data/courses.yaml`
+- Anything marked `VERIFY` in the content (draft quotes, lessons, skill levels)
 - Screenshots: `shots:` in each project's frontmatter; photos in `src/data/about.ts`
 - Book covers: optional `cover:` per book (otherwise a cover is generated from the title)
 - `links:` on each project (currently `#`, shown as disabled)
@@ -55,7 +57,7 @@ At build time the site pulls from your accounts (`src/lib/live/`):
 | Duolingo | homepage streak cell, About | nothing (unofficial endpoint) |
 | Unsplash | /photos, About photo strip | `UNSPLASH_ACCESS_KEY` |
 | Pexels | /photos | photo IDs listed in `profiles.ts` (their API can't list a user's uploads) |
-| Notion | Books + Course notes merged with the markdown ones | `NOTION_TOKEN` + share both pages with the integration |
+| Notion | Books merged with the markdown ones | `NOTION_TOKEN` + share the reading database with the integration |
 
 Every source is optional and wrapped in a timeout. If one is down, the build uses the last
 snapshot in `src/data/snapshots/`, or hides that block. It never fails the deploy. See
@@ -68,11 +70,11 @@ LinkedIn has no public API. Link projects there from `src/data/experiments.yaml`
 
 ```
 src/
-  content/        markdown/MDX collections (projects, notes, books, courses, templates)
+  content/        markdown/MDX collections (projects, lessons, books)
   data/           YAML + TS data (log, skills, timeline, now, cv, site config)
   components/     Rail, TopBar (+ mobile menu), Palette, Field, Matcher, Arch, …
   layouts/        Base.astro (head, SEO, theme, chrome)
-  pages/          routes — /work/[slug], /notes/[slug], /library/…, /log, /cv, rss.xml
+  pages/          routes — /work/[slug], /lessons, /library/…, /photos, /log, /cv, rss.xml
   scripts/        client-side TS, one module per behaviour
   styles/         tokens.css → base.css → components.css → pages.css
 ```

@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { render } from 'astro:content';
 import { projects, fmtDate } from '../../lib/content';
-import { appstore } from '../../lib/live';
+import { appstore, github } from '../../lib/live';
 import Phone from '../../components/Phone.astro';
 
 export async function getStaticPaths() {
@@ -13,6 +13,9 @@ const { p, prev, next } = Astro.props;
 const { Content, headings } = await render(p);
 const d = p.data;
 const app = d.appstore ? await appstore() : null;
+const gh = await github();
+const repo = d.repo ?? gh?.repos.find((r) => r.name.toLowerCase() === p.id)?.url;
+const links = [...d.links, ...(repo && !d.links.some((l) => l.href === repo) ? [{ label: 'Repo', href: repo, primary: false }] : [])];
 const shots = app?.screenshots?.length ? app.screenshots.map((src, i) => ({ src, label: d.shots[i] ?? '' })) : d.shots.map((label) => ({ src: undefined, label }));
 const toc = [...headings.filter((h) => h.depth === 2), ...(shots.length ? [{ depth: 2, slug: 'screens', text: 'Screens' }] : [])];
 ---
@@ -23,13 +26,13 @@ const toc = [...headings.filter((h) => h.depth === 2), ...(shots.length ? [{ dep
     {app && (
       <a class="appchip" href={app.url} target="_blank" rel="noopener">
         {app.icon ? <img src={app.icon} alt="" width="44" height="44" /> : <span class="appchip-ph" aria-hidden="true">{d.title[0]}</span>}
-        <span class="appchip-t"><b>Live on the App Store</b><small>v{app.version} · updated {fmtDate(new Date(app.updated), { month: 'short', day: 'numeric', year: 'numeric' })}{app.rating ? ` · ★ ${app.rating.toFixed(1)} (${app.ratings})` : ''} · {app.price}</small></span>
+        <span class="appchip-t"><b>Live on the App Store · testing on Google Play</b><small>v{app.version} · updated {fmtDate(new Date(app.updated), { month: 'short', day: 'numeric', year: 'numeric' })}{app.rating ? ` · ★ ${app.rating.toFixed(1)} (${app.ratings})` : ''} · {app.price}</small></span>
         <span class="live"><i class="dot"></i>Live</span>
       </a>
     )}
     <p class="lede-xl" set:html={d.lede} />
     <div class="quick">
-      {d.links.map((l) => <a class={`btn mag ${l.primary ? 'primary' : ''}`} href={l.href} aria-disabled={l.href === '#' ? 'true' : undefined}>{l.label} ↗</a>)}
+      {links.map((l) => <a class={`btn mag ${l.primary ? 'primary' : ''}`} href={l.href} aria-disabled={l.href === '#' ? 'true' : undefined}>{l.label} ↗</a>)}
       <span class="chips" style="align-self:center;margin-left:6px">{d.stack.map((s) => <span class="chip">{s}</span>)}</span>
     </div>
     {d.stats.length > 0 && (

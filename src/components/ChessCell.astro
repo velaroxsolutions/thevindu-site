@@ -11,7 +11,7 @@ const hist = ch?.lichess?.history ?? [];
 const line = [ch?.chesscom?.rapid && `chess.com ${ch.chesscom.rapid}`, ch?.lichess?.rapid && `lichess ${ch.lichess.rapid}`, ch?.lichess?.puzzle && `puzzles ${ch.lichess.puzzle}`].filter(Boolean).join(' · ');
 ---
 <a class="cell c-chess" href={href} target="_blank" rel="noopener" data-anim style={`--i:${i}`} data-lane-item="study">
-  <span class="lbl"><span>Chess · rapid</span><span>{ch ? 'live' : 'Aggressively mediocre'}</span></span>
+  <span class="lbl"><span>Chess · rapid</span><span>For fun</span></span>
   <span class="cell-big"><span class="count" data-to={rapid}>0</span></span>
   {hist.length > 1
     ? <Sparkline points={hist.map((x) => x.r)} label="Lichess" />

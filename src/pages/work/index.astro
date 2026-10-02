@@ -17,8 +17,8 @@ const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C1
 ---
 <Base title="Work" description="Three products under Velarox: Aperis, Reflct, and Cadence.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Work' }]} title="Work"
-    lede={`${proj.length === 3 ? 'Three' : proj.length} products under Velarox. I built <em>all of them</em> alone.`}
-    meta={[`${proj.length} active`, `${live} shipped`, 'Since 2024']} />
+    lede={`${proj.length === 3 ? 'Three' : proj.length} products under Velarox. Built <em>mostly on my own</em>, to solve problems I actually had.`}
+    meta={[`${proj.length} active`, `${live} shipped`, 'Since 2025']} />
 
   <section style="padding-top:0" data-sec="products" data-secname="Products">
     {proj.map((p, i) => (
@@ -43,9 +43,10 @@ const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C1
     ))}
   </section>
 
+  {/* VERIFY: draft pull-quote for Thev to approve */}
   <Words sec="how" name="How I work"
-    text="I don’t keep code I <em>couldn’t rewrite</em> myself."
-    side="I use AI heavily when I build. The rule is that nothing ships if I couldn’t rewrite, extend, and debug it on my own." />
+    text="Most of what I know, I learned by <em>getting it wrong first</em>."
+    side="I start building before I feel ready, break things, and fix them. It’s slower than it looks from the outside, but it sticks." />
 
   {gh && gh.repos.length > 0 && (
     <section data-sec="code" data-secname="In the open">
@@ -66,7 +67,7 @@ const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C1
   )}
 
   <section data-sec="archive" data-secname="Archive">
-    <Chapter num="arch" title="Smaller things" sub="The ones I’d still defend." />
+    <Chapter num="arch" title="Smaller things" sub="Experiments and earlier projects." />
     <div class="res">
       {exps.map((e, i) => {
         const Tag = e.data.href ? 'a' : 'div';

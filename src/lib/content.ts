@@ -1,6 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { appstore, notionBooks, notionCourses } from './live';
-import { PROFILES } from '../data/profiles';
+import { appstore, notionBooks, photos } from './live';
 
 export const fmtDate = (d: Date, opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }) =>
   d.toLocaleDateString('en-CA', { timeZone: 'UTC', ...opts });
@@ -25,14 +24,17 @@ export async function logEntries(): Promise<LogEntry[]> {
   return out.sort((a, b) => +b.data.date - +a.data.date);
 }
 
-export async function notes() {
-  return (await getCollection('notes', (n) => import.meta.env.DEV || !n.data.draft)).sort(
+export async function lessons() {
+  return (await getCollection('lessons', (n) => import.meta.env.DEV || !n.data.draft)).sort(
     (a, b) => +b.data.date - +a.data.date,
   );
 }
 
 const VERDICT_ORDER = ['Reading', 'Worth it', 'Mixed', 'Skim it', 'Shelved'];
+// Skip the lookup (and Astro's empty-collection warning) until the first book file exists.
+const HAS_BOOKS = Object.keys(import.meta.glob('../content/books/*.md')).length > 0;
 export async function books() {
+  if (!HAS_BOOKS) return [];
   return (await getCollection('books')).sort(
     (a, b) =>
       VERDICT_ORDER.indexOf(a.data.verdict) - VERDICT_ORDER.indexOf(b.data.verdict) ||
@@ -40,12 +42,9 @@ export async function books() {
   );
 }
 
+/** Completed courses and certificates, newest first. */
 export async function courses() {
-  return (await getCollection('courses')).sort((a, b) => +b.data.added - +a.data.added);
-}
-
-export async function templates() {
-  return (await getCollection('templates')).sort((a, b) => +b.data.added - +a.data.added);
+  return (await getCollection('courses')).sort((a, b) => +b.data.date - +a.data.date);
 }
 
 export async function skills() {
@@ -77,46 +76,11 @@ export async function allBooks(): Promise<Book[]> {
   return out.sort((a, b) => rank(a.verdict) - rank(b.verdict) || a.title.localeCompare(b.title));
 }
 
-/* ---------- Courses: local markdown + Notion course summaries ---------- */
-export type Course = { id: string; code: string; name: string; blurb: string; pages?: number; pdf?: string; href?: string; icon?: string | null; added: Date; source: 'local' | 'notion' };
-export async function allCourses(): Promise<Course[]> {
-  const [local, remote] = await Promise.all([courses(), notionCourses()]);
-  const out: Course[] = local.map((c) => ({ id: c.id, ...c.data, source: 'local' as const }));
-  for (const r of remote ?? []) {
-    const m = r.title.match(/^([A-Z]{2,6}\s?\d{3}[A-Z]?)\s*[-—:–]?\s*(.*)$/);
-    const code = m ? m[1] : r.title, name = m ? m[2] : '';
-    const existing = out.find((c) => norm(c.code) === norm(code));
-    if (existing) { existing.href ??= r.url; continue; }
-    out.push({ id: 'n-' + norm(r.title).slice(0, 40), code, name, blurb: r.blurb, href: r.url, icon: r.icon, added: new Date(r.updated), source: 'notion' });
-  }
-  // Anything without a PDF or its own page points at the public Notion index.
-  out.forEach((c) => { if (!c.pdf) c.href ??= PROFILES.notion.courses.url; });
-  return out.sort((a, b) => +b.added - +a.added);
-}
-
 export async function libraryCounts() {
-  const [b, c, t] = await Promise.all([allBooks(), allCourses(), getCollection('templates')]);
-  return {
-    books: b.length,
-    reading: b.filter((x) => x.verdict === 'Reading').length,
-    courses: c.length,
-    templates: t.length,
-    total: b.length + c.length + t.length,
-  };
+  const [b, c, p] = await Promise.all([allBooks(), courses(), photos()]);
+  const books = b.length, crs = c.length, pics = p?.photos.length ?? 0;
+  return { books, reading: b.filter((x) => x.verdict === 'Reading').length, courses: crs, photos: pics, total: books + crs + pics };
 }
-
-/** Everything the library "Latest" list and the palette can point at. */
-export async function libraryLatest(limit = 4) {
-  const [c, t] = await Promise.all([allCourses(), templates()]);
-  const items = [
-    ...c.map((x) => ({ date: x.added, title: x.name ? `${x.code} — ${x.name}` : x.code, text: x.blurb, type: 'Course', href: `/library/courses#${x.id}` })),
-    ...t.map((x) => ({ date: x.data.added, title: x.data.title, text: x.data.blurb, type: 'Template', href: templateHref(x) })),
-  ];
-  return items.sort((a, b) => +b.date - +a.date).slice(0, limit);
-}
-
-export const templateHref = (t: CollectionEntry<'templates'>) => t.data.href ?? `/library/templates/${t.id}`;
-export const templateIsExternal = (t: CollectionEntry<'templates'>) => !!t.data.href;
 
 /** Deterministic hash → used for generated covers and field positions. */
 export function hash(s: string) {

@@ -1,14 +1,70 @@
 {
   "cleanUrls": true,
   "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/work.html", "destination": "/work", "permanent": true },
-    { "source": "/work-aperis.html", "destination": "/work/aperis", "permanent": true },
-    { "source": "/about.html", "destination": "/about", "permanent": true },
-    { "source": "/library.html", "destination": "/library", "permanent": true },
-    { "source": "/library-books.html", "destination": "/library/books", "permanent": true },
-    { "source": "/library-courses.html", "destination": "/library/courses", "permanent": true },
-    { "source": "/library-templates.html", "destination": "/library/templates", "permanent": true },
-    { "source": "/cv.html", "destination": "/cv", "permanent": true }
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/work.html",
+      "destination": "/work",
+      "permanent": true
+    },
+    {
+      "source": "/work-aperis.html",
+      "destination": "/work/aperis",
+      "permanent": true
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/library.html",
+      "destination": "/library",
+      "permanent": true
+    },
+    {
+      "source": "/library-books.html",
+      "destination": "/library/books",
+      "permanent": true
+    },
+    {
+      "source": "/library-courses.html",
+      "destination": "/library/courses",
+      "permanent": true
+    },
+    {
+      "source": "/library-templates.html",
+      "destination": "/library/templates",
+      "permanent": true
+    },
+    {
+      "source": "/cv.html",
+      "destination": "/cv",
+      "permanent": true
+    },
+    {
+      "source": "/notes",
+      "destination": "/lessons",
+      "permanent": true
+    },
+    {
+      "source": "/notes/:path*",
+      "destination": "/lessons",
+      "permanent": true
+    },
+    {
+      "source": "/library/templates/:path*",
+      "destination": "/library",
+      "permanent": true
+    },
+    {
+      "source": "/library/templates",
+      "destination": "/library",
+      "permanent": true
+    }
   ]
 }

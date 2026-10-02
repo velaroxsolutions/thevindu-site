@@ -23,8 +23,8 @@
    ]
   },
   {
-   "name": "snake-ppo",
-   "description": "MaskablePPO agent on a custom Gymnasium environment.",
+   "name": "tictactoe-rl",
+   "description": "MaskablePPO agent trained through self-play. FAKE FIXTURE.",
    "language": "Python",
    "stars": 2,
    "forks": 0,
@@ -34,9 +34,9 @@
    "topics": []
   },
   {
-   "name": "chess-engine",
-   "description": "Minimax with alpha-beta pruning.",
-   "language": "Python",
+   "name": "reflct",
+   "description": "A journal that remembers. FAKE FIXTURE.",
+   "language": "TypeScript",
    "stars": 1,
    "forks": 0,
    "pushed": "2025-11-12T10:00:00Z",

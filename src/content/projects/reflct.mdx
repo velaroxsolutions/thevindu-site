@@ -4,17 +4,17 @@ order: 2
 tagline: A journal that remembers.
 lede: Most journals forget you the moment you close them. This one <em>keeps the thread</em>.
 summary: An AI journaling companion that carries context between entries, so what comes back is about your life.
-status: In dev
+status: On GitHub
 accent: study
-stack: [React, Claude SDK, FastAPI]
-started: "2025"
+stack: [React, FastAPI, Claude API]
+started: "2026"
 role: The memory layer is the hard part and the whole point.
+# repo: link is picked up automatically from GitHub if a repo named `reflct` exists — or set it here.
 stats:
-  - { value: "1", label: Memory layer, rewritten twice }
-  - { value: "∞", label: Entries it should remember }
+  - { value: "1", label: Memory layer }
   - { value: "1", label: Person building it }
-  - { value: "’25", label: Started }
-shots: [Entry, Recall, Threads]
+  - { value: "’26", label: Built }
+# VERIFY tradeoffs and arch below
 tradeoffs:
   - decision: Summarised memory, not raw history
     cost: Fits in the context window and stays cheap. But every summary throws something away, and you don’t get to choose what.
@@ -50,6 +50,4 @@ can reference the thing you wrote about three weeks ago, because it’s still ho
 
 <Tradeoffs items={frontmatter.tradeoffs} />
 
-## Next
-
-Rewriting the memory so entries carry context across months, not days.
+{/* TODO(Thev): "## Next" */}

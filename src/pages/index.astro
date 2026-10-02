@@ -9,11 +9,12 @@ import { SITE } from '../data/site';
 import { NOW } from '../data/now';
 import Heatmap from '../components/Heatmap.astro';
 import ChessCell from '../components/ChessCell.astro';
-import { projects, logEntries, libraryCounts, notes, allBooks, fmtDate } from '../lib/content';
+import { projects, logEntries, libraryCounts, lessons, allBooks, fmtDate } from '../lib/content';
+import { TERM } from '../data/term';
 import { github, chess, duolingo, appstore } from '../lib/live';
 import { PROFILES } from '../data/profiles';
 
-const [proj, log, counts, ns, bs, gh, ch, duo, app] = await Promise.all([projects(), logEntries(), libraryCounts(), notes(), allBooks(), github(), chess(), duolingo(), appstore()]);
+const [proj, log, counts, ns, bs, gh, ch, duo, app] = await Promise.all([projects(), logEntries(), libraryCounts(), lessons(), allBooks(), github(), chess(), duolingo(), appstore()]);
 const shipped = log.find((l) => l.data.kind === 'Shipped');
 const current = proj.find((p) => p.data.hot) ?? proj[0];
 const reading = bs.find((b) => b.verdict === 'Reading');
@@ -37,8 +38,8 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
       </h1>
       <p class="status"><span class="live"><i class="dot"></i>Now</span><span>Building <a href={`/work/${current.id}`}>{current.data.title}</a>.</span></p>
       <p class="intro">
-        I build software under <a href="/work">Velarox</a> and I’m learning how machines represent meaning.
-        Everything I pick up ends up in the <a href="/library">library</a>, free.
+        I build things with software and AI under <a href="/work">Velarox</a>, mostly to solve problems I or the people around me actually have.
+        Whatever I figure out along the way ends up in the <a href="/library">library</a>, free.
       </p>
       <div class="quick">
         {SITE.socials.map((s) => <a class="btn mag" href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}
@@ -51,9 +52,10 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
 
   <Marquee />
 
+  {/* VERIFY: draft pull-quote for Thev to approve */}
   <Words sec="belief" name="Belief"
-    text="The bottleneck is <em>almost never</em> the code."
-    side="Every time I’ve been stuck, the real problem was that I hadn’t talked to anyone who’d use the thing. Knowing that hasn’t fixed it. It has made it shorter." />
+    text="If I learned it the hard way, <em>you shouldn’t have to</em>."
+    side="Most of what I know came from trial and error. Writing it down and giving it away is the least I can do with the errors." />
 
   <section id="now" data-sec="now" data-secname="Now">
     <Chapter num="01" title="State of things" sub="Updated when it changes, not on a schedule." more={{ href: '/log', label: 'Full log' }} />
@@ -97,15 +99,23 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
           <small>{duo.xp.toLocaleString('en-CA')} XP{french ? ` · ${french.xp.toLocaleString('en-CA')} in French` : ''}</small>
         </a>
       )}
-      <a class="cell c-read" href={reading?.href ?? (reading ? `/library/books#${reading.id}` : '/library/books')} data-anim style="--i:6" data-lane-item="study">
-        <span class="lbl"><span>Reading</span><span>{counts.reading} open</span></span>
-        <p class="cell-lead">{reading?.title ?? NOW.panel.reading}</p>
-        <small>{reading?.author ? `${reading.author} · ` : ''}{NOW.panel.reading}</small>
-      </a>
-      <a class="cell c-lib" href="/library" data-anim style="--i:7">
+      {reading && (
+        <a class="cell c-read" href={reading.href ?? `/library/books#${reading.id}`} data-anim style="--i:6" data-lane-item="study">
+          <span class="lbl"><span>Reading</span><span>{counts.reading} open</span></span>
+          <p class="cell-lead">{reading.title}</p>
+          <small>{reading.author}</small>
+        </a>
+      )}
+      {TERM.courses.length > 0 && (
+        <a class="cell c-term" href="/about#term" data-anim style="--i:6" data-lane-item="study">
+          <span class="lbl"><span>This term</span><span>{TERM.label}</span></span>
+          <p class="cell-lead">{TERM.courses.length} courses</p>
+          <small>{TERM.courses.map((c) => c.code).join(' · ')}</small>
+        </a>
+      )}      <a class="cell c-lib" href="/library" data-anim style="--i:7">
         <span class="lbl"><span>Library</span><span>Free</span></span>
         <span class="cell-big"><span class="count" data-to={counts.total}>0</span></span>
-        <small>{counts.templates} templates · {counts.courses} courses · {counts.books} books</small>
+        <small>{[counts.books && `${counts.books} books`, counts.courses && `${counts.courses} courses`, counts.photos && `${counts.photos} photos`].filter(Boolean).join(' · ') || 'Being put together'}</small>
       </a>
       {app && (
         <a class="cell c-app" href={app.url} target="_blank" rel="noopener" data-anim style="--i:8" data-lane-item="build">
@@ -119,7 +129,7 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
   </section>
 
   <section data-sec="work" data-secname="Work">
-    <Chapter num="02" title="Building" sub="Three products under Velarox. All of them, alone." more={{ href: '/work', label: 'All work' }} />
+    <Chapter num="02" title="Building" sub="Things I’ve built under Velarox, mostly on my own." more={{ href: '/work', label: 'All work' }} />
     <div class="rows">
       {proj.map((p, i) => (
         <a class={`prow acc-${p.data.accent}`} href={`/work/${p.id}`} data-lane-item="build" data-anim style={`--i:${i}`}
@@ -141,31 +151,33 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
     <SkillsExplorer />
   </section>
 
-  <section data-sec="writing" data-secname="Writing">
-    <Chapter num="04" title="Field notes" sub="What I’m reading and working out, written down." more={{ href: '/notes', label: 'All notes' }} />
-    <div class="nlist">
-      {ns.slice(0, 3).map((n, i) => (
-        <a class="nitem" href={`/notes/${n.id}`} data-lane-item={n.data.lane} data-anim style={`--i:${i}`}>
-          <time datetime={n.data.date.toISOString()}>{fmtDate(n.data.date)}</time>
-          <div><h3>{n.data.title}</h3><p>{n.data.dek}</p></div>
-          <span class="dl">Read →</span>
-        </a>
-      ))}
-    </div>
-  </section>
+  {ns.length > 0 && (
+    <section data-sec="lessons" data-secname="Lessons">
+      <Chapter num="04" title="Lessons learnt" sub="Short and honest. The hard way, written down." more={{ href: '/lessons', label: 'All lessons' }} />
+      <ol class="lessons">
+        {ns.slice(0, 3).map((l, i) => (
+          <li class="lesson" data-lane-item={l.data.lane} data-anim style={`--i:${i}`}>
+            <span class="lesson-n">{String(ns.length - i).padStart(2, '0')}</span>
+            <div><h3 class="lesson-t"><a href={`/lessons#${l.id}`}>{l.data.title}</a></h3><p class="lesson-c">{l.data.context}</p></div>
+            <span class="lesson-m"><span class={`kind ${l.data.lane === 'build' ? 'Shipped' : 'Learned'}`}>{l.data.from ?? 'Life'}</span></span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
 
   <section data-sec="library" data-secname="Library">
-    <Chapter num="05" title="Library" sub="Everything I learn, given away. No email gate." more={{ href: '/library', label: 'Open the library' }} />
+    <Chapter num="05" title="Library" sub="What I learn, given away. No email gate." more={{ href: '/library', label: 'Open the library' }} />
     <div class="grid3">
-      <a class="card ret" href="/library/templates" data-lane-item="build" data-anim>
-        <span class="arrow">↗</span><span class="kcount"><span class="count" data-to={counts.templates}>0</span> templates</span>
-        <h3>Templates</h3><p>Starting points for software, AI, and content work.</p></a>
+      <a class="card ret" href="/library/books" data-lane-item="study" data-anim>
+        <span class="arrow">↗</span><span class="kcount">{counts.books ? <><span class="count" data-to={counts.books}>0</span> books</> : 'Coming soon'}</span>
+        <h3>Books</h3><p>What I read and the one line I kept from each.</p></a>
       <a class="card ret" href="/library/courses" data-lane-item="study" data-anim style="--i:1">
-        <span class="arrow">↗</span><span class="kcount"><span class="count" data-to={counts.courses}>0</span> courses</span>
-        <h3>Course notes</h3><p>Lectures condensed into sheets I study from.</p></a>
-      <a class="card ret" href="/library/books" data-lane-item="study" data-anim style="--i:2">
-        <span class="arrow">↗</span><span class="kcount"><span class="count" data-to={counts.books}>0</span> books</span>
-        <h3>Books</h3><p>What I read and whether it was worth it.</p></a>
+        <span class="arrow">↗</span><span class="kcount"><span class="count" data-to={counts.courses}>0</span> completed</span>
+        <h3>Courses</h3><p>Courses and certificates I’ve finished.</p></a>
+      <a class="card ret" href="/photos" data-lane-item="build" data-anim style="--i:2">
+        <span class="arrow">↗</span><span class="kcount">{counts.photos ? <><span class="count" data-to={counts.photos}>0</span> photos</> : `${PROFILES.pexels.views} views`}</span>
+        <h3>Free photos</h3><p>Mostly nature. Free for anyone to use.</p></a>
     </div>
   </section>
 </Base>
