@@ -13,7 +13,7 @@ const env = (k: string) => process.env[k] ?? (import.meta as any).env?.[k];
 
 export const status: Record<string, 'live' | 'snapshot' | 'fixture' | 'missing'> = {};
 
-async function request(url: string, init: RequestInit = {}, timeout = 8000) {
+export async function request(url: string, init: RequestInit = {}, timeout = 8000) {
   for (let attempt = 0; attempt < 2; attempt++) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeout);

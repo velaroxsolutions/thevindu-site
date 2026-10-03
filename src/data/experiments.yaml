@@ -1,5 +1,6 @@
-- { id: athenyx, title: Athenyx, text: "Study platform with auto-generated flashcards, calendar-synced to-dos, and an AI assistant. Also tried a BERT pipeline for reading syllabi.", kind: Web + AI, year: 2025, href: "https://athenyx.velaroxsolutions.com" }
-- { id: rl-tictactoe, title: Tic-tac-toe RL agent, text: "Custom Gymnasium environment, MaskablePPO, 100k timesteps of self-play. Never loses.", kind: RL, year: 2026 }
+- { id: reflct, title: Reflct, text: "A personal project: an AI journal that carries context between entries. React, FastAPI, the Claude API.", kind: AI, year: 2026, href: "/work/reflct" }
+- { id: zentro, title: Zentro, text: "A completed Velarox app. More on velarox.app.", kind: App, href: "https://www.velarox.app/apps" } # TODO(Thev): one or two sentences + year
+- { id: lingulex, title: Lingulex, text: "A completed Velarox app. More on velarox.app.", kind: App, href: "https://www.velarox.app/apps" } # TODO(Thev): one or two sentences + year
+- { id: rl-tictactoe, title: Tic-tac-toe RL agent, text: "Custom Gymnasium environment, MaskablePPO, 100k timesteps of self-play. Never loses. React on Vercel, FastAPI on Render.", kind: RL, year: 2026 }
 - { id: feps, title: FEPS, text: "Two assistive accessories for people with limited hand mobility. First-year design project.", kind: Hardware, year: 2024 }
-- { id: mece-open-house, title: MEC E Open House 2026, text: "Contributed the map routing, schedule page, searchable FAQ, and passport stickers with collect animations.", kind: Team, year: 2026, href: "https://github.com/aniketh1409/MEC-E-Open-House-2026" }
 - { id: this-site, title: This website, text: "Astro, content as data, one set of design tokens, hand-written motion.", kind: Web, year: 2026 }

@@ -1,166 +1,125 @@
-# group: sw = Software, ai = AI/ML, to = Tools, co = Content, de = Design
-# level: rough self-rating 1–12 // VERIFY — adjust these. Rows marked VERIFY were added beyond the brief's table.
+# Current focus — shown as batteries. Older skills live in src/data/also.ts.
+# group: sw = Full-stack, ai = AI engineering, to = Ship & deploy, co = Product & growth, de = Design
+# level: rough self-rating 1–12 // VERIFY — adjust these
 - id: python
   name: "Python"
   group: sw
   level: 10
   years: "3 yrs"
-  where: "Aperis \u00b7 RL agent \u00b7 Reflct \u00b7 Cadence"
-  note: "Main language, used for backends, data, and every AI experiment."
+  where: "Aperis \u00b7 Cadence \u00b7 Reflct \u00b7 research"
+  note: "Primary language: backends, data, and every AI experiment."
+- id: react-native
+  name: "React Native / Expo"
+  group: sw
+  level: 9
+  years: "1 yr"
+  where: "Aperis"
+  note: "The whole Aperis app \u2014 live on the App Store, in closed testing on Google Play."
 - id: fastapi
   name: "FastAPI"
   group: sw
   level: 9
   years: "2 yrs"
-  where: "Aperis \u00b7 Reflct \u00b7 Cadence \u00b7 RL agent"
+  where: "Aperis \u00b7 Cadence \u00b7 Reflct"
   note: "Every backend I've shipped."
-- id: react
-  name: "React"
+- id: react-next
+  name: "React / Next.js"
   group: sw
-  level: 9
+  level: 8
   years: "2 yrs"
-  where: "Athenyx \u00b7 Reflct \u00b7 Cadence \u00b7 RL agent"
-  note: "Most of my frontends."
-- id: react-native
-  name: "React Native / Expo"
-  group: sw
-  level: 8
-  years: "1 yr"
-  where: "Aperis"
-  note: "The whole Aperis app, shipped through EAS to the App Store and Google Play testing."
-- id: javascript
-  name: "JavaScript"
-  group: sw
-  level: 8
-  years: "3 yrs"
-  where: "everywhere"
-  note: "The default for anything on the web."
+  where: "Athenyx \u00b7 Cadence \u00b7 Reflct"
+  note: "Most of my web frontends; Next.js for Athenyx."
 - id: firebase
-  name: "Firebase / Firestore"
+  name: "Firebase (Auth + Firestore)"
   group: sw
   level: 8
   years: "2 yrs"
   where: "Aperis \u00b7 Athenyx"
   note: "Auth, data modelling, and security rules."
-- id: nextjs
-  name: "Next.js"
-  group: sw
-  level: 7
-  years: "1 yr"
-  where: "Athenyx"
-  note: "Athenyx's frontend and routing."
-- id: html-css  # VERIFY level
-  name: "HTML / CSS"
+- id: web
+  name: "HTML / CSS / JavaScript"
   group: sw
   level: 8
   years: "3 yrs"
   where: "every frontend \u00b7 this site"
-  note: "Layouts, design tokens, and motion by hand."
-- id: nodejs  # VERIFY level
-  name: "Node.js"
+  note: "Including a custom Python build system for an earlier version of this site."
+- id: typescript  # VERIFY level
+  name: "TypeScript"
   group: sw
-  level: 6
+  level: 7
   years: "1 yr"
-  where: "Full-stack bootcamp \u00b7 tooling"
-  note: "Servers and build scripts."
-- id: sql
-  name: "SQL"
-  group: sw
-  level: 5
-  years: "1 yr"
-  where: "coursework"
-  note: "Getting better at it."
-- id: claude-api
-  name: "Claude / Anthropic API"
-  group: ai
+  where: "Aperis \u00b7 this site"
+  note: "Typed frontends, once the untyped version got hard to change."
+- id: release
+  name: "Deployment & release"
+  group: to
   level: 8
   years: "1 yr"
-  where: "Reflct \u00b7 daily work"
-  note: "Prompt design, context, and memory across sessions."
-- id: data
-  name: "NumPy / Pandas / scikit-learn"
-  group: ai
-  level: 7
-  years: "2 yrs"
-  where: "projects \u00b7 coursework"
-  note: "The default tools for any data question."
-- id: rl
-  name: "RL (SB3 \u00b7 Gymnasium)"
-  group: ai
-  level: 6
-  years: "1 yr"
-  where: "RL agent"
-  note: "Built an environment and trained a MaskablePPO agent through self-play."
-- id: nlp
-  name: "NLP / BERT"
-  group: ai
-  level: 5
-  years: "1 yr"
-  where: "Athenyx"
-  note: "Tried named-entity extraction on course syllabi."
+  where: "Aperis \u00b7 Cadence"
+  note: "Railway, EAS builds, the Play Store pipeline, and more Gradle debugging than I'd like."
 - id: git
-  name: "Git"
+  name: "Git & GitHub"
   group: to
   level: 8
   years: "3 yrs"
   where: "everything"
-  note: "Branches, history, and cleaning up after myself."
-- id: vercel-render  # VERIFY level
-  name: "Vercel / Render"
-  group: to
-  level: 7
-  years: "2 yrs"
-  where: "RL agent \u00b7 Athenyx"
-  note: "Frontends on Vercel, FastAPI backends on Render."
-- id: eas  # VERIFY level
-  name: "EAS CLI"
-  group: to
-  level: 7
-  years: "1 yr"
-  where: "Aperis"
-  note: "Builds and submissions for iOS and Android."
-- id: android-studio  # VERIFY level
-  name: "Android Studio"
-  group: to
-  level: 5
-  years: "1 yr"
-  where: "Aperis"
-  note: "Emulators and Android builds."
-- id: postman  # VERIFY level
-  name: "Postman"
-  group: to
-  level: 6
-  years: "2 yrs"
-  where: "every API"
-  note: "Poking at endpoints before the frontend exists."
-- id: tauri  # VERIFY level
+  note: "Including cleaning sensitive files out of history, carefully."
+- id: tauri
   name: "Tauri"
   group: to
   level: 5
   years: "1 yr"
   where: "Cadence"
-  note: "The Cadence desktop build."
-- id: short-form
-  name: "Short-form video"
+  note: "The Cadence desktop app."
+- id: llm-apps
+  name: "LLM apps (Anthropic API)"
+  group: ai
+  level: 8
+  years: "1 yr"
+  where: "Reflct"
+  note: "Contextual memory across sessions, prompt design, and context management."
+- id: nlp-ner
+  name: "NLP / NER (BERT)"
+  group: ai
+  level: 6
+  years: "1 yr"
+  where: "Athenyx"
+  note: "Fine-tuned BERT on a 121-label schema to pull structure out of course syllabi."
+- id: pytorch  # VERIFY level
+  name: "PyTorch"
+  group: ai
+  level: 6
+  years: "1 yr"
+  where: "research \u00b7 coursework"
+  note: "Training loops and reading other people's model code."
+- id: embeddings
+  name: "Multimodal embeddings"
+  group: ai
+  level: 5
+  years: "new"
+  where: "Fyshe Lab research"
+  note: "Why image and text embeddings drift apart in contrastive models like CLIP."
+- id: growth
+  name: "Short-form content & growth"
   group: co
   level: 8
   years: "2 yrs"
-  where: "Overhill Games \u00b7 Aperis"
-  note: "Campaigns that reached 100K+ views."
-- id: campaigns
-  name: "Social campaigns"
+  where: "Aperis \u00b7 Overhill Games"
+  note: "Reels, campaigns, and waitlist conversion. One campaign passed 100K views."
+- id: curriculum
+  name: "Curriculum & educational content"
+  group: co
+  level: 6
+  years: "new"
+  where: "UAlberta internship"
+  note: "Building new approaches to how course material is taught."
+- id: media
+  name: "Photo & video editing"
   group: co
   level: 7
-  years: "1 yr"
-  where: "Overhill Games"
-  note: "Crowdfunding launch: 300+ wishlists."
-- id: graphics  # VERIFY level
-  name: "Graphics"
-  group: co
-  level: 7
-  years: "2 yrs"
-  where: "Overhill Games \u00b7 Aperis"
-  note: "Posts, launch art, and everything in between."
+  years: "4 yrs"
+  where: "Pexels \u00b7 Aperis"
+  note: "72.5K+ views on Pexels; most of the Aperis content."
 - id: figma
   name: "Figma"
   group: de
@@ -168,31 +127,3 @@
   years: "2 yrs"
   where: "Aperis \u00b7 Cadence"
   note: "Designing screens before building them."
-- id: photography
-  name: "Photography"
-  group: de
-  level: 7
-  years: "4 yrs"
-  where: "Pexels \u00b7 Unsplash"
-  note: "Nature, 72.5K+ views."
-- id: illustrator
-  name: "Illustrator"
-  group: de
-  level: 5
-  years: "2 yrs"
-  where: "graphics"
-  note: "Vector work and brand pieces."
-- id: blender  # VERIFY level
-  name: "Blender"
-  group: de
-  level: 4
-  years: "1 yr"
-  where: "3D"
-  note: "Some 3D, mostly for fun."
-- id: canva  # VERIFY level
-  name: "Canva"
-  group: de
-  level: 7
-  years: "3 yrs"
-  where: "Overhill Games \u00b7 quick graphics"
-  note: "When it needs to be done in ten minutes."

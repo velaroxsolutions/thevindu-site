@@ -10,6 +10,6 @@ export const PHOTOS: { label: string; cap: string; meta: string; src?: string }[
 
 export const HOBBIES = [
   { k: 'Photography', title: 'Mostly nature', text: '72.5K+ views on Pexels and a few features. I like catching places when nobody’s around.' }, // VERIFY last sentence
-  { k: 'Chess · 1450+', title: 'For fun', text: 'Played since I was a kid. Won a school-team national title once (Division B), and still enjoy a slow game.' },
+  { k: 'Chess · FIDE 1456', title: 'For fun', text: 'FIDE-rated (1456 standard, 1515 blitz). Runner-up with the U-15 All Island team, and a school-team title in Division B. Still enjoy a slow game.' },
   { k: 'French', title: 'Beginner', text: 'Learning on Duolingo, one lesson at a time.' },
 ];

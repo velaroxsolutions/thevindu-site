@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { appstore, notionBooks, photos } from './live';
+import { appstore, notionBooks, photos, notionCourseIndex, notionHTML, normId } from './live';
+import { PROFILES } from '../data/profiles';
 import { localPhotos } from './localPhotos';
 
 export const fmtDate = (d: Date, opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }) =>
@@ -27,11 +28,11 @@ export async function logEntries(): Promise<LogEntry[]> {
 
 export async function lessons() {
   return (await getCollection('lessons', (n) => import.meta.env.DEV || !n.data.draft)).sort(
-    (a, b) => +b.data.date - +a.data.date,
+    (a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title),
   );
 }
 
-const VERDICT_ORDER = ['Reading', 'Worth it', 'Mixed', 'Skim it', 'Shelved'];
+const VERDICT_ORDER = ['Reading', 'Worth it', 'Read', 'Mixed', 'Skim it', 'Shelved', 'Want to read'];
 // Skip the lookup (and Astro's empty-collection warning) until the first book file exists.
 const HAS_BOOKS = Object.keys(import.meta.glob('../content/books/*.md')).length > 0;
 export async function books() {
@@ -61,13 +62,13 @@ export async function skills() {
 }
 
 /* ---------- Books: local markdown + the Notion reading database ---------- */
-export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; href?: string; featured: boolean; source: 'local' | 'notion' };
+export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; href?: string; summary?: string; notion?: string; featured: boolean; source: 'local' | 'notion' };
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 const READING = /reading|progress|current|started|now/i;
 
 export async function allBooks(): Promise<Book[]> {
   const [local, remote] = await Promise.all([books(), notionBooks()]);
-  const out: Book[] = local.map((b) => ({ id: b.id, ...b.data, source: 'local' as const }));
+  const out: Book[] = local.map((b) => ({ id: b.id, ...b.data, href: b.data.summary, source: 'local' as const }));
   const seen = new Set(out.map((b) => norm(b.title)));
   for (const r of remote ?? []) {
     const key = norm(r.title);
@@ -80,7 +81,7 @@ export async function allBooks(): Promise<Book[]> {
       verdict: READING.test(r.status) ? 'Reading' : r.status || 'Read', take: r.take || undefined, cover: r.cover ?? undefined, href: r.url,
     });
   }
-  const order = ['Reading', 'Worth it', 'Mixed', 'Skim it', 'Shelved'];
+  const order = VERDICT_ORDER;
   const rank = (v: string) => (order.indexOf(v) + 1 || order.length + 1);
   return out.sort((a, b) => rank(a.verdict) - rank(b.verdict) || a.title.localeCompare(b.title));
 }
@@ -100,3 +101,36 @@ export function hash(s: string) {
   }
   return h >>> 0;
 }
+
+/* ---------- Notes: my Notion summaries, rendered on this site ---------- */
+const words = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length > 2 && !['the', 'and', 'for', 'with', 'your', 'complete'].includes(w));
+const similar = (a: string, b: string) => {
+  const A = new Set(words(a)), B = words(b);
+  if (!A.size || !B.length) return 0;
+  return B.filter((w) => A.has(w)).length / Math.max(A.size, B.length);
+};
+
+/** courseId → Notion page id, by explicit `notion:` or best title match in the Course summaries index. */
+export async function courseNotionIds() {
+  const [cs, index] = await Promise.all([courses(), notionCourseIndex()]);
+  const map = new Map<string, string>();
+  for (const c of cs) {
+    if (c.data.notion) { map.set(c.id, normId(c.data.notion)); continue; }
+    const best = (index ?? []).map((e) => ({ e, s: similar(c.data.title, e.title) })).sort((a, b) => b.s - a.s)[0];
+    if (best && best.s >= 0.5) map.set(c.id, best.e.id);
+  }
+  return map;
+}
+
+export type NoteRef = { slug: string; kind: 'course' | 'book'; title: string; notionId: string; back: string };
+/** Every book/course whose Notion summary can be rendered on-site. */
+export async function noteRefs(): Promise<NoteRef[]> {
+  const [bs, cs, ids] = await Promise.all([books(), courses(), courseNotionIds()]);
+  const refs: NoteRef[] = [
+    ...bs.filter((b) => b.data.notion).map((b) => ({ slug: `book-${b.id}`, kind: 'book' as const, title: b.data.title, notionId: normId(b.data.notion!), back: `/library/books#${b.id}` })),
+    ...cs.filter((c) => ids.has(c.id)).map((c) => ({ slug: `course-${c.id}`, kind: 'course' as const, title: c.data.title, notionId: ids.get(c.id)!, back: `/library/courses#${c.id}` })),
+  ];
+  const ok = await Promise.all(refs.map(async (r) => !!(await notionHTML(r.notionId))));
+  return refs.filter((_, i) => ok[i]);
+}
+export const notionPublicUrl = (id: string) => `${PROFILES.notion.site}/${normId(id)}`;

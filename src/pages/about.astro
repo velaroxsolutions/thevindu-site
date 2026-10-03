@@ -42,7 +42,7 @@ const strip = livePhotos.length
       <div class="res">
         {TERM.courses.map((c, i) => (
           <div class="ritem" data-anim style={`--i:${i}`} data-lane-item="study">
-            <div><h3>{c.code} — {c.name}</h3>{c.take && <p>{c.take}</p>}</div>
+            <div><h3>{[c.code, c.name].filter(Boolean).join(' — ')}</h3>{c.take && <p>{c.take}</p>}</div>
             <span class="rtype">{TERM.label}</span>
           </div>
         ))}

@@ -4,20 +4,22 @@ import PageHead from '../../components/PageHead.astro';
 import Chapter from '../../components/Chapter.astro';
 import { libraryCounts } from '../../lib/content';
 import { PROFILES } from '../../data/profiles';
+import { RESEARCH } from '../../data/research';
 const c = await libraryCounts();
 const shelves = [
   { href: '/library/books', n: c.books, unit: 'books', title: 'Books', text: 'What I read and the one line I kept from each.', lane: 'study' },
   { href: '/library/courses', n: c.courses, unit: 'completed', title: 'Courses', text: 'Courses and certificates I’ve finished, and what they covered.', lane: 'study' },
+  { href: '/library/research', n: RESEARCH.length, unit: 'projects', title: 'Research', text: 'Lab research, and my notes on what makes short-form video work. Free to read.', lane: 'study' },
   { href: '/photos', n: c.photos, unit: 'photos', title: 'Free photos', text: `Mostly nature. Free to use, ${PROFILES.pexels.views} views on Pexels.`, lane: 'build' },
 ];
 ---
-<Base title="Library" description="Books, completed courses, and free-to-use photos. No email gate.">
+<Base title="Library" description="Books, completed courses, research, and free-to-use photos. No email gate.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Library' }]} title="Library"
     lede="What I learn, <em>given away</em>. No email gate, no catch." />
 
   <section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="cats" data-secname="Shelves">
-    <Chapter num="01" title="Three shelves" />
-    <div class="grid3">
+    <Chapter num="01" title="Four shelves" />
+    <div class="grid3 grid4">
       {shelves.map((s, i) => (
         <a class="card shelf ret" href={s.href} data-lane-item={s.lane} data-anim style={`--i:${i}`}>
           <span class="arrow">↗</span>

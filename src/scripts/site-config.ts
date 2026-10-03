@@ -1,2 +1,1 @@
-import { SITE } from '../data/site';
-export const SITE_EMAIL = SITE.email;
+export { EMAIL as SITE_EMAIL } from './email';

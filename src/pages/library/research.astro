@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import Chapter from '../../components/Chapter.astro';
+import { RESEARCH } from '../../data/research';
+const docs = RESEARCH.reduce((a, r) => a + r.docs.length, 0);
+---
+<Base title="Research" description="Research I'm doing and have done — free to read.">
+  <PageHead crumbs={[{ href: '/', label: 'Home' }, { href: '/library', label: 'Library' }, { label: 'Research' }]} title="Research"
+    lede="Questions I’ve gone digging into. <em>Free to read</em>, free to use."
+    meta={[`${RESEARCH.length} projects`, `${docs} documents`, 'No sign-up']} />
+
+  {RESEARCH.map((r, ri) => (
+    <section style={ri === 0 ? 'padding-top:clamp(34px,4.5vw,56px)' : ''} id={r.id} data-sec={r.id} data-secname={ri === 0 ? 'Lab' : 'Social'}>
+      <Chapter num={String(ri + 1).padStart(2, '0')} title={r.title} />
+      <div class="rs-head" data-lane-item={r.lane}>
+        <div>
+          <span class="lbl">{r.kind}</span>
+          <p class="rs-text">{r.text}</p>
+          <div class="quick">{r.links.map((l) => <a class="btn mag" href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>)}</div>
+        </div>
+        <span class={`rs-status ${r.status.startsWith('Ongoing') ? 'on' : ''}`}><i></i>{r.status}</span>
+      </div>
+      {r.docs.length > 0 && (
+        <div class="rs-docs">
+          {r.docs.map((d, i) => (
+            <button class="rs-doc ret" type="button" data-preview={d.preview} data-view={d.view} data-title={d.title} data-anim style={`--i:${i % 3}`}>
+              <span class="rs-pg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="lbl">{d.date} · PDF</span>
+              <h3>{d.title}</h3>
+              <p>{d.text}</p>
+              <span class="dl">Preview →</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </section>
+  ))}
+
+  <div class="lb rs-lb" id="rslb" role="dialog" aria-modal="true" aria-label="Document preview">
+    <button class="lb-x">ESC ×</button>
+    <div class="lb-in rs-in">
+      <div class="rs-frame"><iframe id="rsframe" title="Document preview" loading="lazy"></iframe></div>
+      <div class="lb-cap"><span id="rscap"></span><a class="lbl" id="rsview" target="_blank" rel="noopener">Open in Google Drive ↗</a></div>
+    </div>
+  </div>
+</Base>
+<script>
+  import { $, $$ } from '../../scripts/util';
+  const lb = $('#rslb'), frame = $<HTMLIFrameElement>('#rsframe'), cap = $('#rscap'), view = $<HTMLAnchorElement>('#rsview');
+  let last: HTMLElement | null = null;
+  const close = () => { lb!.classList.remove('show'); frame!.src = 'about:blank'; last?.focus(); };
+  $$('.rs-doc').forEach((b) => b.addEventListener('click', () => {
+    last = b; frame!.src = b.dataset.preview!; cap!.textContent = b.dataset.title!; view!.href = b.dataset.view!;
+    lb!.classList.add('show'); lb!.querySelector<HTMLElement>('.lb-x')!.focus();
+  }));
+  lb?.addEventListener('click', (e) => { const t = e.target as Element; if (t === lb || t.classList.contains('lb-x')) close(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb?.classList.contains('show')) close(); });
+</script>

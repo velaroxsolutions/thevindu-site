@@ -9,7 +9,7 @@ const seen = new Set<string>();
 const list = [...mine, ...(data?.photos ?? [])].filter((p) => !seen.has(p.src) && seen.add(p.src));
 const fmt = (n?: number) => (n == null ? null : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'k' : String(n));
 const meta = [
-  list.length ? `${list.length} photos` : 'Pexels',
+  list.length ? `${list.length} here · 100+ on Pexels` : 'Pexels',
   `${PROFILES.pexels.views} views on Pexels`,
   ...(data?.stats.views ? [`${fmt(data.stats.views)} views`] : []),
   ...(data?.stats.downloads ? [`${fmt(data.stats.downloads)} downloads`] : []),
@@ -35,6 +35,11 @@ const meta = [
             <span class="shot-cap"><span>{p.alt}</span><small>{p.id.startsWith('l-') ? 'Free to use' : p.source}</small></span>
           </button>
         ))}
+        <a class="shot-more" href={PROFILES.pexels.url} target="_blank" rel="noopener">
+          <span class="lbl">Pexels · {PROFILES.pexels.views} views</span>
+          <b>See all 100+ photos</b>
+          <span class="dl">Open on Pexels ↗</span>
+        </a>
       </div>
     ) : (
       <div class="grid3 photo-empty">

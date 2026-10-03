@@ -9,21 +9,27 @@ import { github } from '../../lib/live';
 import { PROFILES } from '../../data/profiles';
 import { fmtDate } from '../../lib/content';
 
-const proj = await projects();
-const exps = (await getCollection('experiments')).sort((a, b) => b.data.year - a.data.year);
-const live = proj.filter((p) => /app store|live|beta/i.test(p.data.status)).length;
+const all = await projects();
+const proj = all.filter((p) => p.data.featured);
+const building = proj.filter((p) => p.data.stage === 'building');
+const shipped = proj.filter((p) => p.data.stage === 'shipped');
+const ventures = await getCollection('ventures');
+const shippedMore = ventures.filter((v) => v.data.stage === 'shipped');
+const next = ventures.filter((v) => v.data.stage === 'next');
+const exps = await getCollection('experiments'); // file order
 const gh = await github();
 const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C12C', Python: '#3A75A8', Astro: '#FF5D01', HTML: '#E34C26', CSS: '#663399', 'Jupyter Notebook': '#DA5B0B', C: '#555', Rust: '#DEA584', Swift: '#F05138' };
 ---
-<Base title="Work" description="Three products under Velarox: Aperis, Reflct, and Cadence.">
+<Base title="Work" description="What I’m building under Velarox: Aperis now, Cadence and Athenyx shipped, SonaScore and Lumo next.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Work' }]} title="Work"
-    lede={`${proj.length === 3 ? 'Three' : proj.length} products under Velarox. Built <em>mostly on my own</em>, to solve problems I actually had.`}
-    meta={[`${proj.length} active`, `${live} shipped`, 'Since 2025']} />
+    lede="Things I’ve built under Velarox, <em>mostly on my own</em>, to solve problems I actually had."
+    meta={[`${building.length} building now`, `${shipped.length + shippedMore.length} shipped`, `${next.length} up next`, 'Since 2025']} />
 
-  <section style="padding-top:0" data-sec="products" data-secname="Products">
-    {proj.map((p, i) => (
+  <section style="padding-top:0" data-sec="building" data-secname="Building now">
+    <Chapter num="01" title="Building now" sub="Aperis is the priority. Everything else waits for it." />
+    {building.map((p, i) => (
       <a class={`feature acc-${p.data.accent} ${i % 2 ? 'flip' : ''}`} href={`/work/${p.id}`} data-lane-item="build">
-        <span class="fnum">{String(i + 1).padStart(2, '0')} — {String(proj.length).padStart(2, '0')}</span>
+        <span class="fnum">{String(i + 1).padStart(2, '0')}</span>
         <div class="fmain">
           <h3 class="rv"><span>{p.data.title}</span></h3>
           <p class="ftag">{p.data.tagline}</p>
@@ -42,6 +48,61 @@ const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C1
       </a>
     ))}
   </section>
+
+  <section data-sec="shipped" data-secname="Shipped">
+    <Chapter num="02" title="Shipped" sub="Finished, and out in the world." />
+    {shipped.map((p, i) => (
+      <a class={`feature acc-${p.data.accent} flip`} href={`/work/${p.id}`} data-lane-item="build">
+        <span class="fnum">{String(i + 1).padStart(2, '0')}</span>
+        <div class="fmain">
+          <h3 class="rv"><span>{p.data.title}</span></h3>
+          <p class="ftag">{p.data.tagline}</p>
+          <p>{p.data.summary}</p>
+          {p.data.role && <p>{p.data.role}</p>}
+          <span class="golink mag">Read the case study <i></i></span>
+          <div class="fmeta">
+            <div><span>Status</span><span style={p.data.hot ? 'color:var(--build)' : ''}>{p.data.status}</span></div>
+            <div><span>Stack</span><span>{p.data.stack.join(' · ')}</span></div>
+            <div><span>Started</span><span>{p.data.started}</span></div>
+          </div>
+        </div>
+        <div class="fvis" data-drift="22">
+          <div class="frame"><div class="fbar"><i></i><i></i><i></i><span>{p.id}.velarox</span></div><b>{p.data.title}</b></div>
+        </div>
+      </a>
+    ))}
+    {shippedMore.length > 0 && (
+      <div class="vgrid">
+        {shippedMore.map((v, i) => {
+          const Tag = v.data.href ? 'a' : 'div';
+          return (
+            <Tag class="vcard ret" href={v.data.href} target={v.data.href?.startsWith('http') ? '_blank' : undefined} rel="noopener" data-anim style={`--i:${i}`} data-lane-item="build">
+              <span class="vstat live-s">{v.data.status}{v.data.when && <em> · {v.data.when}</em>}</span>
+              <h3>{v.data.title}{v.data.href && <span class="arrow"> ↗</span>}</h3>
+              <p>{v.data.text}</p>
+              {v.data.stack.length > 0 && <div class="chips">{v.data.stack.map((t) => <span class="chip">{t}</span>)}</div>}
+            </Tag>
+          );
+        })}
+      </div>
+    )}
+  </section>
+
+  {next.length > 0 && (
+    <section data-sec="next" data-secname="Up next">
+      <Chapter num="03" title="Up next" sub="In creation. They get my full attention once Aperis is done." />
+      <div class="vgrid next">
+        {next.map((v, i) => (
+          <div class="vcard" data-anim style={`--i:${i}`} data-lane-item="build">
+            <span class="vstat">{v.data.status}</span>
+            <h3>{v.data.title}</h3>
+            <p>{v.data.text}</p>
+            <span class="vbar" aria-hidden="true"><i></i></span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
 
   {/* VERIFY: draft pull-quote for Thev to approve */}
   <Words sec="how" name="How I work"
@@ -74,7 +135,7 @@ const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C1
         return (
           <Tag class="ritem" href={e.data.href} data-anim style={`--i:${i}`}>
             <div><h3>{e.data.title}</h3><p>{e.data.text}</p></div>
-            <span class="rtype">{e.data.kind}</span><span class="dl">{e.data.year}</span>
+            <span class="rtype">{e.data.kind}</span><span class="dl">{e.data.year ?? '↗'}</span>
           </Tag>
         );
       })}

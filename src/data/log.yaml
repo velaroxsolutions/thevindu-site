@@ -1,10 +1,14 @@
 # The changelog. kind: Shipped | Broke | Learned | Stuck | Reading | Started
 # The homepage ticker, "last shipped" and /log read from this file.
 # App Store releases are added automatically from the live listing.
+- id: fyshe-lab
+  date: 2026-09-01 # VERIFY date
+  kind: Started
+  text: Started undergraduate research in the Fyshe Lab, on the contrastive gap in vision-language models.
 - id: curriculum-dev
   date: 2026-09-14
   kind: Started
-  text: Started as a junior curriculum developer at the University of Alberta.
+  text: Started an internship as a junior curriculum developer at the University of Alberta.
 - id: cadence-built
   date: 2026-09-01
   kind: Shipped

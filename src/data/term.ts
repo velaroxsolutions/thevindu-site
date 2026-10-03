@@ -3,6 +3,10 @@
 export const TERM = {
   label: 'Fall 2026',
   courses: [
-    // { code: 'ECE 325', name: 'Object-Oriented Software Design', take: '' },
-  ] as { code: string; name: string; take?: string }[],
+    { name: 'Databases' },
+    { name: 'Software Engineering' },
+    { name: 'Operating Systems' },
+    { name: 'Software Testing' },
+    { code: 'ECE 449', name: '' },
+  ] as { code?: string; name: string; take?: string }[],
 };

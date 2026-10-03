@@ -1,27 +1,49 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { lessons, fmtDate } from '../lib/content';
+import { lessons } from '../lib/content';
 const all = await lessons();
+const types = [...new Set(all.map((l) => l.data.type))];
+const slug = (t: string) => t.toLowerCase().replace(/\W+/g, '-');
 ---
-<Base title="Lessons learnt" description="Short, honest lessons from building things and getting them wrong first.">
+<Base title="Lessons learnt" description="Short lessons on mindset, habits, focus and decisions — the ones I keep relearning.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Lessons' }]} title="Lessons learnt"
-    lede="Things I learned <em>the hard way</em>, so you don’t have to."
-    meta={[`${all.length} ${all.length === 1 ? 'lesson' : 'lessons'}`, 'Short on purpose', 'Added as they happen']} />
+    lede="Things I keep relearning, <em>written down</em> so I stop forgetting."
+    meta={[`${all.length} ${all.length === 1 ? 'lesson' : 'lessons'}`, `${types.length} kinds`, 'Short on purpose']} />
   <section style="padding-top:0" data-sec="lessons" data-secname="Lessons">
     {all.length ? (
-      <ol class="lessons">
-        {all.map((l, i) => (
-          <li class="lesson" id={l.id} data-lane-item={l.data.lane} data-anim style={`--i:${i % 4}`}>
-            <span class="lesson-n">{String(all.length - i).padStart(2, '0')}</span>
-            <div>
-              <h2 class="lesson-t">{l.data.title}</h2>
-              <p class="lesson-c">{l.data.context}</p>
-            </div>
-            <span class="lesson-m"><span class={`kind ${l.data.lane === 'build' ? 'Shipped' : 'Learned'}`}>{l.data.from ?? 'Life'}</span><time datetime={l.data.date.toISOString()}>{fmtDate(l.data.date, { month: 'short', year: 'numeric' })}</time></span>
-          </li>
-        ))}
-      </ol>
+      <>
+        <div class="filters" role="group" aria-label="Filter lessons by type" id="lessonfilter">
+          <button data-t="all" aria-pressed="true">All<sup>{all.length}</sup></button>
+          {types.map((t) => <button data-t={slug(t)} aria-pressed="false">{t}<sup>{all.filter((l) => l.data.type === t).length}</sup></button>)}
+        </div>
+        <ol class="lessons">
+          {all.map((l, i) => (
+            <li class="lesson" id={l.id} data-t={slug(l.data.type)} data-anim style={`--i:${i % 4}`}>
+              <span class="lesson-n">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h2 class="lesson-t">{l.data.title}</h2>
+                <p class="lesson-c">{l.data.context}</p>
+              </div>
+              <span class="lesson-m"><span class="kind Learned">{l.data.type}</span></span>
+            </li>
+          ))}
+        </ol>
+        <p class="building-note lesson-empty" hidden>Nothing here yet.</p>
+      </>
     ) : <p class="building-note">Being put together. Lessons are on their way.</p>}
   </section>
 </Base>
+<script>
+  import { $$ } from '../scripts/util';
+  const btns = $$('#lessonfilter button');
+  const pick = (t: string) => {
+    btns.forEach((o) => o.setAttribute('aria-pressed', String(o.dataset.t === t)));
+    let shown = 0;
+    $$('.lesson').forEach((l) => { const on = t === 'all' || l.dataset.t === t; l.hidden = !on; if (on) shown++; });
+    const empty = document.querySelector<HTMLElement>('.lesson-empty'); if (empty) empty.hidden = shown > 0;
+    history.replaceState(null, '', t === 'all' ? location.pathname : `#type-${t}`);
+  };
+  btns.forEach((b) => b.addEventListener('click', () => pick(b.dataset.t!)));
+  const m = location.hash.match(/^#type-(.+)/); if (m) pick(m[1]);
+</script>

@@ -10,6 +10,6 @@ const max = Math.max(1, ...recent.map((x) => x.c));
 const lvl = (c: number) => (c === 0 ? 0 : Math.min(4, Math.ceil((c / max) * 4)));
 const cols = Math.ceil(cells.length / 7);
 ---
-<div class="heat" style={`--cols:${cols}`} role="img" aria-label={`${recent.reduce((a, b) => a + b.c, 0)} contributions in the last ${weeks} weeks`}>
+<div class="heat" data-live="heatmap" data-weeks={weeks} style={`--cols:${cols}`} role="img" aria-label={`${recent.reduce((a, b) => a + b.c, 0)} contributions in the last ${weeks} weeks`}>
   {cells.map((x, i) => x ? <i class={`l${lvl(x.c)}`} style={`--k:${Math.floor(i / 7)}`} title={`${x.c} on ${x.d}`} /> : <i class="pad" />)}
 </div>

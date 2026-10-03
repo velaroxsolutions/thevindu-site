@@ -4,10 +4,21 @@ export const CV = {
     'Computer engineering student at the University of Alberta who builds and ships full-stack and AI products, mostly on my own. Currently a junior curriculum developer at the University of Alberta, and building Aperis, an appearance-blind dating app live on the App Store and in closed testing on Google Play. Most interested in AI engineering: turning models into things people actually use.',
   experience: [
     {
-      title: 'Junior Curriculum Developer',
+      title: 'Junior Curriculum Developer (Intern)',
       when: 'Sep 2026 — present',
       org: 'University of Alberta · Edmonton, AB',
-      points: ['Research and development on making learning more effective: developing new projects and approaches to how course material is taught.'], // VERIFY wording
+      points: [
+        'Research and development on making learning more effective: developing new projects and approaches to how course material is taught.', // VERIFY wording
+        'Built features for the MEC E Open House 2026 web app: custom map routing, the schedule page, a searchable FAQ, and passport stickers with collect animations.',
+      ],
+    },
+    {
+      title: 'Undergraduate Researcher, Fyshe Lab',
+      when: 'Fall 2026 — present',
+      org: 'University of Alberta · Computing Science',
+      points: [
+        'Continuing work on the contrastive gap in vision-language models like CLIP, building on Fahim, Murphy & Fyshe (2024). Running experiments on university compute and interpreting the results.', // VERIFY
+      ],
     },
     {
       title: 'Marketing Intern',
@@ -22,17 +33,17 @@ export const CV = {
   ],
   projects: [
     { title: 'Aperis', when: 'Apr 2026 — present', text: 'Appearance-blind dating app, live on the App Store and in Google Play closed testing. React Native, FastAPI, Firestore. Weighted matching across 5 psychological dimensions with an attachment-style multiplier; 5-layer profile reveal driven by a conversation health score.' },
-    { title: 'Reflct', when: '2026', text: 'AI journaling companion with a memory layer that carries context across entries. React, FastAPI, Claude API.' },
+    { title: 'Reflct (personal project)', when: '2026', text: 'AI journaling companion with a memory layer that carries context across entries. React, FastAPI, Claude API.' },
     { title: 'Cadence', when: '2026', text: 'Free multi-platform content scheduler. React, FastAPI, OAuth, Tauri desktop build; one adapter per platform and a background publishing worker.' },
     { title: 'Reinforcement learning agent', when: 'Jan — Feb 2026', text: 'Custom Gymnasium environment; MaskablePPO trained through 100,000 timesteps of self-play to a 100% win rate. React/Vite on Vercel, FastAPI on Render.' },
-    { title: 'Athenyx', when: 'Jul 2025 — Jan 2026', text: 'Student productivity platform with automatic flashcard generation, calendar-synced to-dos, and an AI assistant. Next.js, React, Firebase.' },
+    { title: 'Athenyx', when: 'Jul 2025 — Jan 2026', text: 'Student productivity platform with automatic flashcard generation, calendar-synced to-dos, and an AI assistant. Fine-tuned BERT on a 121-label schema to pull structure out of course syllabi. Next.js, React, Firebase.' },
     { title: 'FEPS', when: 'Jan — Mar 2024', text: 'Assistive accessories for users with limited hand mobility (ENGG 160 design project).' },
   ],
   skills: [
     ['Languages', 'Python, JavaScript, HTML/CSS, SQL'],
-    ['AI', 'Claude API, Stable-Baselines3, Gymnasium, scikit-learn, NumPy, Pandas'],
-    ['Product', 'React, Next.js, React Native, Expo, Node.js, FastAPI, Firebase, Tauri'],
-    ['Tools & design', 'Git, Postman, Vercel, Render, EAS, Figma, Illustrator, Blender'],
+    ['AI', 'Claude API, PyTorch, BERT fine-tuning (NER), multimodal embeddings, scikit-learn, Stable-Baselines3'],
+    ['Product', 'React Native, Expo, React, Next.js, TypeScript, FastAPI, Firebase, Tauri'],
+    ['Tools & design', 'Git, EAS, Railway, Vercel, Render, Postman, Figma, Illustrator, Blender'],
   ],
   education: [{ title: 'University of Alberta', when: '2023 — 2028', org: 'BSc Computer Engineering — Software Option, Co-op · President’s International Distinction Scholarship' }],
   certificates: [
