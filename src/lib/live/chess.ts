@@ -1,4 +1,4 @@
-import { live } from './core';
+import { live, request } from './core';
 import { PROFILES } from '../../data/profiles';
 
 export type Chess = {
@@ -6,8 +6,8 @@ export type Chess = {
   chesscom: { rapid?: number; blitz?: number; bullet?: number; daily?: number; bestRapid?: number; tactics?: number; puzzleRush?: number; wins: number; losses: number; draws: number; url: string } | null;
 };
 
-export const chess = () =>
-  live<Chess>('chess', async (get) => {
+/** The raw fetch, also used by the /api/stats function for live refreshes. */
+export async function loadChess(get: typeof request): Promise<Chess | null> {
     const L = PROFILES.lichess.user, C = PROFILES.chesscom.user;
     const [lu, lh, cs] = await Promise.all([
       get(`https://lichess.org/api/user/${L}`).catch(() => null),
@@ -41,4 +41,6 @@ export const chess = () =>
       };
     }
     return { lichess, chesscom };
-  });
+}
+
+export const chess = () => live<Chess>('chess', loadChess);

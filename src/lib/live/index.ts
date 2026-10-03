@@ -5,3 +5,4 @@ export { appstore } from './appstore';
 export { photos } from './photos';
 export { notionBooks } from './notion';
 export { status as liveStatus } from './core';
+export { notionHTML, notionCourseIndex, normId } from './notionPage';

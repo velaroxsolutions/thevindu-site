@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { SITE } from '../data/site';
 import { CV } from '../data/cv';
+import { displayEmail } from '../lib/email';
 ---
 <Base title="Résumé" description="Experience, projects, skills, and education." lanes={false} contact={false}>
   <div class="cv">
@@ -10,7 +11,7 @@ import { CV } from '../data/cv';
       <h1>{SITE.name}</h1>
       <div class="cvcontact">
         <span>{SITE.location}, Canada</span>
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        <a href="#" data-e="text">{displayEmail}</a>
         {SITE.socials.map((s) => <a href={s.href}>{s.href.replace(/^https:\/\/(www\.)?/, '').replace(/\/in\/.*/, '/in/…')}</a>)}
       </div>
       <div class="quick noprint" style="margin-top:22px">
@@ -43,7 +44,7 @@ import { CV } from '../data/cv';
     <div class="cvsec"><h2>Languages</h2><dl class="cvskills">{CV.languages.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></div>
     <div class="cvsec noprint">
       <h2>Availability</h2>
-      <div class="prose" style="max-width:none"><p>Open to Summer 2027 roles in AI engineering and software. Reach me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p></div>
+      <div class="prose" style="max-width:none"><p>Open to Summer 2027 roles in AI engineering and software. Reach me at <a href="#" data-e="text">{displayEmail}</a>.</p></div>
     </div>
   </div>
 </Base>

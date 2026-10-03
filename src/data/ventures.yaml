@@ -1,0 +1,19 @@
+# Projects that don't need a full case study. stage: shipped | next
+- id: athenyx
+  title: Athenyx
+  stage: shipped
+  status: Live
+  when: Jul 2025 — Jan 2026
+  text: A study platform for students — automatic flashcards, calendar-synced to-dos, and an AI assistant. I also fine-tuned BERT to read course syllabi; it worked, but it wasn’t the most useful part.
+  stack: [Next.js, React, Firebase, BERT]
+  href: https://athenyx.velaroxsolutions.com
+- id: sonascore
+  title: SonaScore
+  stage: next
+  status: In creation · after Aperis
+  text: An app that keeps game scores up to date from the commentary itself.
+- id: lumo
+  title: Lumo
+  stage: next
+  status: In creation · after Aperis
+  text: Gamify everything.

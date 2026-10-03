@@ -4,7 +4,9 @@ export const SITE = {
   url: 'https://thevindu.dev', // TODO: your real domain
   name: 'Thevindu Nagasinghe',
   short: 'THEV',
-  email: 'hello@thevindu.dev', // TODO: your real email
+  // The +site tag lands in the same inbox — filter on it in Gmail to see what came from here.
+  // Never written into the HTML as-is; see lib/email.ts.
+  email: 'thevindu.edu+site@gmail.com',
   location: 'Edmonton, Alberta',
   timezone: 'America/Edmonton',
   description:

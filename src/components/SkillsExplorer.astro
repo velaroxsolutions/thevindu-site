@@ -1,10 +1,11 @@
 ---
 import { skills } from '../lib/content';
+import { ALSO } from '../data/also';
 const data = await skills();
 ---
 <div class="sk" data-anim>
   <div class="sk-top">
-    <span class="lbl">Skills · charge level</span>
+    <span class="lbl">Current focus · charge level</span>
     <div class="sk-search">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input id="sksearch" type="search" placeholder="search…" aria-label="Search skills">
@@ -12,10 +13,10 @@ const data = await skills();
   </div>
   <div class="pills" id="skpills" role="group" aria-label="Skill groups">
     <button data-g="all" aria-pressed="true">All</button>
-    <button data-g="sw" aria-pressed="false">Software</button>
-    <button data-g="ai" aria-pressed="false">AI / ML</button>
-    <button data-g="to" aria-pressed="false">Tools</button>
-    <button data-g="co" aria-pressed="false">Content</button>
+    <button data-g="sw" aria-pressed="false">Full-stack</button>
+    <button data-g="ai" aria-pressed="false">AI engineering</button>
+    <button data-g="to" aria-pressed="false">Ship & deploy</button>
+    <button data-g="co" aria-pressed="false">Product & growth</button>
     <button data-g="de" aria-pressed="false">Design</button>
   </div>
   <div class="wellmask"><div class="well" id="skwell"></div></div>
@@ -24,5 +25,13 @@ const data = await skills();
     <span class="lbl sk-status" id="skstatus"><i class="sk-plug"></i><span>Plugged in</span></span>
   </div>
 </div>
+<details class="also" data-anim>
+  <summary><span class="lbl">Also experienced with</span><span class="also-n">{ALSO.reduce((a, g) => a + g.items.length, 0)} more</span></summary>
+  <div class="also-in">
+    {ALSO.map((g) => (
+      <div class="also-g"><span class="lbl">{g.group}</span><div class="chips">{g.items.map((i) => <span class="chip">{i}</span>)}</div></div>
+    ))}
+  </div>
+</details>
 <script type="application/json" id="sk-data" set:html={JSON.stringify(data)} />
 <script>import '../scripts/skills';</script>

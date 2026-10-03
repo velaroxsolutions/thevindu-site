@@ -11,12 +11,16 @@ import Heatmap from '../components/Heatmap.astro';
 import ChessCell from '../components/ChessCell.astro';
 import { projects, logEntries, libraryCounts, lessons, allBooks, fmtDate } from '../lib/content';
 import { TERM } from '../data/term';
+import { RESEARCH } from '../data/research';
+import { getCollection } from 'astro:content';
 import { github, chess, duolingo, appstore } from '../lib/live';
 import { PROFILES } from '../data/profiles';
 
 const [proj, log, counts, ns, bs, gh, ch, duo, app] = await Promise.all([projects(), logEntries(), libraryCounts(), lessons(), allBooks(), github(), chess(), duolingo(), appstore()]);
 const shipped = log.find((l) => l.data.kind === 'Shipped');
-const current = proj.find((p) => p.data.hot) ?? proj[0];
+const current = proj.find((p) => p.data.stage === 'building') ?? proj[0];
+const featured = proj.filter((p) => p.data.featured);
+const ventures = await getCollection('ventures');
 const reading = bs.find((b) => b.verdict === 'Reading');
 const french = duo?.courses.find((c) => c.lang === 'fr');
 const lastPush = gh?.activity[0];
@@ -83,9 +87,9 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
       )}
       {gh && (
         <a class="cell c-gh" href={PROFILES.github.url} target="_blank" rel="noopener" data-anim style="--i:3" data-lane-item="build">
-          <span class="lbl"><span>GitHub · @{PROFILES.github.user}</span><span>{gh.calendar ? `${gh.calendar.total} contributions` : `${gh.profile.repos} repos`}</span></span>
+          <span class="lbl"><span>GitHub · @{PROFILES.github.user}</span><span data-live="gh-total">{gh.calendar ? `${gh.calendar.total} contributions` : `${gh.profile.repos} repos`}</span></span>
           {gh.calendar && <Heatmap days={gh.calendar.days} weeks={30} />}
-          {lastPush && <small class="gh-last"><span class="gh-repo">{lastPush.repo.replace(`${PROFILES.github.user}/`, '')}</span> {lastPush.text} · <span data-ago={lastPush.at}>{fmtDate(new Date(lastPush.at), { month: 'short', day: 'numeric' })}</span></small>}
+          {lastPush && <small class="gh-last" data-live="gh-last"><span class="gh-repo">{lastPush.repo.replace(`${PROFILES.github.user}/`, '')}</span> {lastPush.text} · <span data-ago={lastPush.at}>{fmtDate(new Date(lastPush.at), { month: 'short', day: 'numeric' })}</span></small>}
         </a>
       )}
       {gh && <ChessCell ch={ch} />}
@@ -110,7 +114,7 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
         <a class="cell c-term" href="/about#term" data-anim style="--i:6" data-lane-item="study">
           <span class="lbl"><span>This term</span><span>{TERM.label}</span></span>
           <p class="cell-lead">{TERM.courses.length} courses</p>
-          <small>{TERM.courses.map((c) => c.code).join(' · ')}</small>
+          <small>{TERM.courses.map((c) => c.code || c.name).join(' · ')}</small>
         </a>
       )}      <a class="cell c-lib" href="/library" data-anim style="--i:7">
         <span class="lbl"><span>Library</span><span>Free</span></span>
@@ -131,7 +135,7 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
   <section data-sec="work" data-secname="Work">
     <Chapter num="02" title="Building" sub="Things I’ve built under Velarox, mostly on my own." more={{ href: '/work', label: 'All work' }} />
     <div class="rows">
-      {proj.map((p, i) => (
+      {featured.map((p, i) => (
         <a class={`prow acc-${p.data.accent}`} href={`/work/${p.id}`} data-lane-item="build" data-anim style={`--i:${i}`}
            data-peek={p.data.title} data-peek-sub={p.data.status} data-peek-rgb={rgb[p.data.accent]}>
           <span class="pnum">{String(i + 1).padStart(2, '0')}</span>
@@ -141,6 +145,14 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
             <div class="chips">{p.data.stack.map((s) => <span class="chip">{s}</span>)}</div>
           </div>
           <span class={`pstat ${p.data.hot ? 'hot' : ''}`}>{p.data.status}</span>
+        </a>
+      ))}
+      {ventures.map((v, i) => (
+        <a class="prow acc-neutral" href={v.data.href ?? '/work#next'} target={v.data.href ? '_blank' : undefined} rel="noopener" data-lane-item="build" data-anim style={`--i:${featured.length + i}`}>
+          <span class="pnum">{String(featured.length + i + 1).padStart(2, '0')}</span>
+          <div><p class="pname">{v.data.title}</p><p class="ptag">{v.data.stage === 'next' ? 'Up next' : 'Shipped'}</p></div>
+          <div class="pbody"><p>{v.data.text}</p>{v.data.stack.length > 0 && <div class="chips">{v.data.stack.map((s) => <span class="chip">{s}</span>)}</div>}</div>
+          <span class="pstat">{v.data.stage === 'next' ? 'In creation' : v.data.status}</span>
         </a>
       ))}
     </div>
@@ -153,13 +165,13 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
 
   {ns.length > 0 && (
     <section data-sec="lessons" data-secname="Lessons">
-      <Chapter num="04" title="Lessons learnt" sub="Short and honest. The hard way, written down." more={{ href: '/lessons', label: 'All lessons' }} />
+      <Chapter num="04" title="Lessons learnt" sub="Things I keep relearning, written down so I stop forgetting." more={{ href: '/lessons', label: 'All lessons' }} />
       <ol class="lessons">
         {ns.slice(0, 3).map((l, i) => (
           <li class="lesson" data-lane-item={l.data.lane} data-anim style={`--i:${i}`}>
             <span class="lesson-n">{String(ns.length - i).padStart(2, '0')}</span>
             <div><h3 class="lesson-t"><a href={`/lessons#${l.id}`}>{l.data.title}</a></h3><p class="lesson-c">{l.data.context}</p></div>
-            <span class="lesson-m"><span class={`kind ${l.data.lane === 'build' ? 'Shipped' : 'Learned'}`}>{l.data.from ?? 'Life'}</span></span>
+            <span class="lesson-m"><span class="kind Learned">{l.data.type}</span></span>
           </li>
         ))}
       </ol>
@@ -168,14 +180,17 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
 
   <section data-sec="library" data-secname="Library">
     <Chapter num="05" title="Library" sub="What I learn, given away. No email gate." more={{ href: '/library', label: 'Open the library' }} />
-    <div class="grid3">
+    <div class="grid3 grid4">
       <a class="card ret" href="/library/books" data-lane-item="study" data-anim>
         <span class="arrow">↗</span><span class="kcount">{counts.books ? <><span class="count" data-to={counts.books}>0</span> books</> : 'Coming soon'}</span>
         <h3>Books</h3><p>What I read and the one line I kept from each.</p></a>
       <a class="card ret" href="/library/courses" data-lane-item="study" data-anim style="--i:1">
         <span class="arrow">↗</span><span class="kcount"><span class="count" data-to={counts.courses}>0</span> completed</span>
         <h3>Courses</h3><p>Courses and certificates I’ve finished.</p></a>
-      <a class="card ret" href="/photos" data-lane-item="build" data-anim style="--i:2">
+      <a class="card ret" href="/library/research" data-lane-item="study" data-anim style="--i:2">
+        <span class="arrow">↗</span><span class="kcount">{RESEARCH.length} projects</span>
+        <h3>Research</h3><p>Lab work, and what makes short-form video go viral.</p></a>
+      <a class="card ret" href="/photos" data-lane-item="build" data-anim style="--i:3">
         <span class="arrow">↗</span><span class="kcount">{counts.photos ? <><span class="count" data-to={counts.photos}>0</span> photos</> : `${PROFILES.pexels.views} views`}</span>
         <h3>Free photos</h3><p>Mostly nature. Free for anyone to use.</p></a>
     </div>

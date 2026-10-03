@@ -10,6 +10,7 @@ import Palette from '../components/Palette.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../data/site';
+import { encodedEmail } from '../lib/email';
 
 interface Props {
   title?: string;
@@ -64,6 +65,7 @@ const ogImage = new URL(image, Astro.site);
   <Footer />
   <Palette />
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <span id="e-data" hidden data-e={encodedEmail}></span>
   <script>import '../scripts/site';</script>
 </body>
 </html>

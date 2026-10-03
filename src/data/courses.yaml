@@ -1,6 +1,8 @@
 # Completed courses, grouped the same way as the Notion "Course summaries" page:
 # https://thevindu.notion.site/Course-summaries-217870ccc7224762bb81d397472e93cc
-# certificate: true marks ones with a certificate. Add `url:` to link a certificate or summary.
+# certificate: true marks ones with a certificate. `url:` links a certificate.
+# Notes: each course is matched by title to its page under Course summaries in Notion and
+# rendered on this site (needs NOTION_TOKEN). If a match is missed, add `notion: <page id>`.
 # Titles copied from Notion; ones cut off in the screenshot are marked VERIFY.
 
 # ---- Artificial Intelligence & Prompt Engineering
@@ -9,6 +11,7 @@
 - { id: prompt-engineering-bootcamp, title: The Complete Prompt Engineering for AI Bootcamp, category: "Artificial Intelligence & Prompt Engineering", lane: study }
 - { id: ai-engineer-roadmap, title: AI Engineer Roadmap, category: "Artificial Intelligence & Prompt Engineering", lane: study }
 - { id: ai-foundations, title: "AI Foundations: Thinking Machines", provider: LinkedIn Learning, date: 2024-12-01, category: "Artificial Intelligence & Prompt Engineering", certificate: true, lane: study }
+- { id: karpathy-nn, title: "Neural Networks: Zero to Hero", provider: Andrej Karpathy · YouTube, category: "Artificial Intelligence & Prompt Engineering", lane: study } # summary notebook in Notion
 - { id: ml-a-z, title: Machine Learning A-Z, provider: Udemy, date: 2025-05-01, category: "Artificial Intelligence & Prompt Engineering", certificate: true, lane: study }
 
 # ---- Branding and Entrepreneurship

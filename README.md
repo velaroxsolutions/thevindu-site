@@ -25,7 +25,11 @@ npm run dev:fixtures   # fake live data from tests/fixtures, to work on the UI
 | Edit the résumé (incl. certificates, awards) | `src/data/cv.ts`                |
 | Add a completed course / certificate  | `src/data/courses.yaml`                |
 | "This term" courses (About + homepage) | `src/data/term.ts`                     |
-| Add a lesson learnt                   | `src/content/lessons/*.md`             |
+| Add a lesson learnt (with a `type` for the filter) | `src/content/lessons/*.md` |
+| Research shelf                        | `src/data/research.ts`                 |
+| Shipped / up-next project cards       | `src/data/ventures.yaml`               |
+| "Also experienced with" chips          | `src/data/also.ts`                     |
+| Photos (alt text, order)              | `src/assets/photos/` + `src/data/photos.ts` |
 | Photos + hobbies on /about            | `src/data/about.ts` (images → `public/photos/`) |
 | Aperis matcher dimensions & profiles  | `src/data/matcher.ts`                  |
 | Write a case study                    | `src/content/projects/*.mdx`           |
@@ -57,7 +61,7 @@ At build time the site pulls from your accounts (`src/lib/live/`):
 | Duolingo | homepage streak cell, About | nothing (unofficial endpoint) |
 | Unsplash | /photos, About photo strip | `UNSPLASH_ACCESS_KEY` |
 | Pexels | /photos | photo IDs listed in `profiles.ts` (their API can't list a user's uploads) |
-| Notion | Books merged with the markdown ones | `NOTION_TOKEN` + share the reading database with the integration |
+| Notion | Book + course summaries rendered as pages on this site (`/library/notes/…`), courses matched to their pages by title | `NOTION_TOKEN` + share "Course summaries", the reading database and each book summary with the integration |
 
 Every source is optional and wrapped in a timeout. If one is down, the build uses the last
 snapshot in `src/data/snapshots/`, or hides that block. It never fails the deploy. See
@@ -65,6 +69,13 @@ snapshot in `src/data/snapshots/`, or hides that block. It never fails the deplo
 numbers stay fresh (it needs a `VERCEL_DEPLOY_HOOK` secret).
 
 LinkedIn has no public API. Link projects there from `src/data/experiments.yaml` instead.
+
+## Live refresh (Vercel function)
+
+Pages are static, but `src/pages/api/stats.ts` runs as a Vercel function. It returns fresh
+GitHub + chess stats, cached at the edge for an hour, and `src/scripts/livestats.ts` swaps them
+into the page after load. The GitHub token stays on the server. Redirects for old URLs live in
+`astro.config.mjs`.
 
 ## Structure
 

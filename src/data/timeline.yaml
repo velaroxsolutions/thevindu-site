@@ -1,4 +1,5 @@
-- { id: curriculum, order: 1, when: "2026 — now", title: Junior Curriculum Developer, text: "University of Alberta. Research and development on making learning more effective.", tag: Work, lane: study }
+- { id: curriculum, order: 1, when: "2026 — now", title: Junior Curriculum Developer, text: "University of Alberta internship. Making learning more effective — and building the MEC E Open House app.", tag: Internship, lane: study }
+- { id: fyshe, order: 1.5, when: "Fall 2026 — now", title: Fyshe Lab, text: "Undergraduate research on the contrastive gap in vision-language models.", tag: Research, lane: study }
 - { id: aperis, order: 2, when: "2026 — now", title: Aperis, text: "A dating app that matches on who you are before what you look like.", tag: Build, lane: build }
 - { id: athenyx, order: 3, when: "2025", title: Athenyx, text: "A study platform for students: flashcards, to-dos, and an AI assistant.", tag: Build, lane: build }
 - { id: overhill, order: 4, when: "Summer 2025", title: Overhill Games, text: "Marketing intern. Campaigns, crowdfunding, and a lot of short-form video.", tag: Co-op, lane: build }

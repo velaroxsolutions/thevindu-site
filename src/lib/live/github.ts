@@ -1,4 +1,4 @@
-import { live, token } from './core';
+import { live, token, request } from './core';
 import { PROFILES } from '../../data/profiles';
 
 const U = PROFILES.github.user;
@@ -29,8 +29,8 @@ const describe = (e: any): string | null => {
 };
 const cap = (s?: string) => (s ? s[0].toUpperCase() + s.slice(1) : '');
 
-export const github = () =>
-  live<GitHub>('github', async (get) => {
+/** The raw fetch, also used by the /api/stats function for live refreshes. */
+export async function loadGitHub(get: typeof request): Promise<GitHub | null> {
     const h = { headers: auth() };
     const [user, repos, events] = await Promise.all([
       get(`https://api.github.com/users/${U}`, h),
@@ -63,4 +63,6 @@ export const github = () =>
         .filter((a: any) => a.text).slice(0, 12) as GitHub['activity'],
       calendar,
     };
-  });
+}
+
+export const github = () => live<GitHub>('github', loadGitHub);

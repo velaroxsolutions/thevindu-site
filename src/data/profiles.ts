@@ -18,6 +18,7 @@ export const PROFILES = {
   },
   notion: {
     site: 'https://thevindu.notion.site',
+    courses: { id: '217870ccc7224762bb81d397472e93cc', url: 'https://thevindu.notion.site/Course-summaries-217870ccc7224762bb81d397472e93cc' },
     reading: { id: '123956bd27f880e892a3f499d7f12a4e', url: 'https://thevindu.notion.site/123956bd27f880e892a3f499d7f12a4e?v=bc61269fcda74ba2886bc90bd09beb3d' },
   },
   appstore: { id: '6768458084', country: 'gb', url: 'https://apps.apple.com/gb/app/aperis/id6768458084' },
