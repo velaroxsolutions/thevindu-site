@@ -1,15 +1,9 @@
 ---
-// GitHub-style contribution grid, in the site's palette.
-interface Props { days: { d: string; c: number }[]; weeks?: number }
-const { days, weeks = 26 } = Astro.props;
-const recent = days.slice(-(weeks * 7));
-// Pad the front so columns start on Sunday.
-const first = new Date(recent[0]?.d + 'T00:00:00Z').getUTCDay() || 0;
-const cells = [...Array(first).fill(null), ...recent];
-const max = Math.max(1, ...recent.map((x) => x.c));
-const lvl = (c: number) => (c === 0 ? 0 : Math.min(4, Math.ceil((c / max) * 4)));
-const cols = Math.ceil(cells.length / 7);
+// GitHub's contribution graph, redrawn from the real calendar (see lib/live/contributions.ts).
+import { heatmapHTML } from '../lib/heatmap';
+import type { Contributions } from '../lib/live/contributions';
+interface Props { contrib: Contributions }
+const { contrib } = Astro.props;
 ---
-<div class="heat" data-live="heatmap" data-weeks={weeks} style={`--cols:${cols}`} role="img" aria-label={`${recent.reduce((a, b) => a + b.c, 0)} contributions in the last ${weeks} weeks`}>
-  {cells.map((x, i) => x ? <i class={`l${lvl(x.c)}`} style={`--k:${Math.floor(i / 7)}`} title={`${x.c} on ${x.d}`} /> : <i class="pad" />)}
-</div>
+<div class="ghcal" data-live="heatmap" set:html={heatmapHTML(contrib.days, contrib.total)} />
+<script>import '../scripts/ghcal';</script>

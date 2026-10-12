@@ -13,7 +13,7 @@ const env = (k: string) => process.env[k] ?? (import.meta as any).env?.[k];
 
 export const status: Record<string, 'live' | 'snapshot' | 'fixture' | 'missing'> = {};
 
-export async function request(url: string, init: RequestInit = {}, timeout = 8000) {
+export async function request(url: string, init: RequestInit = {}, timeout = 8000, as: 'json' | 'text' = 'json') {
   for (let attempt = 0; attempt < 2; attempt++) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeout);
@@ -21,7 +21,7 @@ export async function request(url: string, init: RequestInit = {}, timeout = 800
       const res = await fetch(url, { ...init, signal: ctrl.signal, headers: { 'User-Agent': 'thevindu-site (build)', Accept: 'application/json', ...(init.headers || {}) } });
       if (res.status === 404) throw new Error('404');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      return as === 'text' ? await res.text() : await res.json();
     } catch (e) {
       if (attempt === 1 || (e as Error).message === '404') throw e;
     } finally {

@@ -1,15 +1,17 @@
 import { live, token, request } from './core';
 import { PROFILES } from '../../data/profiles';
+import { loadContributions, type Contributions } from './contributions';
 
 const U = PROFILES.github.user;
 const auth = (): Record<string, string> => { const t = token('GITHUB_TOKEN'); return t ? { Authorization: `Bearer ${t}` } : {}; };
 
 export type Repo = { name: string; description: string | null; language: string | null; stars: number; forks: number; pushed: string; url: string; homepage: string | null; topics: string[] };
 export type GitHub = {
-  profile: { name: string | null; bio: string | null; repos: number; followers: number; since: string; avatar: string };
+  profile: { name: string | null; bio: string | null; repos: number; followers: number; since: string; avatar: string } | null;
   repos: Repo[];
   activity: { type: string; repo: string; at: string; text: string }[];
-  calendar: { total: number; days: { d: string; c: number }[] } | null;
+  /** The real calendar (same as the profile graph), or null if neither source answered. */
+  contrib: Contributions | null;
 };
 
 const describe = (e: any): string | null => {
@@ -29,40 +31,27 @@ const describe = (e: any): string | null => {
 };
 const cap = (s?: string) => (s ? s[0].toUpperCase() + s.slice(1) : '');
 
-/** The raw fetch, also used by the /api/stats function for live refreshes. */
+/** The raw fetch, also used by the /api/stats function for live refreshes.
+ *  Each part is independent: a rate-limited REST call never takes the calendar down with it. */
 export async function loadGitHub(get: typeof request): Promise<GitHub | null> {
-    const h = { headers: auth() };
-    const [user, repos, events] = await Promise.all([
-      get(`https://api.github.com/users/${U}`, h),
-      get(`https://api.github.com/users/${U}/repos?per_page=100&sort=pushed`, h),
-      get(`https://api.github.com/users/${U}/events/public?per_page=60`, h).catch(() => []),
-    ]);
-    let calendar: GitHub['calendar'] = null;
-    if (token('GITHUB_TOKEN')) {
-      // The contribution calendar is only available through GraphQL (needs any token).
-      const q = `query{user(login:"${U}"){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount}}}}}}`;
-      const g = await get('https://api.github.com/graphql', { method: 'POST', headers: { ...auth(), 'Content-Type': 'application/json' }, body: JSON.stringify({ query: q }) }).catch(() => null);
-      const cal = g?.data?.user?.contributionsCollection?.contributionCalendar;
-      if (cal) calendar = { total: cal.totalContributions, days: cal.weeks.flatMap((w: any) => w.contributionDays.map((d: any) => ({ d: d.date, c: d.contributionCount }))) };
-    }
-    if (!calendar && Array.isArray(events) && events.length) {
-      // Without a token, approximate from public events (last ~90 days).
-      const m = new Map<string, number>();
-      events.forEach((e: any) => { const d = e.created_at.slice(0, 10); m.set(d, (m.get(d) || 0) + (e.payload?.size || e.payload?.commits?.length || 1)); });
-      const days: { d: string; c: number }[] = [];
-      for (let i = 181; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10); days.push({ d, c: m.get(d) || 0 }); }
-      calendar = { total: [...m.values()].reduce((a, b) => a + b, 0), days };
-    }
-    return {
-      profile: { name: user.name, bio: user.bio, repos: user.public_repos, followers: user.followers, since: user.created_at, avatar: user.avatar_url },
-      repos: (repos as any[]).filter((r) => !r.fork && !r.archived && r.name !== U).map((r) => ({
-        name: r.name, description: r.description, language: r.language, stars: r.stargazers_count, forks: r.forks_count,
-        pushed: r.pushed_at, url: r.html_url, homepage: r.homepage || null, topics: r.topics || [],
-      })),
-      activity: (Array.isArray(events) ? events : []).map((e: any) => ({ type: e.type, repo: e.repo?.name ?? '', at: e.created_at, text: describe(e) }))
-        .filter((a: any) => a.text).slice(0, 12) as GitHub['activity'],
-      calendar,
-    };
+  const h = { headers: auth() };
+  const [user, repos, events, contrib] = await Promise.all([
+    get(`https://api.github.com/users/${U}`, h).catch(() => null),
+    get(`https://api.github.com/users/${U}/repos?per_page=100&sort=pushed`, h).catch(() => null),
+    get(`https://api.github.com/users/${U}/events/public?per_page=60`, h).catch(() => null),
+    loadContributions(get),
+  ]);
+  if (!user && !repos && !events && !contrib) return null;
+  return {
+    profile: user ? { name: user.name, bio: user.bio, repos: user.public_repos, followers: user.followers, since: user.created_at, avatar: user.avatar_url } : null,
+    repos: (Array.isArray(repos) ? repos : []).filter((r: any) => !r.fork && !r.archived && r.name !== U).map((r: any) => ({
+      name: r.name, description: r.description, language: r.language, stars: r.stargazers_count, forks: r.forks_count,
+      pushed: r.pushed_at, url: r.html_url, homepage: r.homepage || null, topics: r.topics || [],
+    })),
+    activity: (Array.isArray(events) ? events : []).map((e: any) => ({ type: e.type, repo: e.repo?.name ?? '', at: e.created_at, text: describe(e) }))
+      .filter((a: any) => a.text).slice(0, 12) as GitHub['activity'],
+    contrib,
+  };
 }
 
 export const github = () => live<GitHub>('github', loadGitHub);

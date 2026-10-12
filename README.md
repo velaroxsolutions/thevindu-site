@@ -55,7 +55,7 @@ At build time the site pulls from your accounts (`src/lib/live/`):
 
 | Source | Shows up in | Needs |
 | --- | --- | --- |
-| GitHub | homepage heatmap + last commit, /work "In the open", palette, field | nothing (`GITHUB_TOKEN` for the heatmap) |
+| GitHub | homepage heatmap + last commit, /work "In the open", palette, field | nothing — the graph is read from GitHub's own profile graph. Add `GITHUB_TOKEN` (fine-grained, no permissions needed) for the exact GraphQL calendar plus “N commits in M repositories this month” |
 | App Store (iTunes lookup) | Aperis version/rating/screenshots, top bar chip, log entries | nothing |
 | Lichess + Chess.com | homepage chess cell with rating sparkline, About | nothing |
 | Duolingo | homepage streak cell, About | nothing (unofficial endpoint) |
