@@ -2,11 +2,12 @@
 // Update when it changes, not on a schedule.
 export const NOW = {
   updated: '2026-10-01',
+  // The one line people read first. Keep it to what's true this week.
+  headline: 'Working a co\u2011op term, growing Aperis, and getting through CMPUT 379.', // VERIFY: draft
+  // Short lines only, and nothing the cells around it already say (term, chess, French have their own).
   items: [
-    { label: 'Work', lane: 'study', text: 'Junior curriculum developer at the University of Alberta, working on ways to make learning more effective.' },
-    { label: 'Aperis', lane: 'build', text: 'Live on the App Store, in closed testing on Google Play. Getting it in front of more people.' },
-    { label: 'School', lane: 'study', text: 'On a co-op work term this fall, with one course alongside it: CMPUT 379, Operating Systems.' },
-    { label: 'Off-screen', lane: 'study', text: 'Photographing nature, learning French, and the occasional game of chess.' },
+    { label: 'Work', lane: 'study', text: 'Junior curriculum developer, University of Alberta', chip: 'co-op', href: '/cv' },
+    { label: 'Aperis', lane: 'build', text: 'Getting it in front of more people', chip: 'live on iOS', href: '/work/aperis' },
   ],
   panel: {
     // Backup for when Duolingo doesn't answer: the day the current streak started (YYYY-MM-DD).

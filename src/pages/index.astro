@@ -65,9 +65,16 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
     <Chapter num="01" title="State of things" sub="Updated when it changes, not on a schedule." more={{ href: '/log', label: 'Full log' }} />
     <div class="bento">
       <div class="cell c-now" data-anim>
-        <span class="lbl"><span>Now</span><span>{fmtDate(new Date(NOW.updated))}</span></span>
+        <span class="lbl"><span>This week</span><span>updated <span data-ago={NOW.updated}>{fmtDate(new Date(NOW.updated))}</span></span></span>
+        <p class="now-head">{NOW.headline}</p>
         <div class="nowlist">
-          {NOW.items.map((n) => <div data-lane-item={n.lane}><span>{n.label}</span><p>{n.text}</p></div>)}
+          {NOW.items.map((n) => (
+            <a href={n.href} data-lane-item={n.lane}>
+              <span class="now-k">{n.label}</span>
+              <span class="now-t">{n.text}</span>
+              <span class="now-chip"><i></i>{n.chip}</span>
+            </a>
+          ))}
         </div>
       </div>
       <div class="cell c-clock" data-anim style="--i:1">
