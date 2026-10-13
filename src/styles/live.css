@@ -2,10 +2,11 @@
    LIVE DATA — bento additions
    ============================================================ */
 .c-gh{grid-column:span 8}
-.c-chess{grid-column:span 4}
+.c-duo{grid-column:span 4}
+.c-duo.wide{grid-column:span 12}
 .bento-tail{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--rule)}
 .bento-tail .cell{grid-column:auto}
-@media(max-width:959px){.c-gh,.c-chess{grid-column:span 12}}
+@media(max-width:959px){.c-gh,.c-duo{grid-column:span 12}}
 .cell-lead{font-size:18px!important;font-family:var(--display);font-weight:600;letter-spacing:-.01em;color:var(--ink)!important;line-height:1.3}
 .cell-big .unit{font-style:normal;font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--muted);margin-left:8px;font-stretch:100%;font-weight:400}
 .stars{color:var(--build);font-size:.8em;margin-left:6px}
@@ -309,8 +310,16 @@ a.vcard:hover{background:var(--sunk)}
 .shot-more:hover::before{transform:rotate(8deg) scale(1.1)}
 .shot-more>*{position:relative}
 .shot-more b{font-family:var(--display);font-weight:800;font-stretch:118%;font-size:clamp(28px,3vw,40px);letter-spacing:-.03em;line-height:1}
-.chess-line{display:flex;flex-wrap:wrap;gap:4px 12px}
-.chess-line b{font-weight:500;color:var(--ink)}
+/* chess: one row per site, each rating labelled */
+.chess-rows{display:grid;margin-top:4px}
+.chess-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid var(--rule);color:var(--ink)}
+.chess-row:first-child{border-top:0;padding-top:4px}
+.chess-row:hover .chess-site{color:var(--study)}
+.chess-site{display:grid;font-size:14px;font-weight:500;transition:color .2s}
+.chess-site small{font-family:var(--mono);font-size:10px;font-weight:400;color:var(--muted);margin-top:2px}
+.chess-r{display:grid;gap:3px;justify-items:end}
+.chess-r span{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chess-r b{font-family:var(--display);font-weight:800;font-stretch:118%;font-size:18px;letter-spacing:-.03em;color:var(--ink);text-transform:none;line-height:1.15;font-variant-numeric:tabular-nums}
 [data-live].fresh{animation:fresh 1.2s var(--ease)}
 @keyframes fresh{0%{color:var(--build)}100%{}}
 
@@ -336,3 +345,11 @@ a.vcard:hover{background:var(--sunk)}
   background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;padding:6px 9px;white-space:nowrap;border-radius:3px}
 .ghcal-tip.on{opacity:1}
 .gh-month{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+
+/* Duolingo */
+.c-duo .streak{margin-top:14px}
+.duo-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.duo-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin:18px 0 0;padding-top:14px;border-top:1px solid var(--rule)}
+.duo-stats div{display:grid;gap:3px}
+.duo-stats dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.duo-stats dd{margin:0;font-size:15px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}

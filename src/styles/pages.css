@@ -75,10 +75,6 @@ a.cell:hover{background:var(--sunk)}
 .sky .sun{fill:var(--build)}
 .sky .sun.night{fill:var(--study)}
 .c-clock{padding-bottom:90px}
-.board{display:grid;grid-template-columns:repeat(8,1fr);width:74px;height:74px;border:1px solid var(--rule);position:absolute;right:22px;bottom:20px}
-.board i{background:var(--sunk)}
-.board i.d{background:var(--rule)}
-.board i.q{background:var(--build)}
 
 /* ============================================================
    WORK — editorial feature blocks
@@ -345,3 +341,16 @@ a.cell:hover{background:var(--sunk)}
   .cvhead{padding-top:0}
 }
 .cvwide{grid-template-columns:200px 1fr}
+
+/* Full course list on /about — tucked away, open when needed */
+.coursework{margin-top:22px;border-top:1px solid var(--rule)}
+.coursework summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;cursor:pointer;list-style:none;font-size:14px;color:var(--muted)}
+.coursework summary::-webkit-details-marker{display:none}
+.coursework summary>span:first-child::before{content:'+';display:inline-block;width:1.2em;font-family:var(--mono);transition:transform .25s var(--ease)}
+.coursework[open] summary>span:first-child::before{transform:rotate(45deg)}
+.coursework summary:hover{color:var(--ink)}
+.cw-note{font-size:13.5px;color:var(--muted);margin:0 0 18px;max-width:70ch}
+.cw-terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px 32px;padding-bottom:20px}
+.cw-term ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:5px}
+.cw-term li{display:grid;grid-template-columns:80px 1fr;gap:8px;font-size:13.5px;color:var(--body-ink);line-height:1.4}
+.cw-term li b{font-family:var(--mono);font-weight:500;font-size:11.5px;color:var(--ink);padding-top:2px}

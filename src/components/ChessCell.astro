@@ -1,22 +1,33 @@
 ---
-import Sparkline from './Sparkline.astro';
+// Chess, one row per site, every number labelled with its time control.
+// FIDE is typed in by hand (no API); Chess.com and Lichess are live and refresh via /api/stats.
 import type { Chess } from '../lib/live/chess';
 import { PROFILES } from '../data/profiles';
 import { NOW } from '../data/now';
+import { fmtDate } from '../lib/content';
 interface Props { ch: Chess | null; i?: number }
 const { ch, i = 4 } = Astro.props;
 const { fide } = NOW.panel;
-const hist = ch?.lichess?.history ?? [];
+const TC = ['rapid', 'blitz', 'bullet', 'classical', 'daily'] as const;
+const rated = (o: Record<string, unknown> | null | undefined) =>
+  o ? TC.filter((k) => typeof o[k] === 'number').map((k) => ({ k, r: o[k] as number })) : [];
+const rows = [
+  { site: 'FIDE', key: 'fide', href: fide.url, note: `official · as of ${fmtDate(new Date(fide.asOf), { month: 'short', year: 'numeric' })}`,
+    ratings: [{ k: 'standard', r: fide.standard }, { k: 'blitz', r: fide.blitz }] },
+  { site: 'Chess.com', key: 'chesscom', href: PROFILES.chesscom.url, note: `@${PROFILES.chesscom.user}`, ratings: rated(ch?.chesscom) },
+  { site: 'Lichess', key: 'lichess', href: PROFILES.lichess.url, note: `@${PROFILES.lichess.user}`, ratings: rated(ch?.lichess) },
+].filter((r) => r.ratings.length);
 ---
-<a class="cell c-chess" href={fide.url} target="_blank" rel="noopener" data-anim style={`--i:${i}`} data-lane-item="study">
-  <span class="lbl"><span>Chess · FIDE standard</span><span>For fun</span></span>
-  <span class="cell-big"><span class="count" data-to={fide.standard}>0</span></span>
-  {hist.length > 1
-    ? <Sparkline points={hist.map((x) => x.r)} label="Lichess" />
-    : <div class="board" aria-hidden="true">{Array.from({ length: 64 }, (_, k) => <i class={k === 27 ? 'q' : (Math.floor(k / 8) + k) % 2 ? 'd' : ''} />)}</div>}
-  <small class="chess-line">
-    <span>blitz {fide.blitz}</span>
-    <span>chess.com <b data-live="chesscom-rapid">{ch?.chesscom?.rapid ?? '—'}</b></span>
-    <span>lichess <b data-live="lichess-rapid">{ch?.lichess?.rapid ?? ch?.lichess?.blitz ?? '—'}</b></span>
-  </small>
-</a>
+<div class="cell c-chess" data-anim style={`--i:${i}`} data-lane-item="study">
+  <span class="lbl"><span>Chess</span><span>For fun</span></span>
+  <div class="chess-rows">
+    {rows.map((r) => (
+      <a class="chess-row" href={r.href} target="_blank" rel="noopener">
+        <span class="chess-site">{r.site}<small>{r.note}</small></span>
+        <span class="chess-r">
+          {r.ratings.map((x) => <span><b data-live={r.key === 'fide' ? undefined : `chess-${r.key}-${x.k}`}>{x.r}</b>{x.k}</span>)}
+        </span>
+      </a>
+    ))}
+  </div>
+</div>

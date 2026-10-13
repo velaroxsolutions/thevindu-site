@@ -6,7 +6,8 @@ import { initCalendars } from './ghcal';
 
 type Stats = {
   github: { contrib: { total: number; days: Cell[] } | null; activity: { repo: string; at: string; text: string }[] } | null;
-  chess: { lichess: { rapid?: number; blitz?: number } | null; chesscom: { rapid?: number } | null } | null;
+  chess: Record<'lichess' | 'chesscom', Record<string, unknown> | null> | null;
+  duolingo: { streak: number; xp: number } | null;
 };
 
 const targets = $$('[data-live]');
@@ -20,6 +21,7 @@ if (targets.length) {
 function set(key: string, v: unknown) {
   if (v == null) return;
   $$(`[data-live="${key}"]`).forEach((el) => {
+    if (el.dataset.to != null) el.dataset.to = String(v);
     if (el.textContent === String(v)) return;
     el.textContent = String(v);
     el.classList.remove('fresh'); void el.offsetWidth; el.classList.add('fresh');
@@ -27,8 +29,10 @@ function set(key: string, v: unknown) {
 }
 
 function apply(s: Stats) {
-  set('chesscom-rapid', s.chess?.chesscom?.rapid);
-  set('lichess-rapid', s.chess?.lichess?.rapid ?? s.chess?.lichess?.blitz);
+  // Each rating is keyed by site and time control, so a number only ever replaces the same number.
+  for (const site of ['chesscom', 'lichess'] as const)
+    for (const [k, v] of Object.entries(s.chess?.[site] ?? {})) if (typeof v === 'number') set(`chess-${site}-${k}`, v);
+  if (s.duolingo) { set('duo-streak', s.duolingo.streak); set('duo-xp', s.duolingo.xp.toLocaleString('en-CA')); }
   const gh = s.github;
   if (!gh) return;
   const c = gh.contrib;

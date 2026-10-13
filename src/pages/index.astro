@@ -9,6 +9,7 @@ import { SITE } from '../data/site';
 import { NOW } from '../data/now';
 import Heatmap from '../components/Heatmap.astro';
 import ChessCell from '../components/ChessCell.astro';
+import DuoCell from '../components/DuoCell.astro';
 import { projects, logEntries, libraryCounts, lessons, allBooks, fmtDate } from '../lib/content';
 import { TERM } from '../data/term';
 import { RESEARCH } from '../data/research';
@@ -22,7 +23,6 @@ const current = proj.find((p) => p.data.stage === 'building') ?? proj[0];
 const featured = proj.filter((p) => p.data.featured);
 const ventures = await getCollection('ventures');
 const reading = bs.find((b) => b.verdict === 'Reading');
-const french = duo?.courses.find((c) => c.lang === 'fr');
 const lastPush = gh?.activity[0];
 const split = (s: string, off = 0) => [...s].map((c, i) => ({ c, k: i + off }));
 const first = split('Thevindu'), last = split('Nagasinghe', 8);
@@ -95,17 +95,9 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
           {lastPush && <small class="gh-last" data-live="gh-last"><span class="gh-repo">{lastPush.repo.replace(`${PROFILES.github.user}/`, '')}</span> {lastPush.text} · <span data-ago={lastPush.at}>{fmtDate(new Date(lastPush.at), { month: 'short', day: 'numeric' })}</span></small>}
         </a>
       )}
-      {gh && <ChessCell ch={ch} />}
+      <DuoCell duo={duo} i={4} wide={!gh} />
       <div class="bento-tail">
-        {!gh && <ChessCell ch={ch} />}
-      {duo && (
-        <a class="cell c-duo" href={duo.url} target="_blank" rel="noopener" data-anim style="--i:5" data-lane-item="study">
-          <span class="lbl"><span>Duolingo streak</span><span>{french ? 'French' : duo.courses[0]?.title}</span></span>
-          <span class="cell-big"><span class="count" data-to={duo.streak}>0</span><em class="unit">days</em></span>
-          <div class="streak" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <i class={i < Math.min(14, duo.streak) ? 'on' : ''} style={`--k:${i}`} />)}</div>
-          <small>{duo.xp.toLocaleString('en-CA')} XP{french ? ` · ${french.xp.toLocaleString('en-CA')} in French` : ''}</small>
-        </a>
-      )}
+        <ChessCell ch={ch} i={5} />
       {reading && (
         <a class="cell c-read" href={reading.href ?? `/library/books#${reading.id}`} data-anim style="--i:6" data-lane-item="study">
           <span class="lbl"><span>Reading</span><span>{counts.reading} open</span></span>
@@ -113,16 +105,10 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
           <small>{reading.author}</small>
         </a>
       )}
-      {TERM.courses.length > 0 && (
-        <a class="cell c-term" href="/about#term" data-anim style="--i:6" data-lane-item="study">
-          <span class="lbl"><span>This term</span><span>{TERM.label}</span></span>
-          <p class="cell-lead">{TERM.courses.length} courses</p>
-          <small>{TERM.courses.map((c) => c.code || c.name).join(' · ')}</small>
-        </a>
-      )}      <a class="cell c-lib" href="/library" data-anim style="--i:7">
-        <span class="lbl"><span>Library</span><span>Free</span></span>
-        <span class="cell-big"><span class="count" data-to={counts.total}>0</span></span>
-        <small>{[counts.books && `${counts.books} books`, counts.courses && `${counts.courses} courses`, counts.photos && `${counts.photos} photos`].filter(Boolean).join(' · ') || 'Being put together'}</small>
+      <a class="cell c-term" href="/about#term" data-anim style="--i:6" data-lane-item="study">
+        <span class="lbl"><span>This term</span><span>{TERM.label}</span></span>
+        <p class="cell-lead">{TERM.mode}</p>
+        <small>{TERM.courses.length ? `Plus ${TERM.courses.map((c) => [c.code, c.name].filter(Boolean).join(', ')).join(' · ')}` : TERM.note}</small>
       </a>
       {app && (
         <a class="cell c-app" href={app.url} target="_blank" rel="noopener" data-anim style="--i:8" data-lane-item="build">
@@ -191,8 +177,8 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
         <span class="arrow">↗</span><span class="kcount"><span class="count" data-to={counts.courses}>0</span> completed</span>
         <h3>Courses</h3><p>Courses and certificates I’ve finished.</p></a>
       <a class="card ret" href="/library/research" data-lane-item="study" data-anim style="--i:2">
-        <span class="arrow">↗</span><span class="kcount">{RESEARCH.length} projects</span>
-        <h3>Research</h3><p>Lab work, and what makes short-form video go viral.</p></a>
+        <span class="arrow">↗</span><span class="kcount">{RESEARCH.reduce((a, r) => a + r.docs.length, 0)} notes</span>
+        <h3>Research</h3><p>What makes short-form video go viral: hooks, story, thumbnails.</p></a>
       <a class="card ret" href="/photos" data-lane-item="build" data-anim style="--i:3">
         <span class="arrow">↗</span><span class="kcount">{counts.photos ? <><span class="count" data-to={counts.photos}>0</span> photos</> : `${PROFILES.pexels.views} views`}</span>
         <h3>Free photos</h3><p>Mostly nature. Free for anyone to use.</p></a>

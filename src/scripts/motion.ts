@@ -13,12 +13,13 @@ onEnter($$('.arch'), (el) => el.classList.add('drawn'), 0.3);
 
 /* ---- counters ---- */
 onEnter($$('.count'), (el) => {
-  const to = Number((el as HTMLElement).dataset.to);
-  if (reduce || !to) { el.textContent = String(to); return; }
+  // Read the target every frame: a live refresh can raise it mid-count.
+  const target = () => Number((el as HTMLElement).dataset.to);
+  if (reduce || !target()) { el.textContent = String(target()); return; }
   const t0 = performance.now();
   const step = (t: number) => {
     const k = Math.min(1, (t - t0) / 900);
-    el.textContent = String(Math.round(to * (1 - Math.pow(1 - k, 3))));
+    el.textContent = String(Math.round(target() * (1 - Math.pow(1 - k, 3))));
     if (k < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
