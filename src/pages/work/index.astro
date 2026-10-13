@@ -111,7 +111,7 @@ const LANG: Record<string, string> = { TypeScript: '#3178C6', JavaScript: '#E8C1
 
   {gh && gh.repos.length > 0 && (
     <section data-sec="code" data-secname="In the open">
-      <Chapter num="code" title="In the open" sub={`Public repositories on GitHub, pulled at build time. ${gh.profile.repos} total.`} more={{ href: PROFILES.github.url, label: '@' + PROFILES.github.user }} />
+      <Chapter num="code" title="In the open" sub={`Public repositories on GitHub, pulled at build time.${gh.profile ? ` ${gh.profile.repos} total.` : ''}`} more={{ href: PROFILES.github.url, label: '@' + PROFILES.github.user }} />
       <div class="repos">
         {gh.repos.slice(0, 9).map((r, i) => (
           <a class="repo ret" href={r.url} target="_blank" rel="noopener" data-anim style={`--i:${i % 3}`} data-lane-item="build">

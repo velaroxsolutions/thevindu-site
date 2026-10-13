@@ -12,14 +12,6 @@
 .gh-last{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gh-repo{color:var(--ink)}
 
-/* contribution heatmap */
-.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);grid-template-columns:repeat(var(--cols),1fr);gap:3px;margin:6px 0 4px}
-.heat i{aspect-ratio:1;border-radius:2px;background:var(--sunk);opacity:0;transform:scale(.4);
-  transition:opacity .4s var(--ease),transform .4s var(--ease);transition-delay:calc(var(--k,0) * 18ms)}
-.heat i.pad{visibility:hidden}
-.heat i.l1{background:rgba(var(--build-rgb),.25)} .heat i.l2{background:rgba(var(--build-rgb),.45)}
-.heat i.l3{background:rgba(var(--build-rgb),.7)} .heat i.l4{background:var(--build)}
-.cell.in .heat i{opacity:1;transform:none}
 
 /* sparkline */
 .spark{width:100%;height:54px;display:block;overflow:visible}
@@ -321,3 +313,26 @@ a.vcard:hover{background:var(--sunk)}
 .chess-line b{font-weight:500;color:var(--ink)}
 [data-live].fresh{animation:fresh 1.2s var(--ease)}
 @keyframes fresh{0%{color:var(--build)}100%{}}
+
+/* ============================================================
+   GITHUB CONTRIBUTION GRAPH — laid out like the profile
+   ============================================================ */
+.ghcal{margin:8px 0 2px}
+.ghcal-scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--rule) transparent;padding-bottom:4px}
+.ghcal-grid{display:grid;grid-template-columns:26px repeat(var(--weeks),minmax(7px,1fr));grid-template-rows:14px repeat(7,auto);gap:3px;min-width:560px}
+.ghcal-grid i{aspect-ratio:1;border-radius:2px;background:var(--sunk);outline:1px solid rgba(var(--ink-rgb),.07);outline-offset:-1px}
+.ghcal-grid i.l1{background:rgba(var(--build-rgb),.28)} .ghcal-grid i.l2{background:rgba(var(--build-rgb),.5)}
+.ghcal-grid i.l3{background:rgba(var(--build-rgb),.75)} .ghcal-grid i.l4{background:var(--build)}
+.ghcal-grid i:hover{outline:1.5px solid var(--ink);outline-offset:0}
+.ghcal-m,.ghcal-wd{font-family:var(--mono);font-size:9.5px;color:var(--muted);line-height:1;white-space:nowrap}
+.ghcal-m{grid-row:1;align-self:end}
+.ghcal-wd{grid-column:1;align-self:center}
+.ghcal-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.ghcal-legend{display:inline-flex;align-items:center;gap:3px}
+.ghcal-legend i{width:10px;height:10px;border-radius:2px;background:var(--sunk);display:inline-block;outline:1px solid rgba(var(--ink-rgb),.08);outline-offset:-1px}
+.ghcal-legend i.l1{background:rgba(var(--build-rgb),.28)} .ghcal-legend i.l2{background:rgba(var(--build-rgb),.5)}
+.ghcal-legend i.l3{background:rgba(var(--build-rgb),.75)} .ghcal-legend i.l4{background:var(--build)}
+.ghcal-tip{position:fixed;z-index:85;transform:translate(-50%,calc(-100% - 8px));pointer-events:none;opacity:0;transition:opacity .12s;
+  background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;padding:6px 9px;white-space:nowrap;border-radius:3px}
+.ghcal-tip.on{opacity:1}
+.gh-month{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}

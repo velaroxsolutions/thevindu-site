@@ -87,8 +87,11 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
       )}
       {gh && (
         <a class="cell c-gh" href={PROFILES.github.url} target="_blank" rel="noopener" data-anim style="--i:3" data-lane-item="build">
-          <span class="lbl"><span>GitHub · @{PROFILES.github.user}</span><span data-live="gh-total">{gh.calendar ? `${gh.calendar.total} contributions` : `${gh.profile.repos} repos`}</span></span>
-          {gh.calendar && <Heatmap days={gh.calendar.days} weeks={30} />}
+          <span class="lbl"><span>GitHub · @{PROFILES.github.user}</span><span data-live="gh-total">{gh.contrib ? `${gh.contrib.total.toLocaleString('en-CA')} this year` : gh.profile ? `${gh.profile.repos} repos` : ''}</span></span>
+          {gh.contrib && <Heatmap contrib={gh.contrib} />}
+          {gh.contrib?.activity && gh.contrib.activity.commits > 0 && (
+            <small class="gh-month">Created {gh.contrib.activity.commits} commits in {gh.contrib.activity.repos.length} {gh.contrib.activity.repos.length === 1 ? 'repository' : 'repositories'} in {gh.contrib.activity.month}</small>
+          )}
           {lastPush && <small class="gh-last" data-live="gh-last"><span class="gh-repo">{lastPush.repo.replace(`${PROFILES.github.user}/`, '')}</span> {lastPush.text} · <span data-ago={lastPush.at}>{fmtDate(new Date(lastPush.at), { month: 'short', day: 'numeric' })}</span></small>}
         </a>
       )}
