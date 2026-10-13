@@ -1,9 +1,11 @@
 import { live, request } from './core';
 import { PROFILES } from '../../data/profiles';
 
+/** The rating someone would see first on that site: the time control played most, skipping provisional ones. */
+export type Main = { k: string; r: number; games: number } | null;
 export type Chess = {
-  lichess: { rapid?: number; blitz?: number; bullet?: number; classical?: number; puzzle?: number; games: number; wins: number; url: string; history: { d: string; r: number }[] } | null;
-  chesscom: { rapid?: number; blitz?: number; bullet?: number; daily?: number; bestRapid?: number; tactics?: number; puzzleRush?: number; wins: number; losses: number; draws: number; url: string } | null;
+  lichess: { rapid?: number; blitz?: number; bullet?: number; classical?: number; puzzle?: number; games: number; wins: number; url: string; history: { d: string; r: number }[]; main: Main } | null;
+  chesscom: { rapid?: number; blitz?: number; bullet?: number; daily?: number; bestRapid?: number; tactics?: number; puzzleRush?: number; wins: number; losses: number; draws: number; url: string; main: Main } | null;
 };
 
 /** The raw fetch, also used by the /api/stats function for live refreshes. */
@@ -26,6 +28,10 @@ export async function loadChess(get: typeof request): Promise<Chess | null> {
         bullet: p.bullet?.games ? p.bullet.rating : undefined, classical: p.classical?.games ? p.classical.rating : undefined,
         puzzle: p.puzzle?.games ? p.puzzle.rating : undefined,
         games: lu.count?.all || 0, wins: lu.count?.win || 0, url: PROFILES.lichess.url,
+        main: ['rapid', 'blitz', 'bullet', 'classical']
+          .filter((k) => p[k]?.games && !p[k]?.prov)
+          .map((k) => ({ k, r: p[k].rating as number, games: p[k].games as number }))
+          .sort((a, b) => b.games - a.games)[0] ?? null,
         history: series.slice(-60).map(([y, m, d, r]: number[]) => ({ d: `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`, r })),
       };
     }
@@ -38,6 +44,10 @@ export async function loadChess(get: typeof request): Promise<Chess | null> {
         tactics: cs.tactics?.highest?.rating, puzzleRush: cs.puzzle_rush?.best?.score,
         wins: rec.reduce((a: number, r: any) => a + (r.win || 0), 0), losses: rec.reduce((a: number, r: any) => a + (r.loss || 0), 0),
         draws: rec.reduce((a: number, r: any) => a + (r.draw || 0), 0), url: PROFILES.chesscom.url,
+        main: ['rapid', 'blitz', 'bullet', 'daily']
+          .map((k) => ({ k, r: cs[`chess_${k}`]?.last?.rating as number, games: (({ win = 0, loss = 0, draw = 0 }) => win + loss + draw)(cs[`chess_${k}`]?.record ?? {}) }))
+          .filter((x) => x.r && x.games)
+          .sort((a, b) => b.games - a.games)[0] ?? null,
       };
     }
     return { lichess, chesscom };

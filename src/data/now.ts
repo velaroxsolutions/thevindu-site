@@ -9,6 +9,9 @@ export const NOW = {
     { label: 'Off-screen', lane: 'study', text: 'Photographing nature, learning French, and the occasional game of chess.' },
   ],
   panel: {
+    // Backup for when Duolingo doesn't answer: the day the current streak started (YYYY-MM-DD).
+    // The site counts the days from it, so it stays right without any API. Leave '' to skip.
+    duolingo: { streakStart: '' },
     reading: 'Nothing listed yet',
     chess: 1456,
     // No FIDE API — update by hand from https://ratings.fide.com/profile/29900395 (asOf = the day you checked; VERIFY)

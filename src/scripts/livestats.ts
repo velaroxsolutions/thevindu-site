@@ -29,9 +29,11 @@ function set(key: string, v: unknown) {
 }
 
 function apply(s: Stats) {
-  // Each rating is keyed by site and time control, so a number only ever replaces the same number.
-  for (const site of ['chesscom', 'lichess'] as const)
-    for (const [k, v] of Object.entries(s.chess?.[site] ?? {})) if (typeof v === 'number') set(`chess-${site}-${k}`, v);
+  // One rating per site (its most-played time control); the label updates with it.
+  for (const site of ['chesscom', 'lichess'] as const) {
+    const m = s.chess?.[site]?.main as { k: string; r: number } | null | undefined;
+    if (m) { set(`chess-${site}-main`, m.r); set(`chess-${site}-main-k`, m.k); }
+  }
   if (s.duolingo) { set('duo-streak', s.duolingo.streak); set('duo-xp', s.duolingo.xp.toLocaleString('en-CA')); }
   const gh = s.github;
   if (!gh) return;

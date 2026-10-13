@@ -247,7 +247,12 @@
     "d": "2026-09-25",
     "r": 1185
    }
-  ]
+  ],
+  "main": {
+   "k": "rapid",
+   "r": 1185,
+   "games": 300
+  }
  },
  "chesscom": {
   "rapid": 1450,
@@ -258,6 +263,11 @@
   "wins": 310,
   "losses": 288,
   "draws": 21,
-  "url": "https://www.chess.com/member/ashault_skyliner2005"
+  "url": "https://www.chess.com/member/ashault_skyliner2005",
+  "main": {
+   "k": "rapid",
+   "r": 1450,
+   "games": 500
+  }
  }
 }

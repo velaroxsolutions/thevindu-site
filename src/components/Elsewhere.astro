@@ -14,9 +14,9 @@ const cards = [
   
   { g: 'N', name: 'Course summaries', handle: 'Notion', href: PROFILES.notion.courses.url, stat: null, lane: 'study' },
   { g: 'N', name: 'Reading notes', handle: 'Notion', href: PROFILES.notion.reading.url, stat: nb ? `${nb.length} books` : null, lane: 'study' },
-  { g: '♞', name: 'Lichess', handle: '@' + PROFILES.lichess.user, href: PROFILES.lichess.url, stat: ch?.lichess?.rapid ? `${ch.lichess.rapid} rapid` : ch?.lichess?.blitz ? `${ch.lichess.blitz} blitz` : null, lane: 'study' },
+  { g: '♞', name: 'Lichess', handle: '@' + PROFILES.lichess.user, href: PROFILES.lichess.url, stat: ch?.lichess?.main ? `${ch.lichess.main.r} ${ch.lichess.main.k}` : null, lane: 'study' },
   { g: '♚', name: 'FIDE', handle: `ID ${NOW.panel.fide.id}`, href: NOW.panel.fide.url, stat: `${NOW.panel.fide.standard} std · ${NOW.panel.fide.blitz} blitz`, lane: 'study' },
-  { g: '♟', name: 'Chess.com', handle: '@' + PROFILES.chesscom.user, href: PROFILES.chesscom.url, stat: ch?.chesscom?.rapid ? `${ch.chesscom.rapid} rapid` : null, lane: 'study' },
+  { g: '♟', name: 'Chess.com', handle: '@' + PROFILES.chesscom.user, href: PROFILES.chesscom.url, stat: ch?.chesscom?.main ? `${ch.chesscom.main.r} ${ch.chesscom.main.k}` : null, lane: 'study' },
   { g: 'Fr', name: 'Duolingo', handle: '@' + PROFILES.duolingo.user, href: PROFILES.duolingo.url, stat: duo ? `${duo.streak}-day streak` : null, lane: 'study' },
   { g: '◐', name: 'Unsplash', handle: '@' + PROFILES.unsplash.user, href: PROFILES.unsplash.url, stat: ph?.stats.views ? `${k(ph.stats.views)} views` : null, lane: 'study' },
   { g: '◑', name: 'Pexels', handle: '@' + PROFILES.pexels.user, href: PROFILES.pexels.url, stat: `${PROFILES.pexels.views} views`, lane: 'study' },

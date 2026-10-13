@@ -5,21 +5,26 @@ import type { Duo } from '../lib/live/duolingo';
 import { PROFILES } from '../data/profiles';
 interface Props { duo: Duo | null; i?: number; wide?: boolean }
 const { duo, i = 4, wide = false } = Astro.props;
+import { NOW } from '../data/now';
 const main = duo?.courses.find((c) => c.lang === 'fr') ?? duo?.courses[0];
+// No live answer → count up from the streak's start date in now.ts (the browser recounts on load).
+const start = duo ? null : NOW.panel.duolingo.streakStart || null;
+const days = (iso: string) => Math.floor((Date.now() - Date.parse(iso + 'T00:00:00')) / 864e5) + 1;
+const streak = duo?.streak ?? (start ? days(start) : null);
 const since = duo?.since ? new Date(duo.since).getFullYear() : null;
 ---
 <a class:list={['cell c-duo', { wide }]} href={PROFILES.duolingo.url} target="_blank" rel="noopener" data-anim style={`--i:${i}`} data-lane-item="study">
   <span class="lbl"><span>Duolingo · @{PROFILES.duolingo.user}</span><span>{main?.title ?? 'French'}</span></span>
-  {duo ? (
+  {streak != null ? (
     <>
-      <span class="cell-big"><span class="count" data-to={duo.streak} data-live="duo-streak">0</span><em class="unit">day streak</em></span>
-      <div class="streak" aria-hidden="true">{Array.from({ length: 14 }, (_, k) => <i class={k >= 14 - Math.min(14, duo.streak) ? 'on' : ''} style={`--k:${k}`} />)}</div>
+      <span class="cell-big"><span class="count" data-to={streak} data-live="duo-streak" data-streak-start={start}>0</span><em class="unit">day streak</em></span>
+      <div class="streak" aria-hidden="true">{Array.from({ length: 14 }, (_, k) => <i class={k >= 14 - Math.min(14, streak) ? 'on' : ''} style={`--k:${k}`} />)}</div>
       <small class="duo-cap"><span>Last 14 days</span><span>today</span></small>
-      <dl class="duo-stats">
+      {duo && <dl class="duo-stats">
         {main && <div><dt>{main.title} XP</dt><dd>{main.xp.toLocaleString('en-CA')}</dd></div>}
         <div><dt>Total XP</dt><dd data-live="duo-xp">{duo.xp.toLocaleString('en-CA')}</dd></div>
         {since && <div><dt>Learning since</dt><dd>{since}</dd></div>}
-      </dl>
+      </dl>}
     </>
   ) : (
     <>
@@ -28,3 +33,10 @@ const since = duo?.since ? new Date(duo.since).getFullYear() : null;
     </>
   )}
 </a>
+<script>
+  // Static pages age; recount a start-date streak in the visitor's browser so it's right today.
+  document.querySelectorAll<HTMLElement>('[data-streak-start]').forEach((el) => {
+    const n = Math.floor((Date.now() - Date.parse(el.dataset.streakStart + 'T00:00:00')) / 864e5) + 1;
+    if (n > 0) el.dataset.to = el.textContent = String(n);
+  });
+</script>

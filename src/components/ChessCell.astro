@@ -1,6 +1,6 @@
 ---
-// Chess, one row per site, every number labelled with its time control.
-// FIDE is typed in by hand (no API); Chess.com and Lichess are live and refresh via /api/stats.
+// Chess: the FIDE rating is the headline (official, typed in by hand — FIDE has no API).
+// Chess.com and Lichess are sidenotes: one rating each, the time control played most, live.
 import type { Chess } from '../lib/live/chess';
 import { PROFILES } from '../data/profiles';
 import { NOW } from '../data/now';
@@ -8,26 +8,28 @@ import { fmtDate } from '../lib/content';
 interface Props { ch: Chess | null; i?: number }
 const { ch, i = 4 } = Astro.props;
 const { fide } = NOW.panel;
-const TC = ['rapid', 'blitz', 'bullet', 'classical', 'daily'] as const;
-const rated = (o: Record<string, unknown> | null | undefined) =>
-  o ? TC.filter((k) => typeof o[k] === 'number').map((k) => ({ k, r: o[k] as number })) : [];
-const rows = [
-  { site: 'FIDE', key: 'fide', href: fide.url, note: `official · as of ${fmtDate(new Date(fide.asOf), { month: 'short', year: 'numeric' })}`,
-    ratings: [{ k: 'standard', r: fide.standard }, { k: 'blitz', r: fide.blitz }] },
-  { site: 'Chess.com', key: 'chesscom', href: PROFILES.chesscom.url, note: `@${PROFILES.chesscom.user}`, ratings: rated(ch?.chesscom) },
-  { site: 'Lichess', key: 'lichess', href: PROFILES.lichess.url, note: `@${PROFILES.lichess.user}`, ratings: rated(ch?.lichess) },
-].filter((r) => r.ratings.length);
+const online = [
+  { site: 'Chess.com', key: 'chesscom', href: PROFILES.chesscom.url, main: ch?.chesscom?.main },
+  { site: 'Lichess', key: 'lichess', href: PROFILES.lichess.url, main: ch?.lichess?.main },
+].filter((o) => o.main);
 ---
 <div class="cell c-chess" data-anim style={`--i:${i}`} data-lane-item="study">
-  <span class="lbl"><span>Chess</span><span>For fun</span></span>
-  <div class="chess-rows">
-    {rows.map((r) => (
-      <a class="chess-row" href={r.href} target="_blank" rel="noopener">
-        <span class="chess-site">{r.site}<small>{r.note}</small></span>
-        <span class="chess-r">
-          {r.ratings.map((x) => <span><b data-live={r.key === 'fide' ? undefined : `chess-${r.key}-${x.k}`}>{x.r}</b>{x.k}</span>)}
-        </span>
-      </a>
-    ))}
+  <div class="kboard" aria-hidden="true">
+    {Array.from({ length: 25 }, (_, k) => <i class={(Math.floor(k / 5) + (k % 5)) % 2 ? 'd' : ''} />)}
+    <span class="kdot"></span><span class="knight">&#9822;&#xFE0E;</span>
   </div>
+  <span class="lbl"><span>Chess · FIDE</span><span>For fun</span></span>
+  <a class="fide" href={fide.url} target="_blank" rel="noopener">
+    <span class="cell-big"><span class="count" data-to={fide.standard}>0</span></span>
+    <span class="fide-tc">Standard</span>
+    <span class="fide-sub"><b>{fide.blitz}</b> blitz · as of {fmtDate(new Date(fide.asOf), { month: 'short', year: 'numeric' })}</span>
+  </a>
+  {online.length > 0 && (
+    <small class="chess-side">
+      <span>Online</span>
+      {online.map((o) => (
+        <a href={o.href} target="_blank" rel="noopener">{o.site} <b data-live={`chess-${o.key}-main`}>{o.main!.r}</b> <em data-live={`chess-${o.key}-main-k`}>{o.main!.k}</em></a>
+      ))}
+    </small>
+  )}
 </div>
