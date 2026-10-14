@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { appstore, notionBooks, photos, notionCourseIndex, notionHTML, normId } from './live';
+import { bookCovers } from './live/covers';
 import { PROFILES } from '../data/profiles';
 import { localPhotos } from './localPhotos';
 
@@ -62,18 +63,26 @@ export async function skills() {
 }
 
 /* ---------- Books: local markdown + the Notion reading database ---------- */
-export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; href?: string; summary?: string; notion?: string; featured: boolean; source: 'local' | 'notion' };
+export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; pages?: number; isbn?: string; href?: string; summary?: string; notion?: string; featured: boolean; source: 'local' | 'notion' };
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 const READING = /reading|progress|current|started|now/i;
 
 export async function allBooks(): Promise<Book[]> {
-  const [local, remote] = await Promise.all([books(), notionBooks()]);
-  const out: Book[] = local.map((b) => ({ id: b.id, ...b.data, href: b.data.summary, source: 'local' as const }));
+  const local = await books();
+  const [remote, found] = await Promise.all([
+    notionBooks(),
+    bookCovers(local.map((b) => ({ id: b.id, title: b.data.title, author: b.data.author, isbn: b.data.isbn }))),
+  ]);
+  const out: Book[] = local.map((b) => ({
+    id: b.id, ...b.data, href: b.data.summary, source: 'local' as const,
+    cover: b.data.cover ?? found?.[b.id]?.cover ?? undefined,
+    pages: b.data.pages ?? found?.[b.id]?.pages ?? undefined,
+  }));
   const seen = new Set(out.map((b) => norm(b.title)));
   for (const r of remote ?? []) {
     const key = norm(r.title);
     const existing = out.find((b) => norm(b.title) === key);
-    if (existing) { existing.href ??= r.url; existing.cover ??= r.cover ?? undefined; existing.take ??= r.take || undefined; continue; }
+    if (existing) { existing.href ??= r.url; if (r.cover && !local.find((l) => l.id === existing.id)?.data.cover) existing.cover = r.cover; existing.take ??= r.take || undefined; continue; }
     if (seen.has(key)) continue;
     seen.add(key);
     out.push({

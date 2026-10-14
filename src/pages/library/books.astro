@@ -4,6 +4,7 @@ import PageHead from '../../components/PageHead.astro';
 import Chapter from '../../components/Chapter.astro';
 import Words from '../../components/Words.astro';
 import Cover from '../../components/Cover.astro';
+import BookShelf from '../../components/BookShelf.astro';
 import { allBooks, noteRefs } from '../../lib/content';
 import { PROFILES } from '../../data/profiles';
 const [all, refs] = await Promise.all([allBooks(), noteRefs()]);
@@ -22,24 +23,13 @@ const slug = (v: string) => v.toLowerCase().replace(/\s+/g, '-');
   </PageHead>
 
   <section style="padding-top:clamp(34px,4.5vw,56px)" data-sec="shelf" data-secname="Shelf">
-    <Chapter num="01" title="The shelf" sub="An outlined cover means I’m in the middle of it. Ones marked “summary” open my notes." />
+    <Chapter num="01" title="The shelf" sub="Spine out, like the real thing. Take any book off the shelf to see the cover and what I thought." />
     {all.length === 0 && <p class="building-note">Being put together. Book notes are on their way.</p>}
     <div class="filters" hidden={all.length === 0} role="group" aria-label="Filter by verdict" id="bookfilter">
       <button data-v="all" aria-pressed="true">All<sup>{all.length}</sup></button>
       {verdicts.map((v) => <button data-v={slug(v)} aria-pressed="false">{v}<sup>{all.filter((b) => b.verdict === v).length}</sup></button>)}
     </div>
-    <div class="wall">
-      {all.map((b, i) => {
-        const href = onsite.has(b.id) ? `/library/notes/book-${b.id}` : withTake.includes(b) ? `#${b.id}` : b.href;
-        return (
-          <a class={`wbook ${b.verdict === 'Reading' ? 'now' : ''} ${b.summary || onsite.has(b.id) ? 'has-sum' : ''}`} id={withTake.includes(b) ? undefined : b.id} href={href} target={href?.startsWith('http') ? '_blank' : undefined} rel={href?.startsWith('http') ? 'noopener' : undefined}
-             data-v={slug(b.verdict)} data-anim style={`--i:${i % 6}`}>
-            <Cover title={b.title} author={b.author} src={b.cover} />
-            <div class="wmeta"><strong>{b.title}</strong><span>{b.verdict}{(b.summary || onsite.has(b.id)) && <em class="sumtag"> · summary</em>}</span></div>
-          </a>
-        );
-      })}
-    </div>
+    <BookShelf books={all} onsite={onsite} />
   </section>
 
   {featured && (
@@ -61,11 +51,3 @@ const slug = (v: string) => v.toLowerCase().replace(/\s+/g, '-');
     </div>
   </section>}
 </Base>
-<script>
-  import { $$ } from '../../scripts/util';
-  const btns = $$('#bookfilter button');
-  btns.forEach((b) => b.addEventListener('click', () => {
-    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
-    $$('.wbook').forEach((w) => w.classList.toggle('hide', b.dataset.v !== 'all' && w.dataset.v !== b.dataset.v));
-  }));
-</script>

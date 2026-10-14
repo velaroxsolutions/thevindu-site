@@ -47,7 +47,9 @@ const books = defineCollection({
     notion: z.string().optional(), // that page's id — lets the summary render on this site (needs NOTION_TOKEN)
     take: z.string().optional(),
     year: z.number().optional(), // year I read it
-    cover: z.string().optional(), // /covers/x.jpg in public — optional, falls back to a generated cover
+    cover: z.string().optional(), // /covers/x.jpg in public or any image URL — beats the Open Library lookup
+    isbn: z.string().optional(), // pins the exact edition for the cover + page count
+    pages: z.number().optional(), // spine thickness; filled from Open Library when missing
     featured: z.boolean().default(false),
     quote: z.string().optional(),
   }),

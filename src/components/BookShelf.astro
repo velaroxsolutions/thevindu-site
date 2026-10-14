@@ -1,0 +1,115 @@
+---
+// The shelf: books stand spine-out on wooden shelves. Hover slides one out;
+// click pulls it off and turns it round to show the cover, your take and the summary link.
+// Spine thickness follows the page count (Open Library), colour follows the title.
+import Cover from './Cover.astro';
+import { hash, type Book } from '../lib/content';
+interface Props { books: Book[]; onsite: Set<string> }
+const { books, onsite } = Astro.props;
+const slug = (v: string) => v.toLowerCase().replace(/\s+/g, '-');
+const short = (t: string) => t.split(/[:(]/)[0].trim();
+const surname = (a: string) => a.split(/\s+/).pop() ?? a;
+const items = books.map((b) => {
+  const h = hash(b.title);
+  const pages = b.pages ?? 180 + (h % 260);
+  const summary = onsite.has(b.id) ? `/library/notes/book-${b.id}` : b.href;
+  const w = Math.round(Math.min(58, Math.max(32, pages / 8)));
+  const ht = 236 + ((h >> 5) % 56);
+  // Largest title size that fits the spine: lines stack across the width, letters run along the height.
+  const n = short(b.title).length, run = ht * 0.86 - 64 - surname(b.author).length * 6.6;
+  let fs = 15;
+  while (fs > 8.5 && Math.ceil((n * fs * (/\s/.test(short(b.title)) ? 0.7 : 0.85)) / run) > Math.max(1, Math.floor((w - 12) / (fs * 1.08)))) fs -= 0.5;
+  return { b, h, summary, hue: h % 360, w, ht, fs, lean: (h >> 11) % 9 === 0 };
+});
+---
+<div class="shelf" id="shelf" role="list">
+  {items.map(({ b, hue, w, ht, fs, lean, summary }, k) => (
+    <div class:list={['slot', { lean }]} role="listitem" data-v={slug(b.verdict)} style={`--k:${k}`}>
+      <button type="button" class:list={['spine', { now: b.verdict === 'Reading', sum: !!summary }]} data-book={b.id}
+        style={`--h:${hue};--w:${w}px;--ht:${ht}px;--fs:${fs}px`} aria-haspopup="dialog" aria-label={`${b.title} by ${b.author}. ${b.verdict}${summary ? ', has a summary' : ''}`}>
+        <span class="spine-band"></span>
+        <span class="spine-t">{short(b.title)}</span>
+        <span class="spine-a">{surname(b.author)}</span>
+        <span class="spine-band"></span>
+        {b.verdict === 'Reading' && <i class="ribbon" aria-hidden="true"></i>}
+        {summary && <i class="tab" aria-hidden="true"></i>}
+      </button>
+    </div>
+  ))}
+  <div class="slot bookend-slot" aria-hidden="true"><span class="bookend"></span></div>
+</div>
+<p class="shelf-key"><span><i class="k-ribbon"></i>reading now</span><span><i class="k-tab"></i>has my summary</span><span>Click a book to take it off the shelf.</span></p>
+
+<dialog class="bdlg" id="bookdlg" aria-label="Book">
+  <button class="bdlg-x" type="button" aria-label="Put it back">×</button>
+  {items.map(({ b, hue, w, summary }) => (
+    <article class="bdlg-a" data-book={b.id} hidden>
+      <div class="b3d" style={`--h:${hue};--w:${w}px`}>
+        <div class="b3d-book">
+          <div class="b3d-front"><Cover title={b.title} author={b.author} src={b.cover} /></div>
+          <div class="b3d-spine"><span>{short(b.title)}</span></div>
+          <div class="b3d-pages"></div>
+        </div>
+      </div>
+      <div class="bdlg-info">
+        <span class="lbl">{b.verdict}{b.pages ? ` · ${b.pages} pages` : ''}</span>
+        <h2>{b.title}</h2>
+        <p class="by">{b.author}</p>
+        {b.take && <p class="take">{b.take}</p>}
+        {b.quote && <blockquote>“{b.quote}”</blockquote>}
+        <div class="quick">
+          {summary
+            ? <a class="btn primary mag" href={summary} target={summary.startsWith('http') ? '_blank' : undefined} rel="noopener">Read my summary{summary.startsWith('http') ? ' ↗' : ' →'}</a>
+            : <span class="bdlg-none">No summary for this one yet.</span>}
+        </div>
+      </div>
+    </article>
+  ))}
+</dialog>
+
+<script>
+  import { $, $$ } from '../scripts/util';
+  const shelf = $('#shelf'), dlg = $('#bookdlg') as HTMLDialogElement | null;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Books drop onto the shelf the first time it scrolls into view.
+  if (shelf) new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { shelf.classList.add('in'); o.disconnect(); } }), { threshold: 0.15 }).observe(shelf);
+
+  // Take a book off the shelf.
+  let from: HTMLElement | null = null;
+  const open = (id: string, btn?: HTMLElement | null) => {
+    if (!dlg) return;
+    const a = $$<HTMLElement>('.bdlg-a', dlg);
+    if (!a.some((x) => x.dataset.book === id)) return;
+    a.forEach((x) => (x.hidden = x.dataset.book !== id));
+    from = btn ?? null;
+    from?.classList.add('out');
+    dlg.showModal();
+    history.replaceState(null, '', `#${id}`);
+  };
+  dlg?.addEventListener('close', () => {
+    from?.classList.remove('out'); from?.focus();
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+  dlg?.addEventListener('click', (e) => { if (e.target === dlg || (e.target as Element).closest('.bdlg-x')) dlg.close(); });
+  $$<HTMLElement>('.spine').forEach((s) => s.addEventListener('click', () => open(s.dataset.book!, s)));
+  const hashId = decodeURIComponent(location.hash.slice(1));
+  if (hashId) open(hashId, $(`.spine[data-book="${CSS.escape(hashId)}"]`));
+
+  // Filters: books slide to their new places instead of jumping (FLIP).
+  const btns = $$('#bookfilter button');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    const slots = $$<HTMLElement>('.slot', shelf!);
+    const before = new Map(slots.map((s) => [s, s.getBoundingClientRect()]));
+    slots.forEach((s) => s.classList.toggle('hide', !!s.dataset.v && b.dataset.v !== 'all' && s.dataset.v !== b.dataset.v));
+    if (reduce) return;
+    slots.forEach((s) => {
+      if (s.classList.contains('hide')) return;
+      const a = before.get(s)!, n = s.getBoundingClientRect();
+      const dx = a.left - n.left, dy = a.top - n.top;
+      if (!a.width) { s.animate([{ opacity: 0, transform: 'translateY(-24px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); return; }
+      if (dx || dy) s.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    });
+  }));
+</script>
