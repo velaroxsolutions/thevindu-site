@@ -22,10 +22,19 @@ const items = books.map((b) => {
   return { b, h, summary, hue: h % 360, w, ht, fs, lean: (h >> 11) % 9 === 0 };
 });
 ---
-<div class="shelf" id="shelf" role="list">
+<div class="bsearch">
+  <label class="bsearch-box">
+    <span aria-hidden="true">⌕</span>
+    <input id="booksearch" type="search" placeholder="Search by title or author" autocomplete="off" spellcheck="false" aria-describedby="bsearch-n" />
+  </label>
+  <span class="bsearch-n" id="bsearch-n" aria-live="polite"></span>
+</div>
+<div class="bshelf" id="shelf" role="list">
   {items.map(({ b, hue, w, ht, fs, lean, summary }, k) => (
-    <div class:list={['slot', { lean }]} role="listitem" data-v={slug(b.verdict)} style={`--k:${k}`}>
+    <div class:list={['bslot', { lean }]} role="listitem" data-v={slug(b.verdict)} style={`--k:${k}`}>
       <button type="button" class:list={['spine', { now: b.verdict === 'Reading', sum: !!summary }]} data-book={b.id}
+        data-title={b.title} data-author={b.author} data-verdict={b.verdict} data-desc={b.description ?? b.take ?? ''} data-cover={b.cover ?? ''}
+        data-q={`${b.title} ${b.author}`.toLowerCase()}
         style={`--h:${hue};--w:${w}px;--ht:${ht}px;--fs:${fs}px`} aria-haspopup="dialog" aria-label={`${b.title} by ${b.author}. ${b.verdict}${summary ? ', has a summary' : ''}`}>
         <span class="spine-band"></span>
         <span class="spine-t">{short(b.title)}</span>
@@ -36,7 +45,12 @@ const items = books.map((b) => {
       </button>
     </div>
   ))}
-  <div class="slot bookend-slot" aria-hidden="true"><span class="bookend"></span></div>
+  <div class="bslot bookend-slot" aria-hidden="true"><span class="bookend"></span></div>
+</div>
+<p class="bsearch-empty" id="bsearch-empty" hidden>Nothing on the shelf matches that. Try an author’s surname.</p>
+<div class="bcard" id="bcard" role="tooltip" hidden>
+  <img alt="" />
+  <div><strong></strong><span class="bcard-a"></span><span class="bcard-v"></span><p></p></div>
 </div>
 <p class="shelf-key"><span><i class="k-ribbon"></i>reading now</span><span><i class="k-tab"></i>has my summary</span><span>Click a book to take it off the shelf.</span></p>
 
@@ -46,7 +60,7 @@ const items = books.map((b) => {
     <article class="bdlg-a" data-book={b.id} hidden>
       <div class="b3d" style={`--h:${hue};--w:${w}px`}>
         <div class="b3d-book">
-          <div class="b3d-front"><Cover title={b.title} author={b.author} src={b.cover} /></div>
+          <div class="b3d-front"><Cover title={b.title} author={b.author} src={b.cover} eager /></div>
           <div class="b3d-spine"><span>{short(b.title)}</span></div>
           <div class="b3d-pages"></div>
         </div>
@@ -56,6 +70,7 @@ const items = books.map((b) => {
         <h2>{b.title}</h2>
         <p class="by">{b.author}</p>
         {b.take && <p class="take">{b.take}</p>}
+        {b.description && <p class="desc">{b.description}</p>}
         {b.quote && <blockquote>“{b.quote}”</blockquote>}
         <div class="quick">
           {summary
@@ -96,13 +111,52 @@ const items = books.map((b) => {
   const hashId = decodeURIComponent(location.hash.slice(1));
   if (hashId) open(hashId, $(`.spine[data-book="${CSS.escape(hashId)}"]`));
 
-  // Filters: books slide to their new places instead of jumping (FLIP).
-  const btns = $$('#bookfilter button');
-  btns.forEach((b) => b.addEventListener('click', () => {
-    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
-    const slots = $$<HTMLElement>('.slot', shelf!);
+  // Hover card: the title the right way up, author, verdict and a line about the book.
+  const card = $('#bcard');
+  const show = (sp: HTMLElement) => {
+    if (!card || matchMedia('(hover: none)').matches) return;
+    const d = sp.dataset, img = card.querySelector('img')!;
+    card.querySelector('strong')!.textContent = d.title || '';
+    card.querySelector('.bcard-a')!.textContent = d.author || '';
+    card.querySelector('.bcard-v')!.textContent = d.verdict || '';
+    card.querySelector('p')!.textContent = d.desc || '';
+    img.hidden = !d.cover; if (d.cover) img.src = d.cover;
+    card.hidden = false;
+    const r = sp.getBoundingClientRect(), cw = card.offsetWidth, ch = card.offsetHeight;
+    const x = Math.min(innerWidth - cw - 12, Math.max(12, r.left + r.width / 2 - cw / 2));
+    const above = r.top - ch - 14 > 8;
+    card.style.left = `${x}px`;
+    card.style.top = `${above ? r.top - ch - 14 : r.bottom + 10}px`;
+    card.classList.add('on');
+  };
+  const hide = () => { card?.classList.remove('on'); if (card) card.hidden = true; };
+  $$<HTMLElement>('.spine').forEach((sp) => {
+    sp.addEventListener('pointerenter', () => show(sp));
+    sp.addEventListener('pointerleave', hide);
+    sp.addEventListener('focus', () => show(sp));
+    sp.addEventListener('blur', hide);
+    sp.addEventListener('click', hide);
+  });
+  addEventListener('scroll', hide, { passive: true });
+
+  // Verdict filter + search, together. Books slide to their new places (FLIP) instead of jumping.
+  let verdict = 'all', query = '';
+  const search = $('#booksearch') as HTMLInputElement | null, count = $('#bsearch-n'), empty = $('#bsearch-empty');
+  const apply = () => {
+    const slots = $$<HTMLElement>('.bslot', shelf!);
     const before = new Map(slots.map((s) => [s, s.getBoundingClientRect()]));
-    slots.forEach((s) => s.classList.toggle('hide', !!s.dataset.v && b.dataset.v !== 'all' && s.dataset.v !== b.dataset.v));
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    let shown = 0, books = 0;
+    slots.forEach((s) => {
+      const sp = s.querySelector<HTMLElement>('.spine');
+      if (!sp) return; // bookend
+      books++;
+      const ok = (verdict === 'all' || s.dataset.v === verdict) && words.every((w) => sp.dataset.q!.includes(w));
+      s.classList.toggle('hide', !ok);
+      if (ok) shown++;
+    });
+    if (count) count.textContent = query || verdict !== 'all' ? `${shown} of ${books}` : '';
+    if (empty) empty.hidden = shown > 0;
     if (reduce) return;
     slots.forEach((s) => {
       if (s.classList.contains('hide')) return;
@@ -111,5 +165,18 @@ const items = books.map((b) => {
       if (!a.width) { s.animate([{ opacity: 0, transform: 'translateY(-24px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.2,1)' }); return; }
       if (dx || dy) s.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.2,.8,.2,1)' });
     });
+  };
+  const btns = $$('#bookfilter button');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+    verdict = b.dataset.v || 'all'; apply();
   }));
+  let t = 0;
+  search?.addEventListener('input', () => { clearTimeout(t); t = window.setTimeout(() => { query = search.value.trim(); apply(); }, 120); });
+  // Enter with exactly one match takes that book off the shelf.
+  search?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const hits = $$<HTMLElement>('.bslot:not(.hide) .spine', shelf!);
+    if (hits.length === 1) open(hits[0].dataset.book!, hits[0]);
+  });
 </script>
