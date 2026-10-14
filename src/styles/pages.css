@@ -60,14 +60,22 @@ a.cell:hover{background:var(--sunk)}
 .c-chess{grid-column:span 4}
 @media(max-width:959px){.c-now,.c-clock,.c-ship,.c-read,.c-lib,.c-chess{grid-column:span 12;grid-row:auto}}
 @media(min-width:560px) and (max-width:959px){.c-clock,.c-ship,.c-read,.c-lib{grid-column:span 6}}
-.nowlist{display:flex;flex-direction:column}
-.nowlist div{display:grid;grid-template-columns:96px 1fr;gap:14px;padding:13px 0;border-bottom:1px solid var(--rule-soft)}
-.nowlist div:last-child{border-bottom:0}
-.nowlist span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-top:3px}
-.nowlist div[data-lane-item="build"] span{color:var(--build)}
-.nowlist div[data-lane-item="study"] span{color:var(--study)}
-.nowlist p{font-size:15px}
-@media(max-width:559px){.nowlist div{grid-template-columns:1fr;gap:4px}}
+.c-now{display:flex;flex-direction:column}
+.cell .now-head{font-family:var(--display);font-weight:800;font-stretch:112%;font-size:clamp(24px,2.6vw,36px);line-height:1.12;letter-spacing:-.025em;color:var(--ink);margin:18px 0 0;max-width:22ch;text-wrap:balance}
+.nowlist{display:flex;flex-direction:column;margin-top:auto;padding-top:24px}
+.nowlist a{display:grid;grid-template-columns:72px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--rule-soft);color:var(--body-ink);transition:color .2s}
+.nowlist a:hover{color:var(--ink)}
+.now-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.nowlist a[data-lane-item="build"]{--c:var(--build);--c-rgb:var(--build-rgb)}
+.nowlist a[data-lane-item="study"]{--c:var(--study);--c-rgb:var(--study-rgb)}
+.nowlist a .now-k{color:var(--c)}
+.now-t{font-size:14.5px}
+.now-chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--c);
+  padding:4px 9px;border:1px solid rgba(var(--c-rgb),.35);border-radius:99px;background:rgba(var(--c-rgb),.08);white-space:nowrap}
+.now-chip i{width:6px;height:6px;border-radius:50%;background:var(--c);animation:chipPulse 2.4s ease-in-out infinite}
+@keyframes chipPulse{50%{box-shadow:0 0 0 4px rgba(var(--c-rgb),.18)}}
+@media (prefers-reduced-motion:reduce){.now-chip i{animation:none}}
+@media(max-width:559px){.nowlist a{grid-template-columns:1fr auto;gap:4px 10px}.now-k{grid-column:1/-1}}
 .sky{position:absolute;left:22px;right:22px;bottom:18px;height:56px}
 .sky svg{width:100%;height:100%;overflow:visible}
 .sky .arc{fill:none;stroke:var(--rule);stroke-dasharray:2 4}
@@ -75,10 +83,6 @@ a.cell:hover{background:var(--sunk)}
 .sky .sun{fill:var(--build)}
 .sky .sun.night{fill:var(--study)}
 .c-clock{padding-bottom:90px}
-.board{display:grid;grid-template-columns:repeat(8,1fr);width:74px;height:74px;border:1px solid var(--rule);position:absolute;right:22px;bottom:20px}
-.board i{background:var(--sunk)}
-.board i.d{background:var(--rule)}
-.board i.q{background:var(--build)}
 
 /* ============================================================
    WORK — editorial feature blocks
@@ -345,3 +349,16 @@ a.cell:hover{background:var(--sunk)}
   .cvhead{padding-top:0}
 }
 .cvwide{grid-template-columns:200px 1fr}
+
+/* Full course list on /about — tucked away, open when needed */
+.coursework{margin-top:22px;border-top:1px solid var(--rule)}
+.coursework summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 0;cursor:pointer;list-style:none;font-size:14px;color:var(--muted)}
+.coursework summary::-webkit-details-marker{display:none}
+.coursework summary>span:first-child::before{content:'+';display:inline-block;width:1.2em;font-family:var(--mono);transition:transform .25s var(--ease)}
+.coursework[open] summary>span:first-child::before{transform:rotate(45deg)}
+.coursework summary:hover{color:var(--ink)}
+.cw-note{font-size:13.5px;color:var(--muted);margin:0 0 18px;max-width:70ch}
+.cw-terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px 32px;padding-bottom:20px}
+.cw-term ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:5px}
+.cw-term li{display:grid;grid-template-columns:80px 1fr;gap:8px;font-size:13.5px;color:var(--body-ink);line-height:1.4}
+.cw-term li b{font-family:var(--mono);font-weight:500;font-size:11.5px;color:var(--ink);padding-top:2px}

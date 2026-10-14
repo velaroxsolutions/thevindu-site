@@ -9,7 +9,7 @@ const c = await libraryCounts();
 const shelves = [
   { href: '/library/books', n: c.books, unit: 'books', title: 'Books', text: 'What I read and the one line I kept from each.', lane: 'study' },
   { href: '/library/courses', n: c.courses, unit: 'completed', title: 'Courses', text: 'Courses and certificates I’ve finished, and what they covered.', lane: 'study' },
-  { href: '/library/research', n: RESEARCH.length, unit: 'projects', title: 'Research', text: 'Lab research, and my notes on what makes short-form video work. Free to read.', lane: 'study' },
+  { href: '/library/research', n: RESEARCH.reduce((a, r) => a + r.docs.length, 0), unit: 'notes', title: 'Research', text: 'My notes on what makes short-form video work: hooks, story, thumbnails. Free to read.', lane: 'study' },
   { href: '/photos', n: c.photos, unit: 'photos', title: 'Free photos', text: `Mostly nature. Free to use, ${PROFILES.pexels.views} views on Pexels.`, lane: 'build' },
 ];
 ---

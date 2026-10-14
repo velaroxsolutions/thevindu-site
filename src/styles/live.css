@@ -2,10 +2,11 @@
    LIVE DATA — bento additions
    ============================================================ */
 .c-gh{grid-column:span 8}
-.c-chess{grid-column:span 4}
+.c-duo{grid-column:span 4}
+.c-duo.wide{grid-column:span 12}
 .bento-tail{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--rule)}
 .bento-tail .cell{grid-column:auto}
-@media(max-width:959px){.c-gh,.c-chess{grid-column:span 12}}
+@media(max-width:959px){.c-gh,.c-duo{grid-column:span 12}}
 .cell-lead{font-size:18px!important;font-family:var(--display);font-weight:600;letter-spacing:-.01em;color:var(--ink)!important;line-height:1.3}
 .cell-big .unit{font-style:normal;font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--muted);margin-left:8px;font-stretch:100%;font-weight:400}
 .stars{color:var(--build);font-size:.8em;margin-left:6px}
@@ -309,8 +310,32 @@ a.vcard:hover{background:var(--sunk)}
 .shot-more:hover::before{transform:rotate(8deg) scale(1.1)}
 .shot-more>*{position:relative}
 .shot-more b{font-family:var(--display);font-weight:800;font-stretch:118%;font-size:clamp(28px,3vw,40px);letter-spacing:-.03em;line-height:1}
-.chess-line{display:flex;flex-wrap:wrap;gap:4px 12px}
-.chess-line b{font-weight:500;color:var(--ink)}
+/* chess: FIDE headline, online ratings as sidenotes, a knight that jumps on hover */
+.c-chess{position:relative;overflow:hidden;display:flex;flex-direction:column}
+.c-chess>*:not(.kboard){position:relative;z-index:1}
+.fide{display:grid;justify-items:start;margin-top:6px;color:var(--ink)}
+.fide-tc{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--study);margin-top:6px}
+.fide-sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+.fide-sub b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.fide:hover .cell-big{color:var(--study)}
+.chess-side{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:auto;padding-top:16px;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.chess-side>span{width:100%;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+.chess-side a{color:var(--muted)}
+.chess-side a:hover{color:var(--ink)}
+.chess-side b{color:var(--ink);font-weight:500}
+.chess-side em{font-style:normal}
+.kboard{--sq:24px;position:absolute;right:0;top:40px;display:grid;grid-template-columns:repeat(5,var(--sq));grid-auto-rows:var(--sq);
+  -webkit-mask:radial-gradient(closest-side at 60% 55%,#000 45%,transparent);mask:radial-gradient(closest-side at 60% 55%,#000 45%,transparent);pointer-events:none}
+.kboard i{background:transparent}
+.kboard i.d{background:rgba(var(--ink-rgb),.09)}
+.knight{position:absolute;left:calc(var(--sq) * 3);top:calc(var(--sq) * 3);width:var(--sq);height:var(--sq);display:grid;place-items:center;
+  font-size:24px;line-height:1;color:var(--ink);font-family:"Segoe UI Symbol","DejaVu Sans",serif;transition:transform .55s cubic-bezier(.5,-.4,.3,1.4)}
+.kdot{position:absolute;left:calc(var(--sq) * 2);top:var(--sq);width:var(--sq);height:var(--sq);display:grid;place-items:center;opacity:0;transition:opacity .3s}
+.kdot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--study)}
+.c-chess:hover .knight{transform:translate(calc(var(--sq) * -1),calc(var(--sq) * -2))}
+.c-chess:hover .kdot{opacity:1;transition-delay:0s}
+.c-chess:hover .kboard i.d{background:rgba(var(--ink-rgb),.1)}
+@media (prefers-reduced-motion:reduce){.knight{transition:none}}
 [data-live].fresh{animation:fresh 1.2s var(--ease)}
 @keyframes fresh{0%{color:var(--build)}100%{}}
 
@@ -336,3 +361,11 @@ a.vcard:hover{background:var(--sunk)}
   background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;padding:6px 9px;white-space:nowrap;border-radius:3px}
 .ghcal-tip.on{opacity:1}
 .gh-month{display:block;margin-top:6px;font-size:12.5px;color:var(--muted)}
+
+/* Duolingo */
+.c-duo .streak{margin-top:14px}
+.duo-cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.duo-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:10px;margin:18px 0 0;padding-top:14px;border-top:1px solid var(--rule)}
+.duo-stats div{display:grid;gap:3px}
+.duo-stats dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.duo-stats dd{margin:0;font-size:15px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}

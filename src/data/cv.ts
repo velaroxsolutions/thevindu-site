@@ -13,14 +13,6 @@ export const CV = {
       ],
     },
     {
-      title: 'Undergraduate Researcher, Fyshe Lab',
-      when: 'Fall 2026 — present',
-      org: 'University of Alberta · Computing Science',
-      points: [
-        'Continuing work on the contrastive gap in vision-language models like CLIP, building on Fahim, Murphy & Fyshe (2024). Running experiments on university compute and interpreting the results.', // VERIFY
-      ],
-    },
-    {
       title: 'Marketing Intern',
       when: 'Jun 2025 — Aug 2025',
       org: 'Overhill Games · Edmonton, AB',
@@ -41,7 +33,7 @@ export const CV = {
   ],
   skills: [
     ['Languages', 'Python, JavaScript, HTML/CSS, SQL'],
-    ['AI', 'Claude API, PyTorch, BERT fine-tuning (NER), multimodal embeddings, scikit-learn, Stable-Baselines3'],
+    ['AI', 'Claude API, PyTorch, BERT fine-tuning (NER), scikit-learn, Stable-Baselines3'],
     ['Product', 'React Native, Expo, React, Next.js, TypeScript, FastAPI, Firebase, Tauri'],
     ['Tools & design', 'Git, EAS, Railway, Vercel, Render, Postman, Figma, Illustrator, Blender'],
   ],

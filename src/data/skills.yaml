@@ -90,15 +90,8 @@
   group: ai
   level: 6
   years: "1 yr"
-  where: "research \u00b7 coursework"
+  where: "coursework"
   note: "Training loops and reading other people's model code."
-- id: embeddings
-  name: "Multimodal embeddings"
-  group: ai
-  level: 5
-  years: "new"
-  where: "Fyshe Lab research"
-  note: "Why image and text embeddings drift apart in contrastive models like CLIP."
 - id: growth
   name: "Short-form content & growth"
   group: co

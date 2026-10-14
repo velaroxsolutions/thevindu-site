@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 import { NOW } from '../data/now';
 import { PHOTOS, HOBBIES } from '../data/about';
 import { TERM } from '../data/term';
+import { COURSEWORK, SCHOLARSHIP } from '../data/coursework';
 import Elsewhere from '../components/Elsewhere.astro';
 import { photos } from '../lib/live';
 import { localPhotos } from '../lib/localPhotos';
@@ -36,19 +37,29 @@ const strip = livePhotos.length
     <SkillsExplorer />
   </section>
 
-  {TERM.courses.length > 0 && (
-    <section id="term" data-sec="term" data-secname="This term">
-      <Chapter num="—" title="This term" sub={`${TERM.label}. What I’m taking, and what I think of it so far.`} />
-      <div class="res">
-        {TERM.courses.map((c, i) => (
-          <div class="ritem" data-anim style={`--i:${i}`} data-lane-item="study">
-            <div><h3>{[c.code, c.name].filter(Boolean).join(' — ')}</h3>{c.take && <p>{c.take}</p>}</div>
-            <span class="rtype">{TERM.label}</span>
+  <section id="term" data-sec="term" data-secname="This term">
+    <Chapter num="—" title="This term" sub={`${TERM.label} · ${TERM.mode}. ${TERM.note}`} />
+    <div class="res">
+      {TERM.courses.map((c, i) => (
+        <div class="ritem" data-anim style={`--i:${i}`} data-lane-item="study">
+          <div><h3>{[c.code, c.name].filter(Boolean).join(' — ')}</h3>{c.take && <p>{c.take}</p>}</div>
+          <span class="rtype">{TERM.label}</span>
+        </div>
+      ))}
+    </div>
+    <details class="coursework">
+      <summary><span>Every course I’ve taken</span><span class="lbl">{COURSEWORK.reduce((a, t) => a + t.courses.length, 0)} courses · {COURSEWORK.length} terms</span></summary>
+      <p class="cw-note">Computer Engineering, Software Option (Co-op), University of Alberta. {SCHOLARSHIP}.</p>
+      <div class="cw-terms">
+        {COURSEWORK.map((t) => (
+          <div class="cw-term">
+            <span class="lbl">{t.term}</span>
+            <ul>{t.courses.map(([code, name]) => <li><b>{code}</b> {name}</li>)}</ul>
           </div>
         ))}
       </div>
-    </section>
-  )}
+    </details>
+  </section>
 
   <section data-sec="timeline" data-secname="Timeline">
     <Chapter num="03" title="Timeline" sub="Short, because it’s still early." />

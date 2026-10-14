@@ -11,7 +11,7 @@ const docs = RESEARCH.reduce((a, r) => a + r.docs.length, 0);
     meta={[`${RESEARCH.length} projects`, `${docs} documents`, 'No sign-up']} />
 
   {RESEARCH.map((r, ri) => (
-    <section style={ri === 0 ? 'padding-top:clamp(34px,4.5vw,56px)' : ''} id={r.id} data-sec={r.id} data-secname={ri === 0 ? 'Lab' : 'Social'}>
+    <section style={ri === 0 ? 'padding-top:clamp(34px,4.5vw,56px)' : ''} id={r.id} data-sec={r.id} data-secname={r.title.split(' ').slice(0, 3).join(' ')}>
       <Chapter num={String(ri + 1).padStart(2, '0')} title={r.title} />
       <div class="rs-head" data-lane-item={r.lane}>
         <div>

@@ -3,16 +3,6 @@ const drive = (id: string) => ({ view: `https://drive.google.com/file/d/${id}/vi
 
 export const RESEARCH = [
   {
-    id: 'contrastive-gap',
-    title: 'The contrastive gap in vision-language models',
-    kind: 'Undergraduate research · Fyshe Lab, University of Alberta',
-    status: 'Ongoing · Fall 2026',
-    lane: 'study' as const,
-    text: 'Why do image and text embeddings in contrastive models like CLIP end up in separate regions of the same space? I’m continuing work on this question, building on Fahim, Murphy & Fyshe (2024): running experiments and interpreting what they show.', // VERIFY wording
-    links: [{ label: 'The paper it builds on (arXiv)', href: 'https://arxiv.org/abs/2405.18570' }],
-    docs: [] as { title: string; date: string; text: string; view: string; preview: string }[],
-  },
-  {
     id: 'viral-short-form',
     title: 'What makes short-form video go viral',
     kind: 'Personal research · social media',
