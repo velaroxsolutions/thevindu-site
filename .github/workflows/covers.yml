@@ -1,0 +1,31 @@
+# When a book is added under src/content/books, fetch its cover and description from
+# Open Library, shrink the cover and commit it to public/covers — so the site serves
+# covers from its own domain, instantly. Can also be run by hand (Actions → Book covers).
+name: Book covers
+on:
+  push:
+    branches: [main]
+    paths: ['src/content/books/**']
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Redo every cover'
+        type: boolean
+        default: false
+permissions:
+  contents: write
+jobs:
+  covers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: node scripts/fetch-covers.mjs ${{ inputs.force && '--force' || '' }}
+      - name: Commit covers
+        run: |
+          git add public/covers src/data/covers.json
+          if git diff --cached --quiet; then echo "No new covers"; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Add book covers"
+          git push

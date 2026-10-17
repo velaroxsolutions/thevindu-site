@@ -1,13 +1,12 @@
 ---
 // The hero instrument: the site's own content plotted as an embedding space.
 // Build work clusters bottom-left (magenta), study top-right (blue) — the logo, literally.
-import { projects, lessons, allBooks, courses, skills } from '../lib/content';
+import { projects, allBooks, courses, skills } from '../lib/content';
 import { github } from '../lib/live';
-const [p, n, b, c, s, gh] = await Promise.all([projects(), lessons(), allBooks(), courses(), skills(), github()]);
+const [p, b, c, s, gh] = await Promise.all([projects(), allBooks(), courses(), skills(), github()]);
 const pts = [
   ...p.map((x) => ({ l: x.data.title, k: 'project', lane: 'build', h: `/work/${x.id}`, w: 3 })),
   ...s.filter((x) => !['ai'].includes(x.group)).map((x) => ({ l: x.name, k: 'skill', lane: 'build', h: '/about#skills', w: 1 })),
-  ...n.map((x) => ({ l: x.data.title, k: 'lesson', lane: x.data.lane, h: `/lessons#${x.id}`, w: 2 })),
   ...c.map((x) => ({ l: x.data.title.split(' — ')[0], k: 'course', lane: x.data.lane, h: `/library/courses#${x.id}`, w: 1 })),
   ...b.map((x) => ({ l: x.title, k: 'book', lane: 'study', h: `/library/books#${x.id}`, w: 1 })),
   ...(gh?.repos ?? []).slice(0, 12).map((r) => ({ l: r.name, k: 'repo', lane: 'build', h: r.url, w: 1 })),

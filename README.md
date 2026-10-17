@@ -19,13 +19,12 @@ npm run dev:fixtures   # fake live data from tests/fixtures, to work on the UI
 | Change email, domain, socials, nav    | `src/data/site.ts`                     |
 | Usernames for GitHub, chess, Duolingo, Unsplash, Pexels, Notion, App Store | `src/data/profiles.ts` |
 | Update the "Now" block / chess rating | `src/data/now.ts`                      |
-| Add a log entry (ticker + /log)       | `src/data/log.yaml`                    |
+| Add a log entry (ticker + /log)       | From your phone: a row in the Notion **Log** database (see *Updating the log*). Old/bulk entries: `src/data/log.yaml` |
 | Add a skill                           | `src/data/skills.yaml`                 |
 | Edit the timeline / side projects     | `src/data/timeline.yaml`, `experiments.yaml` |
 | Edit the résumé (incl. certificates, awards) | `src/data/cv.ts`                |
 | Add a completed course / certificate  | `src/data/courses.yaml`                |
 | "This term" courses (About + homepage) | `src/data/term.ts`                     |
-| Add a lesson learnt (with a `type` for the filter) | `src/content/lessons/*.md` |
 | Research shelf                        | `src/data/research.ts`                 |
 | Shipped / up-next project cards       | `src/data/ventures.yaml`               |
 | "Also experienced with" chips          | `src/data/also.ts`                     |
@@ -44,10 +43,27 @@ Content is validated by the schemas in `src/content.config.ts`, so a typo in a f
 - `SITE.email` and `SITE.url` in `src/data/site.ts`
 - `public/resume.pdf` (the /cv page also prints cleanly to PDF)
 - Certificate links → `url:` in `src/data/courses.yaml`
-- Anything marked `VERIFY` in the content (draft quotes, lessons, skill levels)
+- Anything marked `VERIFY` in the content (draft quotes, skill levels)
 - Screenshots: `shots:` in each project's frontmatter; photos in `src/data/about.ts`
 - Book covers: optional `cover:` per book (otherwise a cover is generated from the title)
 - `links:` on each project (currently `#`, shown as disabled)
+
+## Updating the log (no code)
+
+The log fills itself from three places:
+
+1. **Notion, from your phone.** Make a database called *Log* with columns
+   `Name` (title, the entry), `Kind` (select: Shipped · Started · Learned · Broke · Stuck · Reading · Milestone),
+   and optionally `Date`, `Project` (select), `Link` (url), `Hide` (checkbox).
+   Share it with the site's Notion integration and set `NOTION_LOG_DB` to its id.
+   Add a row in the Notion app (pin the database to your home screen) and it appears on `/log`
+   within ~5 minutes; the homepage ticker and RSS pick it up at the next daily rebuild.
+2. **Automatic.** App Store releases, new public GitHub repos (unless you already logged that project),
+   and Duolingo streak milestones (30, 50, 100… days) log themselves, marked "auto".
+3. **`src/data/log.yaml`** for older entries or bulk edits.
+
+Want the homepage updated right away? Open `/api/publish?key=<PUBLISH_KEY>` (bookmark it, or add it
+as a Notion button). Needs `PUBLISH_KEY` and `VERCEL_DEPLOY_HOOK` in Vercel.
 
 ## Live data
 
@@ -81,11 +97,11 @@ into the page after load. The GitHub token stays on the server. Redirects for ol
 
 ```
 src/
-  content/        markdown/MDX collections (projects, lessons, books)
+  content/        markdown/MDX collections (projects, books)
   data/           YAML + TS data (log, skills, timeline, now, cv, site config)
   components/     Rail, TopBar (+ mobile menu), Palette, Field, Matcher, Arch, …
   layouts/        Base.astro (head, SEO, theme, chrome)
-  pages/          routes — /work/[slug], /lessons, /library/…, /photos, /log, /cv, rss.xml
+  pages/          routes — /work/[slug], /log, /library/…, /photos, /log, /cv, rss.xml
   scripts/        client-side TS, one module per behaviour
   styles/         tokens.css → base.css → components.css → pages.css
 ```

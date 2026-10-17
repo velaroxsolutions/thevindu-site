@@ -1,6 +1,14 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { appstore, notionBooks, photos, notionCourseIndex, notionHTML, normId } from './live';
 import { bookCovers } from './live/covers';
+import { notionLog } from './live/notionLog';
+import { github, duolingo } from './live';
+import { NOW } from '../data/now';
+import STORED from '../data/covers.json';
+
+// Covers saved in the repo by scripts/fetch-covers.mjs (public/covers). Fast, same-origin.
+type Stored = { file: string | null; pages: number | null; description: string | null; color: string | null };
+const stored = STORED as Record<string, Stored>;
 import { PROFILES } from '../data/profiles';
 import { localPhotos } from './localPhotos';
 
@@ -13,24 +21,46 @@ export async function projects() {
   return (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 }
 
-export type LogEntry = { id: string; data: { date: Date; kind: CollectionEntry<'log'>['data']['kind']; text: string; project?: string } };
+export type LogEntry = {
+  id: string;
+  /** where it came from: the yaml file, the Notion log, or added automatically from a live source */
+  source: 'file' | 'notion' | 'auto';
+  data: { date: Date; kind: string; text: string; project?: string; link?: string };
+};
+export const LOG_KINDS = ['Shipped', 'Started', 'Learned', 'Broke', 'Stuck', 'Reading', 'Milestone'] as const;
 
-/** The hand-written log, plus entries derived from live sources (App Store releases). */
+const sameDay = (a: Date, b: Date) => Math.abs(+a - +b) < 864e5 * 3;
+const MILESTONES = [30, 50, 100, 150, 200, 250, 300, 365, 500, 730, 1000];
+
+/** Every log entry: log.yaml + the Notion log (from your phone) + things that log themselves. */
 export async function logEntries(): Promise<LogEntry[]> {
-  const [local, app] = await Promise.all([getCollection('log'), appstore()]);
-  const out: LogEntry[] = local.map((e) => ({ id: e.id, data: e.data }));
+  const [local, notion, app, gh, duo] = await Promise.all([getCollection('log'), notionLog(), appstore(), github(), duolingo()]);
+  const out: LogEntry[] = [
+    ...local.map((e) => ({ id: e.id, source: 'file' as const, data: e.data })),
+    ...(notion ?? []).map((e) => ({ id: e.id, source: 'notion' as const, data: { date: new Date(e.date), kind: e.kind, text: e.text, project: e.project, link: e.link } })),
+  ];
+  const mentions = (project: string) => out.some((e) => e.data.project?.toLowerCase() === project.toLowerCase());
+  const auto = (id: string, data: LogEntry['data']) => out.push({ id, source: 'auto', data });
+
+  // App Store: launch and the latest release.
   if (app) {
     const rel = new Date(app.released), upd = new Date(app.updated);
-    out.push({ id: 'appstore-launch', data: { date: rel, kind: 'Shipped', project: 'Aperis', text: `${app.name} launched on the App Store.` } });
-    if (+upd - +rel > 864e5) out.push({ id: 'appstore-version', data: { date: upd, kind: 'Shipped', project: 'Aperis', text: `${app.name} ${app.version} is out${app.notes ? ' — ' + app.notes.split('\n')[0].replace(/[.\s]+$/, '') : ''}.` } });
+    auto('appstore-launch', { date: rel, kind: 'Shipped', project: 'Aperis', text: `${app.name} launched on the App Store.`, link: app.url });
+    if (+upd - +rel > 864e5) auto(`appstore-${app.version}`, { date: upd, kind: 'Shipped', project: 'Aperis', link: app.url, text: `${app.name} ${app.version} is out${app.notes ? ' — ' + app.notes.split('\n')[0].replace(/[.\s]+$/, '') : ''}.` });
+  }
+  // GitHub: a new public repo, unless you already logged that project yourself.
+  for (const r of gh?.repos ?? []) {
+    if (!r.created || mentions(r.name) || out.some((e) => e.data.text.toLowerCase().includes(r.name.toLowerCase()) && sameDay(e.data.date, new Date(r.created!)))) continue;
+    auto(`gh-${r.name}`, { date: new Date(r.created), kind: 'Started', project: r.name, link: r.url, text: `Put ${r.name} up on GitHub${r.description ? ` — ${r.description.replace(/[.\s]+$/, '')}` : ''}.` });
+  }
+  // Duolingo: streak milestones, dated from when the streak started.
+  const start = duo?.streakStart ?? (NOW.panel.duolingo.streakStart || null);
+  if (start) {
+    const days = Math.floor((Date.now() - Date.parse(start + 'T00:00:00')) / 864e5) + 1;
+    for (const m of MILESTONES.filter((m) => m <= days))
+      auto(`duo-${m}`, { date: new Date(Date.parse(start + 'T12:00:00') + (m - 1) * 864e5), kind: 'Milestone', project: 'French', text: `${m}-day Duolingo streak.` });
   }
   return out.sort((a, b) => +b.data.date - +a.data.date);
-}
-
-export async function lessons() {
-  return (await getCollection('lessons', (n) => import.meta.env.DEV || !n.data.draft)).sort(
-    (a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title),
-  );
 }
 
 const VERDICT_ORDER = ['Reading', 'Worth it', 'Read', 'Mixed', 'Skim it', 'Shelved', 'Want to read'];
@@ -63,7 +93,7 @@ export async function skills() {
 }
 
 /* ---------- Books: local markdown + the Notion reading database ---------- */
-export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; pages?: number; isbn?: string; href?: string; summary?: string; notion?: string; featured: boolean; source: 'local' | 'notion' };
+export type Book = { id: string; title: string; author: string; verdict: string; take?: string; quote?: string; cover?: string; pages?: number; isbn?: string; description?: string; color?: string; href?: string; summary?: string; notion?: string; featured: boolean; source: 'local' | 'notion' };
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 const READING = /reading|progress|current|started|now/i;
 
@@ -71,18 +101,24 @@ export async function allBooks(): Promise<Book[]> {
   const local = await books();
   const [remote, found] = await Promise.all([
     notionBooks(),
-    bookCovers(local.map((b) => ({ id: b.id, title: b.data.title, author: b.data.author, isbn: b.data.isbn }))),
+    // Only look up books that don't have a stored cover yet.
+    bookCovers(local.filter((b) => !stored[b.id]?.file).map((b) => ({ id: b.id, title: b.data.title, author: b.data.author, isbn: b.data.isbn }))),
   ]);
-  const out: Book[] = local.map((b) => ({
-    id: b.id, ...b.data, href: b.data.summary, source: 'local' as const,
-    cover: b.data.cover ?? found?.[b.id]?.cover ?? undefined,
-    pages: b.data.pages ?? found?.[b.id]?.pages ?? undefined,
-  }));
+  const out: Book[] = local.map((b) => {
+    const st = stored[b.id];
+    return {
+      id: b.id, ...b.data, href: b.data.summary, source: 'local' as const,
+      cover: b.data.cover ?? st?.file ?? found?.[b.id]?.cover ?? undefined,
+      pages: b.data.pages ?? st?.pages ?? found?.[b.id]?.pages ?? undefined,
+      description: st?.description ?? found?.[b.id]?.description ?? undefined,
+      color: st?.color ?? undefined,
+    };
+  });
   const seen = new Set(out.map((b) => norm(b.title)));
   for (const r of remote ?? []) {
     const key = norm(r.title);
     const existing = out.find((b) => norm(b.title) === key);
-    if (existing) { existing.href ??= r.url; if (r.cover && !local.find((l) => l.id === existing.id)?.data.cover) existing.cover = r.cover; existing.take ??= r.take || undefined; continue; }
+    if (existing) { existing.href ??= r.url; if (r.cover && !local.find((l) => l.id === existing.id)?.data.cover && !stored[existing.id]?.file) existing.cover = r.cover; existing.take ??= r.take || undefined; continue; }
     if (seen.has(key)) continue;
     seen.add(key);
     out.push({

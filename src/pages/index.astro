@@ -10,14 +10,14 @@ import { NOW } from '../data/now';
 import Heatmap from '../components/Heatmap.astro';
 import ChessCell from '../components/ChessCell.astro';
 import DuoCell from '../components/DuoCell.astro';
-import { projects, logEntries, libraryCounts, lessons, allBooks, fmtDate } from '../lib/content';
+import { projects, logEntries, libraryCounts, allBooks, fmtDate } from '../lib/content';
 import { TERM } from '../data/term';
 import { RESEARCH } from '../data/research';
 import { getCollection } from 'astro:content';
 import { github, chess, duolingo, appstore } from '../lib/live';
 import { PROFILES } from '../data/profiles';
 
-const [proj, log, counts, ns, bs, gh, ch, duo, app] = await Promise.all([projects(), logEntries(), libraryCounts(), lessons(), allBooks(), github(), chess(), duolingo(), appstore()]);
+const [proj, log, counts, bs, gh, ch, duo, app] = await Promise.all([projects(), logEntries(), libraryCounts(), allBooks(), github(), chess(), duolingo(), appstore()]);
 const shipped = log.find((l) => l.data.kind === 'Shipped');
 const current = proj.find((p) => p.data.stage === 'building') ?? proj[0];
 const featured = proj.filter((p) => p.data.featured);
@@ -159,23 +159,8 @@ const rgb = { build: '217,26,114', study: '43,76,232', neutral: '92,102,117' } a
     <SkillsExplorer />
   </section>
 
-  {ns.length > 0 && (
-    <section data-sec="lessons" data-secname="Lessons">
-      <Chapter num="04" title="Lessons learnt" sub="Things I keep relearning, written down so I stop forgetting." more={{ href: '/lessons', label: 'All lessons' }} />
-      <ol class="lessons">
-        {ns.slice(0, 3).map((l, i) => (
-          <li class="lesson" data-lane-item={l.data.lane} data-anim style={`--i:${i}`}>
-            <span class="lesson-n">{String(ns.length - i).padStart(2, '0')}</span>
-            <div><h3 class="lesson-t"><a href={`/lessons#${l.id}`}>{l.data.title}</a></h3><p class="lesson-c">{l.data.context}</p></div>
-            <span class="lesson-m"><span class="kind Learned">{l.data.type}</span></span>
-          </li>
-        ))}
-      </ol>
-    </section>
-  )}
-
   <section data-sec="library" data-secname="Library">
-    <Chapter num="05" title="Library" sub="What I learn, given away. No email gate." more={{ href: '/library', label: 'Open the library' }} />
+    <Chapter num="04" title="Library" sub="What I learn, given away. No email gate." more={{ href: '/library', label: 'Open the library' }} />
     <div class="grid3 grid4">
       <a class="card ret" href="/library/books" data-lane-item="study" data-anim>
         <span class="arrow">↗</span><span class="kcount">{counts.books ? <><span class="count" data-to={counts.books}>0</span> books</> : 'Coming soon'}</span>

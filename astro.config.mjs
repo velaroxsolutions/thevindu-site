@@ -22,9 +22,10 @@ export default defineConfig({
     '/library-courses.html': '/library/courses',
     '/library-templates.html': '/library',
     '/cv.html': '/cv',
-    '/notes': '/lessons',
+    '/notes': '/log',
+    '/lessons': '/log',
     '/library/templates': '/library',
-    '/notes/the-contrastive-gap': '/lessons',
+    '/notes/the-contrastive-gap': '/log',
 
   },
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
