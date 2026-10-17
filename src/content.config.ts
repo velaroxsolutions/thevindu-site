@@ -71,26 +71,13 @@ const courses = defineCollection({
   }),
 });
 
-/* ---------- Lessons learnt (short, honest; longer ones can have a body) ---------- */
-const lessons = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/lessons' }),
-  schema: z.object({
-    title: z.string(), // the lesson itself, one line
-    context: z.string(), // a sentence or two of why
-    type: z.string(), // filter group on /lessons, e.g. Mindset, Habits, Focus, Career
-    order: z.number().default(99),
-    date: z.coerce.date().optional(),
-    lane: lane.default('study'),
-    draft: z.boolean().default(false),
-  }),
-});
-
 /* ---------- Structured data (YAML) ---------- */
 const log = defineCollection({
   loader: file('./src/data/log.yaml'),
   schema: z.object({
     date: z.coerce.date(),
-    kind: z.enum(['Shipped', 'Broke', 'Learned', 'Stuck', 'Reading', 'Started']),
+    kind: z.enum(['Shipped', 'Started', 'Learned', 'Broke', 'Stuck', 'Reading', 'Milestone']),
+    link: z.string().optional(),
     text: z.string(),
     project: z.string().optional(),
   }),
@@ -144,4 +131,4 @@ const ventures = defineCollection({
   }),
 });
 
-export const collections = { ventures, projects, books, courses, lessons, log, skills, timeline, experiments };
+export const collections = { ventures, projects, books, courses, log, skills, timeline, experiments };

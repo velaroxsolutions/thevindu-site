@@ -1,5 +1,5 @@
 import { SITE, NAV } from '../data/site';
-import { projects, lessons, allBooks, courses } from './content';
+import { projects, allBooks, courses } from './content';
 import { github } from './live';
 import { PROFILES } from '../data/profiles';
 
@@ -7,13 +7,12 @@ export type Cmd = { t: string; k: string; g: string; url?: string; ext?: string;
 
 /** Every page, project, note and library item — built once at compile time. */
 export async function paletteCommands(): Promise<Cmd[]> {
-  const [p, n, b, c, gh] = await Promise.all([projects(), lessons(), allBooks(), courses(), github()]);
+  const [p, b, c, gh] = await Promise.all([projects(), allBooks(), courses(), github()]);
   return [
     { t: 'Home', k: 'page', g: 'Go to', url: '/' },
     ...NAV.map((x) => ({ t: x.label, k: 'page', g: 'Go to', url: x.href })),
     { t: 'Résumé', k: 'page', g: 'Go to', url: '/cv' },
     ...p.map((x) => ({ t: x.data.title, k: x.data.status, g: 'Projects', url: `/work/${x.id}`, lane: 'build' })),
-    ...n.map((x) => ({ t: x.data.title, k: 'lesson', g: 'Lessons', url: `/lessons#${x.id}`, lane: x.data.lane })),
     ...c.map((x) => ({ t: x.data.title, k: x.data.certificate ? 'certificate' : 'course', g: 'Library', url: `/library/courses#${x.id}`, lane: x.data.lane })),
     ...b.map((x) => ({ t: x.title, k: x.verdict, g: 'Books', url: `/library/books#${x.id}`, lane: 'study' })),
     ...(gh?.repos ?? []).map((r) => ({ t: r.name, k: r.language ?? 'repo', g: 'Code', ext: r.url, lane: 'build' })),

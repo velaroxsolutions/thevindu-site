@@ -9,7 +9,7 @@ import path from 'node:path';
 
 const SNAP_DIR = path.resolve('src/data/snapshots');
 const memo = new Map<string, Promise<any>>();
-const env = (k: string) => process.env[k] ?? (import.meta as any).env?.[k];
+export const env = (k: string) => process.env[k] ?? (import.meta as any).env?.[k];
 
 export const status: Record<string, 'live' | 'snapshot' | 'fixture' | 'missing'> = {};
 

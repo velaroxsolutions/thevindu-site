@@ -1,43 +1,147 @@
 ---
+// The log. Entries come from three places (see lib/content.ts → logEntries):
+//   src/data/log.yaml · the Notion "Log" database (add from your phone) · things that log themselves
+// New Notion rows are merged in live from /api/log, so they show up within minutes.
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
-import { logEntries, fmtDate } from '../lib/content';
+import { logEntries, LOG_KINDS, fmtDate } from '../lib/content';
 const all = await logEntries();
-const years = [...new Set(all.map((e) => e.data.date.getUTCFullYear()))];
-const kinds = [...new Set(all.map((e) => e.data.kind))];
+const NOTE: Record<string, string> = {
+  Shipped: 'Out in the world', Started: 'Something new', Learned: 'Something clicked', Broke: '…and fixed it',
+  Stuck: 'Still figuring out', Reading: 'On the desk', Milestone: 'Streaks and firsts',
+};
+const kinds = [...LOG_KINDS.filter((k) => all.some((e) => e.data.kind === k)), ...new Set(all.map((e) => e.data.kind).filter((k) => !(LOG_KINDS as readonly string[]).includes(k)))];
+const projects = [...new Set(all.map((e) => e.data.project).filter(Boolean))] as string[];
+const monthKey = (d: Date) => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+const months = [...new Set(all.map((e) => monthKey(e.data.date)))];
+const monthName = (k: string) => fmtDate(new Date(k + '-15T00:00:00Z'), { month: 'long', year: 'numeric' });
+const latest = all[0]?.data.date;
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 ---
 <Base title="Log" description="A running log of what I shipped, broke, learned, and got stuck on.">
   <PageHead crumbs={[{ href: '/', label: 'Home' }, { label: 'Log' }]} title="Log"
-    lede="What I shipped, what I broke, and <em>what I got stuck on</em>."
-    meta={[`${all.length} entries`, 'Newest first', 'One line each']} />
+    lede="What I shipped, what I broke, and <em>what I got stuck on</em>. Written as it happens."
+    meta={[`<span data-log-total>${all.length}</span> entries`, latest ? `last one <span data-ago="${latest.toISOString()}">${fmtDate(latest)}</span>` : 'Newest first', `${projects.length} projects`]} />
+
   <section style="padding-top:0" data-sec="log" data-secname="Log">
-    <div class="filters" role="group" aria-label="Filter by kind" id="logfilter">
-      <button data-k="all" aria-pressed="true">All<sup>{all.length}</sup></button>
-      {kinds.map((k) => <button data-k={k} aria-pressed="false">{k}<sup>{all.filter((e) => e.data.kind === k).length}</sup></button>)}
+    <div class="lcats" role="group" aria-label="Filter by category" id="logkinds">
+      <button class="lcat" data-k="all" aria-pressed="true"><b data-count="all">{all.length}</b><span>Everything</span><small>All of it, newest first</small></button>
+      {kinds.map((k) => (
+        <button class={`lcat k-${k}`} data-k={k} aria-pressed="false">
+          <b data-count={k}>{all.filter((e) => e.data.kind === k).length}</b>
+          <span class={`kind ${k}`}>{k}</span>
+          <small>{NOTE[k] ?? ''}</small>
+        </button>
+      ))}
     </div>
-    {years.map((y) => (
-      <>
-        <div class="logyear" aria-hidden="true">{y}</div>
-        <div class="logs">
-          {all.filter((e) => e.data.date.getUTCFullYear() === y).map((e, i) => (
-            <div class="logrow" id={e.id} data-k={e.data.kind} data-anim style={`--i:${i % 8}`}>
-              <time datetime={e.data.date.toISOString()}>{fmtDate(e.data.date, { month: 'short', day: 'numeric' })}</time>
-              <span class={`kind ${e.data.kind}`}>{e.data.kind}</span>
-              <p>{e.data.text}</p>
-              <span class="lbl">{e.data.project ?? ''}</span>
-            </div>
-          ))}
+
+    <div class="ltools">
+      <label class="bsearch-box"><span aria-hidden="true">⌕</span><input id="logsearch" type="search" placeholder="Search the log" autocomplete="off" /></label>
+      {projects.length > 0 && (
+        <div class="lprojects" role="group" aria-label="Filter by project" id="logprojects">
+          <button data-p="all" aria-pressed="true">Any project</button>
+          {projects.map((p) => <button data-p={slug(p)} aria-pressed="false">{p}</button>)}
         </div>
-      </>
-    ))}
-    <p class="quiet" style="margin-top:28px">Add entries in src/data/log.yaml</p>
+      )}
+    </div>
+
+    <div class="ltimeline" id="logtl">
+      {months.map((m) => {
+        const rows = all.filter((e) => monthKey(e.data.date) === m);
+        return (
+          <div class="lmonth" data-month={m}>
+            <h2 class="lmonth-h"><span>{monthName(m)}</span><small data-month-count>{rows.length}</small></h2>
+            <ol class="lrows">
+              {rows.map((e) => (
+                <li class="lrow" id={e.id} data-k={e.data.kind} data-p={e.data.project ? slug(e.data.project) : ''} data-q={`${e.data.text} ${e.data.project ?? ''} ${e.data.kind}`.toLowerCase()} data-t={+e.data.date}>
+                  <time datetime={e.data.date.toISOString()}><b>{e.data.date.getUTCDate()}</b><span>{fmtDate(e.data.date, { weekday: 'short' })}</span></time>
+                  <span class={`kind ${e.data.kind}`}>{e.data.kind}</span>
+                  <p>{e.data.link ? <a href={e.data.link} target={e.data.link.startsWith('http') ? '_blank' : undefined} rel="noopener">{e.data.text} ↗</a> : e.data.text}</p>
+                  <span class="lmeta">
+                    {e.data.project && <span class="lproj">{e.data.project}</span>}
+                    {e.source === 'auto' && <span class="lauto" title="Added automatically from a live source">auto</span>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        );
+      })}
+    </div>
+    <p class="bsearch-empty" id="logempty" hidden>Nothing matches. Try another category or project.</p>
   </section>
 </Base>
 <script>
-  import { $$ } from '../scripts/util';
-  const btns = $$('#logfilter button');
-  btns.forEach((b) => b.addEventListener('click', () => {
-    btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
-    $$('.logrow').forEach((r) => r.classList.toggle('hide', b.dataset.k !== 'all' && r.dataset.k !== b.dataset.k));
-  }));
+  import { $, $$ } from '../scripts/util';
+  let kind = 'all', project = 'all', query = '';
+  const months = 'January February March April May June July August September October November December'.split(' ');
+  const wd = 'Sun Mon Tue Wed Thu Fri Sat'.split(' ');
+  const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+  function apply() {
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    let shown = 0;
+    $$<HTMLElement>('.lmonth').forEach((m) => {
+      let n = 0;
+      $$<HTMLElement>('.lrow', m).forEach((r) => {
+        const ok = (kind === 'all' || r.dataset.k === kind) && (project === 'all' || r.dataset.p === project) && words.every((w) => r.dataset.q!.includes(w));
+        r.hidden = !ok; if (ok) n++;
+      });
+      m.hidden = n === 0; shown += n;
+    });
+    const empty = $('#logempty'); if (empty) empty.hidden = shown > 0;
+  }
+  function recount() {
+    const rows = $$<HTMLElement>('.lrow');
+    $$<HTMLElement>('[data-count]').forEach((b) => { const k = b.dataset.count; b.textContent = String(k === 'all' ? rows.length : rows.filter((r) => r.dataset.k === k).length); });
+    $$<HTMLElement>('[data-log-total]').forEach((b) => (b.textContent = String(rows.length)));
+    $$<HTMLElement>('.lmonth').forEach((m) => { const c = m.querySelector('[data-month-count]'); if (c) c.textContent = String(m.querySelectorAll('.lrow').length); });
+  }
+  const group = (sel: string, attr: string, set: (v: string) => void) => {
+    const btns = $$<HTMLElement>(`${sel} button`);
+    btns.forEach((b) => b.addEventListener('click', () => { btns.forEach((o) => o.setAttribute('aria-pressed', String(o === b))); set(b.dataset[attr]!); apply(); }));
+  };
+  group('#logkinds', 'k', (v) => (kind = v));
+  group('#logprojects', 'p', (v) => (project = v));
+  const search = $('#logsearch') as HTMLInputElement | null;
+  let t = 0;
+  search?.addEventListener('input', () => { clearTimeout(t); t = window.setTimeout(() => { query = search.value.trim(); apply(); }, 120); });
+
+  // Merge in anything added to the Notion log since this page was built.
+  type E = { id: string; date: string; kind: string; text: string; project?: string; link?: string };
+  const row = (e: E) => {
+    const d = new Date(e.date), li = document.createElement('li');
+    li.className = 'lrow fresh'; li.id = e.id;
+    li.dataset.k = e.kind; li.dataset.p = e.project ? slug(e.project) : ''; li.dataset.t = String(+d);
+    li.dataset.q = `${e.text} ${e.project ?? ''} ${e.kind}`.toLowerCase();
+    const time = document.createElement('time'); time.dateTime = d.toISOString();
+    time.innerHTML = `<b>${d.getUTCDate()}</b><span>${wd[d.getUTCDay()]}</span>`;
+    const k = document.createElement('span'); k.className = `kind ${e.kind}`; k.textContent = e.kind;
+    const p = document.createElement('p');
+    if (e.link && /^https?:\/\//.test(e.link)) { const a = document.createElement('a'); a.href = e.link; a.target = '_blank'; a.rel = 'noopener'; a.textContent = `${e.text} ↗`; p.append(a); } else p.textContent = e.text;
+    const meta = document.createElement('span'); meta.className = 'lmeta';
+    if (e.project) { const s = document.createElement('span'); s.className = 'lproj'; s.textContent = e.project; meta.append(s); }
+    li.append(time, k, p, meta);
+    return li;
+  };
+  fetch('/api/log').then((r) => (r.ok ? r.json() : null)).then((res: { entries: E[] | null } | null) => {
+    const tl = $('#logtl'); if (!tl || !res?.entries) return;
+    let added = 0;
+    for (const e of res.entries) {
+      if (!e.text || document.getElementById(e.id)) continue;
+      const d = new Date(e.date), key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+      let m = tl.querySelector<HTMLElement>(`.lmonth[data-month="${key}"]`);
+      if (!m) {
+        m = document.createElement('div'); m.className = 'lmonth'; m.dataset.month = key;
+        m.innerHTML = `<h2 class="lmonth-h"><span>${months[d.getUTCMonth()]} ${d.getUTCFullYear()}</span><small data-month-count>0</small></h2><ol class="lrows"></ol>`;
+        const after = $$<HTMLElement>('.lmonth', tl).find((x) => x.dataset.month! < key);
+        tl.insertBefore(m, after ?? null);
+      }
+      const list = m.querySelector('.lrows')!, li = row(e);
+      const next = $$<HTMLElement>('.lrow', list).find((x) => +x.dataset.t! < +d);
+      list.insertBefore(li, next ?? null);
+      added++;
+    }
+    if (added) { recount(); apply(); }
+  }).catch(() => {});
 </script>

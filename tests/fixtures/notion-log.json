@@ -1,0 +1,5 @@
+[
+ { "id": "n-fixture00001", "date": "2026-10-16", "kind": "Learned", "text": "FAKE FIXTURE: learned why my Firestore listener fired twice.", "project": "Aperis" },
+ { "id": "n-fixture00002", "date": "2026-10-15", "kind": "Broke", "text": "FAKE FIXTURE: broke the onboarding flow with a rename, fixed it an hour later.", "project": "Aperis" },
+ { "id": "n-fixture00003", "date": "2026-10-10", "kind": "Reading", "text": "FAKE FIXTURE: started a new book.", "link": "https://example.com" }
+]

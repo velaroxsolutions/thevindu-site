@@ -5,7 +5,7 @@ import { loadContributions, type Contributions } from './contributions';
 const U = PROFILES.github.user;
 const auth = (): Record<string, string> => { const t = token('GITHUB_TOKEN'); return t ? { Authorization: `Bearer ${t}` } : {}; };
 
-export type Repo = { name: string; description: string | null; language: string | null; stars: number; forks: number; pushed: string; url: string; homepage: string | null; topics: string[] };
+export type Repo = { name: string; description: string | null; language: string | null; stars: number; forks: number; pushed: string; created?: string; url: string; homepage: string | null; topics: string[] };
 export type GitHub = {
   profile: { name: string | null; bio: string | null; repos: number; followers: number; since: string; avatar: string } | null;
   repos: Repo[];
@@ -46,7 +46,7 @@ export async function loadGitHub(get: typeof request): Promise<GitHub | null> {
     profile: user ? { name: user.name, bio: user.bio, repos: user.public_repos, followers: user.followers, since: user.created_at, avatar: user.avatar_url } : null,
     repos: (Array.isArray(repos) ? repos : []).filter((r: any) => !r.fork && !r.archived && r.name !== U).map((r: any) => ({
       name: r.name, description: r.description, language: r.language, stars: r.stargazers_count, forks: r.forks_count,
-      pushed: r.pushed_at, url: r.html_url, homepage: r.homepage || null, topics: r.topics || [],
+      pushed: r.pushed_at, created: r.created_at, url: r.html_url, homepage: r.homepage || null, topics: r.topics || [],
     })),
     activity: (Array.isArray(events) ? events : []).map((e: any) => ({ type: e.type, repo: e.repo?.name ?? '', at: e.created_at, text: describe(e) }))
       .filter((a: any) => a.text).slice(0, 12) as GitHub['activity'],
